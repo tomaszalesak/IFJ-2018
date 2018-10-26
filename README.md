@@ -3,6 +3,9 @@
 ## Řešitelé
 
 Tomáš Zálešák
+
 Tomáš Smädo
+
 Vojtěch Novotný
+
 Robin Skaličan
