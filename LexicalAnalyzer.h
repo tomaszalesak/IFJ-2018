@@ -3,7 +3,7 @@
 **	IFJ
 **	Lexical analysis
 **	---------------------------
-**	Vojtìch Novotný - xnovot1f
+**	VojtÄ›ch NovotnÃ½ - xnovot1f
 */
 
 #include <stdlib.h>
@@ -14,12 +14,12 @@
 
 /// Enum defining different types of tokens.
 typedef enum {
-	T_IDENTIFIER,       // data jsou string s názvem
+	T_IDENTIFIER,       // data jsou string s nÃ¡zvem
 	T_KEYWORD,          // data jsou enum toho slova KeywordType
-	T_INT,              // data jsou int s hodnotou literálu
-	T_FLOAT,            // data jsou float s hodnotou literálu
-	T_STRING,           // data jsou string s hodnotou literálu
-	T_OPERATOR,         // data jsou enum operátorù OperatorType
+	T_INT,              // data jsou int s hodnotou literÃ¡lu
+	T_FLOAT,            // data jsou float s hodnotou literÃ¡lu
+	T_STRING,           // data jsou string s hodnotou literÃ¡lu
+	T_OPERATOR,         // data jsou enum operÃ¡torÅ¯ OperatorType
 	T_LBRACKET,         // no data
 	T_RBRACKET,         // no data
 	T_NIL,              // no data
@@ -58,7 +58,7 @@ typedef enum {
 
 /// Token structure that is used as the return value of the the getToken function.
 typedef struct {
-	TokenType type;// typy tokenù
+	TokenType type;// typy tokenÅ¯
 	void * data;
 } Token;
 
