@@ -1,0 +1,89 @@
+identifier:   s1
+operator:     10
+string:       Toto je nejaky text
+EOL
+identifier:   s2
+operator:     10
+identifier:   s1
+operator:     0
+string:       , ktery jeste trochu obohatime
+EOL
+identifier:   print
+identifier:   s1
+comma
+string:       
+
+comma
+identifier:   s2
+comma
+string:       
+
+EOL
+identifier:   s1len
+operator:     10
+identifier:   length
+left_bracket
+identifier:   s1
+right_bracket
+EOL
+identifier:   s1len
+operator:     10
+identifier:   s1len
+operator:     1
+integer:      4
+operator:     0
+integer:      1
+EOL
+identifier:   s1
+operator:     10
+identifier:   substr
+left_bracket
+identifier:   s2
+comma
+identifier:   s1len
+comma
+integer:      4
+right_bracket
+EOL
+identifier:   print
+string:       4 znaky od 
+comma
+identifier:   s1len
+comma
+string:       . znaku v "
+comma
+identifier:   s2
+comma
+string:       ":
+comma
+identifier:   s1
+comma
+string:       
+
+EOL
+identifier:   print
+string:       Zadejte serazenou posloupnost vsech malych pismen a-h, 
+EOL
+identifier:   print
+string:       pricemz se pismena nesmeji v posloupnosti opakovat: 
+EOL
+identifier:   s1
+operator:     10
+identifier:   inputs
+EOL
+identifier:   while
+identifier:   s1
+operator:     9
+string:       abcdefgh
+
+identifier:   do
+EOL
+identifier:   print
+string:       Spatne zadana posloupnost, zkuste znovu: 
+EOL
+identifier:   s1
+operator:     10
+identifier:   inputs
+EOL
+identifier:   end
+EOL
