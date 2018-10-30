@@ -43,7 +43,10 @@ typedef enum {
     AS_OPERATOR_NOT,
     AS_OPERATOR_ASS,
     AS_COMMENT_LINE,
+    AS_COMMENT_BLOCK_BEGIN,
     AS_COMMENT_BLOCK,
+    AS_COMMENT_BLOCK_EOL,
+    AS_COMMENT_BLOCK_END,
     AS_DONE,
     AS_ERROR
 } AnalyzerState;
@@ -168,7 +171,7 @@ Token getToken() {
 
             else if (c == '=') {
                 if (wasEOL == 1)
-                    state = AS_COMMENT_BLOCK;
+                    state = AS_COMMENT_BLOCK_BEGIN;
                 else
                     state = AS_OPERATOR_ASS;
             }
@@ -617,6 +620,34 @@ Token getToken() {
                 state = AS_EMPTY;
 
             break;
+
+
+        case AS_COMMENT_BLOCK_BEGIN:
+            if (c == 'b' && getc(stdin) == 'e' && getc(stdin) == 'g' && getc(stdin) == 'i' && getc(stdin) == 'n')
+                state = AS_COMMENT_BLOCK;
+            else
+                state = AS_ERROR;
+            break;
+
+        case AS_COMMENT_BLOCK:
+            if (c == EOL)
+                state = AS_COMMENT_BLOCK_EOL;
+
+            break;
+
+        case AS_COMMENT_BLOCK_EOL:
+            if (c == '=' && getc(stdin) == 'e' && getc(stdin) == 'n' && getc(stdin) == 'd')
+                state = AS_COMMENT_BLOCK_END;
+            else
+                state = AS_COMMENT_BLOCK;
+            break;
+
+        case AS_COMMENT_BLOCK_END:
+            if (c == EOL)
+                state = AS_EMPTY;
+
+            break;
+
 
         default:
             state = AS_ERROR;
