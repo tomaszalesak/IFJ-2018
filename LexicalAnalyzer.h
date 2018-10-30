@@ -8,23 +8,23 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include "string.h"
 
 #ifndef LEX_H
 #define LEX_H
 
 /// Enum defining different types of tokens.
 typedef enum {
-	T_IDENTIFIER,       // data jsou string s názvem
-	T_KEYWORD,          // data jsou enum toho slova KeywordType
-	T_INT,              // data jsou int s hodnotou literálu
-	T_FLOAT,            // data jsou float s hodnotou literálu
-	T_STRING,           // data jsou string s hodnotou literálu
-	T_OPERATOR,         // data jsou enum operátorů OperatorType
-	T_LBRACKET,         // no data
-	T_RBRACKET,         // no data
-	T_NIL,              // no data
-	T_EOL,              // no data
-	T_EOF,              // no data
+	T_IDENTIFIER,       // data jsou string s názvem                X
+	T_INT,              // data jsou int s hodnotou literálu        X
+	T_FLOAT,            // data jsou float s hodnotou literálu      X
+	T_STRING,           // data jsou string s hodnotou literálu     X
+	T_OPERATOR,         // data jsou enum operátorů OperatorType    X
+	T_LBRACKET,         // no data      X
+	T_RBRACKET,         // no data      X
+	T_COMMA,
+	T_EOL,              // no data      X
+	T_EOF,              // no data      X
 	T_ERROR             // no data
 } TokenType;
 
@@ -55,6 +55,12 @@ typedef enum {
     OP_NEQ,
     OP_ASS
 } OperatorType;
+
+typedef enum {
+    E_INVALID,
+    E_MEMORY,
+    E_NUMBER_TOO_BIG,
+} ErrorType;
 
 /// Token structure that is used as the return value of the the getToken function.
 typedef struct {
