@@ -523,8 +523,56 @@ Token getToken() {
             }
 
             else if (IS_TOKENEND(c)) {
-                token.type = T_IDENTIFIER;
-                (token.data) = strGetStr(&sBuffer);
+                if (strCmpConstStr(&sBuffer, "def") == 0) {
+                    token.type = T_KEYWORD;
+                    token.data = malloc(sizeof(KeywordType));
+                    *(KeywordType*)(token.data) = KW_DEF;
+                }
+                else if (strCmpConstStr(&sBuffer, "do") == 0) {
+                    token.type = T_KEYWORD;
+                    token.data = malloc(sizeof(KeywordType) == 0);
+                    *(KeywordType*)(token.data) = KW_DO;
+                }
+                else if (strCmpConstStr(&sBuffer, "else") == 0) {
+                    token.type = T_KEYWORD;
+                    token.data = malloc(sizeof(KeywordType));
+                    *(KeywordType*)(token.data) = KW_ELSE;
+                }
+                else if (strCmpConstStr(&sBuffer, "end") == 0) {
+                    token.type = T_KEYWORD;
+                    token.data = malloc(sizeof(KeywordType));
+                    *(KeywordType*)(token.data) = KW_END;
+                }
+                else if (strCmpConstStr(&sBuffer, "if") == 0) {
+                    token.type = T_KEYWORD;
+                    token.data = malloc(sizeof(KeywordType));
+                    *(KeywordType*)(token.data) = KW_IF;
+                }
+                else if (strCmpConstStr(&sBuffer, "nil") == 0) {
+                    token.type = T_KEYWORD;
+                    token.data = malloc(sizeof(KeywordType));
+                    *(KeywordType*)(token.data) = KW_NIL;
+                }
+                else if (strCmpConstStr(&sBuffer, "not") == 0) {
+                    token.type = T_KEYWORD;
+                    token.data = malloc(sizeof(KeywordType));
+                    *(KeywordType*)(token.data) = KW_NOT;
+                }
+                else if (strCmpConstStr(&sBuffer, "then") == 0) {
+                    token.type = T_KEYWORD;
+                    token.data = malloc(sizeof(KeywordType));
+                    *(KeywordType*)(token.data) = KW_THEN;
+                }
+                else if (strCmpConstStr(&sBuffer, "while") == 0) {
+                    token.type = T_KEYWORD;
+                    token.data = malloc(sizeof(KeywordType));
+                    *(KeywordType*)(token.data) = KW_WHILE;
+                }
+                else {
+                    token.type = T_IDENTIFIER;
+                    (token.data) = strGetStr(&sBuffer);
+                }
+
                 oldC = c;
                 state = AS_DONE;
             }
