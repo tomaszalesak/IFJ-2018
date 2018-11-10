@@ -16,7 +16,6 @@
 /// Enum defining different types of tokens.
 typedef enum {
 	T_IDENTIFIER,       // data jsou string s názvem                X
-	T_KEYWORD,          // data jsou enum klíčových slov            X
 	T_INT,              // data jsou int s hodnotou literálu        X
 	T_FLOAT,            // data jsou float s hodnotou literálu      X
 	T_STRING,           // data jsou string s hodnotou literálu     X
@@ -26,11 +25,7 @@ typedef enum {
 	T_COMMA,
 	T_EOL,              // no data      X
 	T_EOF,              // no data      X
-	T_ERROR             // no data
-} TokenType;
-
-/// Enum defining different types of keywords for the T_KEYWORD token type.
-typedef enum {
+	T_ERROR,             // no data
     KW_DEF,
     KW_DO,
     KW_ELSE,
@@ -39,11 +34,7 @@ typedef enum {
     KW_NOT,
     KW_NIL,
     KW_THEN,
-    KW_WHILE
-} KeywordType;
-
-/// Enum defining different types of operators for the T_OPERATOR token type.
-typedef enum {
+    KW_WHILE,
     OP_ADD,
     OP_SUB,
     OP_MUL,
@@ -55,7 +46,8 @@ typedef enum {
     OP_EQ,
     OP_NEQ,
     OP_ASS
-} OperatorType;
+} TokenType;
+
 
 typedef enum {
     E_INVALID,
