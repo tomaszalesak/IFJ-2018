@@ -488,8 +488,10 @@ Token getToken() {
                 break;
 
             case AS_COMMENT_LINE:
-                if (c == EOL)
-                    state = AS_EMPTY;
+                if (c == EOL) {
+                    token.type = T_EOL;
+                    state = AS_DONE;
+                }
                 break;
 
 

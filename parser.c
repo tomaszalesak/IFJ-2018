@@ -36,10 +36,10 @@ void parse_arg_list_switcher();
 int precedence_table_fake(int fake);
 
 Token token;
+int i = 0;
 
 //Parse for <main> LL
 void parse_main() {
-    printf("\n[PARSER]Position: parse_main\n");
     token = getToken();
 
     switch (token.type) {
@@ -57,9 +57,6 @@ void parse_main() {
                         (precedence_table_fake(token.type)) ? exit(4) : 0;//TODO Legit?
                         //TODO EXPR - PRECEDENCE TABLE + GIVE TOKEN + CHECK EXIT CODE
                     }
-                    if(getToken().type != T_EOL){//TODO Added
-                        exit(2);
-                    }
                     break;
                 case T_EOL:// 17
                     break;
@@ -67,6 +64,7 @@ void parse_main() {
                     parse_arg_list_switcher();
                     break;
             }
+
             break;
         case T_EOL:// 6
             break;
@@ -77,11 +75,7 @@ void parse_main() {
             token = getToken();
             if ((token.type == KW_THEN) && (getToken().type) == T_EOL) {
                 parse_st_list(0);//TODO Check if working
-                if (getToken().type == T_EOL) {
-                    parse_st_list(2);
-                } else {
-                    exit(2);
-                }
+                parse_st_list(2);
             } else {
                 exit(2);
             }
@@ -116,7 +110,8 @@ void parse_function() {//3
     if ((token.type == T_IDENTIFIER) && (getToken().type) == T_LBRACKET) {
         parse_param_list_1();
         if ((getToken().type) == T_EOL) {
-            parse_st_list(2);
+            i++;
+            parse_st_list(2);//TODO Quick fixed, check the logic
         } else {
             exit(2);
         }
@@ -134,13 +129,20 @@ void parse_st_list(int position_helper) {//TODO implement position_helper proper
             switch (token.type) {
                 case OP_ASS://16 27
                     token = getToken();
-                    if (token.type == T_IDENTIFIER) {//27 -> 28 29
+                    if (token.type == T_IDENTIFIER) {//27 -> 28 29 !TRAP! I do not know if its function or identifier
+
                         parse_arg_list_switcher();
                     } else {//16
                         (precedence_table_fake(token.type)) ? exit(4) : 0;
+                        token = getToken();
                     }
-                    if(getToken().type != T_EOL){
+                    if(token.type != T_EOL){
                         exit(2);
+                    }
+                    if(position_helper == 0){
+                        parse_st_list(0);
+                    }else{
+                        parse_st_list(2);
                     }
                     break;
                 case T_EOL:// 17
@@ -157,12 +159,8 @@ void parse_st_list(int position_helper) {//TODO implement position_helper proper
             //TODO Will precedence give me/steal token? if y, change this
             token = getToken();
             if ((token.type == KW_THEN) && (getToken().type) == T_EOL) {
-                parse_st_list(0);//TODO Check if working
-                if (getToken().type == T_EOL) {
-                    parse_st_list(2);
-                } else {
-                    exit(2);
-                }
+                parse_st_list(0);
+                parse_st_list(2);
             } else {
                 exit(2);
             }
@@ -181,18 +179,23 @@ void parse_st_list(int position_helper) {//TODO implement position_helper proper
             }
             break;
         case KW_ELSE:
-            if(position_helper != 2){
+            if(position_helper != 0){
+                exit(2);
+            }else if(getToken().type != T_EOL){
                 exit(2);
             }
             break;
         case KW_END:
-            if(position_helper != 0){
+            if(position_helper <= 0){
+                exit(2);
+            }else if(getToken().type != T_EOL){
                 exit(2);
             }
             break;
         default:
             exit(2);
     }
+    i--;
 }
 
 void parse_param_list_1() {//58
@@ -225,9 +228,8 @@ void parse_arg_list_switcher() {
         if (getToken().type != T_EOL) {
             exit(2);//TODO .. Legit?
         }
-    } else {
+    } else if(token.type != T_EOL) {
         parse_arg_list(token.type);
-        parse_arg_list2();
     }
 }
 
@@ -235,12 +237,14 @@ void parse_arg(int token_type) {
     if (token_type == 399) {
         token = getToken();
     }
+
     switch (token.type) {
         case T_IDENTIFIER://51
         case T_INT://52
         case T_FLOAT://53
         case T_STRING://54
-            free(token.data);//TODO Check if free is legit
+            //free(token.data);//TODO Check if free is legit
+            break;
         default://TODO For real like this? Check
             exit(2);
     }
