@@ -3,7 +3,7 @@
 // Inspired by https://www.fit.vutbr.cz/study/courses/IFJ/private/projekt/jednoduchy_interpret.zip
 
 #include <string.h>
-#include <malloc.h>
+#include <stdlib.h>
 #include "string.h"
 
 #define STR_LEN_INC 8
@@ -92,4 +92,14 @@ int strGetLength(string *s)
 // vrati delku daneho retezce
 {
     return s->length;
+}
+
+int strAddString(string *s1, char *s2)
+// pridej konstantni string s2 do s1 
+{
+    for (int i = 0; i < strlen(s2); i++)
+    {
+        strAddChar(s1, s2[i]);
+    }
+    return STR_SUCCESS;
 }
