@@ -1,0 +1,56 @@
+SD<prog> -> <main>
+SD<main> -> <stat><main>
+SD<main> -> <func><main>
+SD<main> -> EOL<main>
+STD<main> -> EOF
+///////////////
+<expr> bud riadok zacina cislom alebo zatvorkou, id po ktorom hned nenasleduje znak =
+///////////////
+SD<stat> -> id = <expr> EOL
+SD<stat> -> id EOL
+SD<stat> -> <expr> EOL
+SD<stat> -> if <expr> then EOL
+			<st-list>
+		  else EOL
+			<st-list>
+		  end EOL
+SD<stat> -> while <expr> do EOL
+			<st-list>
+	   	  end EOL
+SD<stat> -> id = <func-call>
+SD<stat> -> <func-call>
+
+//TODO check vstavane f-cie
+S<stat> -> inputs()
+S<stat> -> inputi()
+S<stat> -> inputf()
+S<stat> -> print(<term-list>)
+S<stat> -> length(<arg>)
+S<stat> -> substr()
+S<stat> -> ord()
+S<stat> -> chr()
+
+D<st-list> -> <stat><st-list>
+
+SD<func-call> -> id <arg-list>
+SD<func-call> -> id (<arg-listb> EOL 
+
+D<func> -> def id (<param-l> EOL
+			<st-list> END 
+D<param-l> -> <param> <param-l2>
+D<param-l2> -> , <param> <param-l2>
+D<param-l2> -> )
+D<param> -> id
+
+SD<arg-list> -> <arg> <arg-list2>
+SD<arg-list2> -> , <arg> <arg-list2>
+SD<arg-list2> -> EOL
+
+SD<arg-listb> -> <arg> <arg-list2b>
+SD<arg-list2b> -> , <arg> <arg-list2b>
+SD<arg-list2b> -> )
+
+SD<arg> -> id
+SD<arg> -> int
+SD<arg> -> float
+SD<arg> -> string
