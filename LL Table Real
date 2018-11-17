@@ -33,6 +33,7 @@ I---------D<func-call> -> id (<arg-listb> EOL
 <stat> -> inputi()
 <stat> -> inputf()
 <stat> -> print(<term-list>)//TODO Pouze na preklad + kdo bude detekovat? //Check READ/WRITE
+
 <stat> -> length(<arg>)
 <stat> -> substr()
 <stat> -> ord()
