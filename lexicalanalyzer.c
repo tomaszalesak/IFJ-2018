@@ -418,6 +418,22 @@ Token getToken() {
                         token.type = KW_THEN;
                     } else if (strCmpConstStr(&sBuffer, "while") == 0) {
                         token.type = KW_WHILE;
+                    } else if (strCmpConstStr(&sBuffer, "inputs") == 0) {
+                        token.type = BIF_INPUTS;
+                    } else if (strCmpConstStr(&sBuffer, "inputi") == 0) {
+                        token.type = BIF_INPUTI;
+                    } else if (strCmpConstStr(&sBuffer, "inputf") == 0) {
+                        token.type = BIF_INPUTF;
+                    } else if (strCmpConstStr(&sBuffer, "print") == 0) {
+                        token.type = BIF_PRINT;
+                    } else if (strCmpConstStr(&sBuffer, "length") == 0) {
+                        token.type = BIF_LENGTH;
+                    } else if (strCmpConstStr(&sBuffer, "substr") == 0) {
+                        token.type = BIF_SUBSTR;
+                    } else if (strCmpConstStr(&sBuffer, "ord") == 0) {
+                        token.type = BIF_ORD;
+                    } else if (strCmpConstStr(&sBuffer, "chr") == 0) {
+                        token.type = BIF_CHR;
                     } else {
                         token.type = T_IDENTIFIER;
                         (token.data) = strGetStr(&sBuffer);
@@ -540,6 +556,6 @@ Token getToken() {
 
     /*token.type = 1;
     token.data = "XD\n";*/
-    tester(token);
+    //tester(token);
     return token;
 }
