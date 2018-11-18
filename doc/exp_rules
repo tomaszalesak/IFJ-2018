@@ -1,0 +1,12 @@
+E ->	T
+E ->	( E )
+E ->	E * E
+E ->	E / E
+E ->	E + E
+E ->	E - E
+E ->	E == E
+E ->	E != E
+E ->	E < E
+E ->	E <= E
+E ->	E >= E
+E ->	E > E
