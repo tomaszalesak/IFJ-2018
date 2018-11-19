@@ -1,4 +1,3 @@
-
 #include "lexicalanalyzer.h"
 
 void tester(Token token)
@@ -18,10 +17,6 @@ void tester(Token token)
                 break;
             case T_IDENTIFIER:
                 printf("%s(id) ", (char *) (token.data));
-                free(token.data);
-                break;
-            case T_OPERATOR:
-                printf("%d ", *(int *) (token.data));
                 free(token.data);
                 break;
             case T_LBRACKET:
@@ -101,6 +96,30 @@ void tester(Token token)
                 break;
             case OP_ASS:
                 printf("= ");
+                break;
+            case BIF_INPUTS:
+                printf("INPUTS");
+                break;
+            case BIF_INPUTI:
+                printf("INPUTI");
+                break;
+            case BIF_INPUTF:
+                printf("INPUTF");
+                break;
+            case BIF_SUBSTR:
+                printf("SUBSTR");
+                break;
+            case BIF_ORD:
+                printf("ORD");
+                break;
+            case BIF_CHR:
+                printf("CHR");
+                break;
+            case BIF_PRINT:
+                printf("PRINT");
+                break;
+            case BIF_LENGTH:
+                printf("LENGTH");
                 break;
             default:
                 printf("other value\n");
