@@ -1,50 +1,70 @@
 /**
  * Predmet:  IFJ
  * Projekt:  Implementacia prekladaca jazyka IFJ18
- * Soubor:   symtable.c
+ * Subor:   symtable.c
  *
  * Popis: Tabulka symbolov realizovana pomocou binarneho vyhledavacieho stromu
  *
  *
  *
 */
+
 #include <stdbool.h>
 #include <string.h>
 #include "symtable.h"
 
-/* inicializacia lokalnej TS (works)*/
-void LTSInit(LTSNodePtr *RootPtr) {
+/**
+ * Initialization of LTS.
+ * @param RootPtr - LTS
+ */
+void ltsInit(LTSNodePtr *RootPtr) {
     *RootPtr = NULL;
 }
 
-/* inicializacia globalnej TS */
-void GTSInit(GTSNodePtr *RootPtr) {
+/**
+ * Initialization of GTS.
+ * @param RootPtr - GTS
+ */
+void gtsInit(GTSNodePtr *RootPtr) {
     *RootPtr = NULL;
 }
 
-/* vyhladanie prvku K v LTS (works)*/
-LTSNodePtr LTSSearch(LTSNodePtr RootPtr, string *K) {
+/**
+ * Search the variable K in LTS.
+ * @param RootPtr - LTS
+ * @param K - variable name
+ * @return pointer on the node containing variable K
+ * @return NULL if the LTS is empty or variable K wasn't found
+ */
+LTSNodePtr ltsSearch(LTSNodePtr RootPtr, string *K) {
     if (RootPtr == NULL) {
         return NULL;
     } else {
         if (strcmp(K->str, (RootPtr->key.str)) == 0) {
-            // najdeny kluc
+            //najdeny kluc
             return RootPtr;
         } else {
             //kluc vacsi, pokracujem doprava
             if (strcmp(K->str, (RootPtr->key.str)) > 0) {
-                return LTSSearch(RootPtr->RPtr, K);
+                return ltsSearch(RootPtr->RPtr, K);
             }
                 //kluc mensi, pokracujem dolava
             else {
-                return LTSSearch(RootPtr->LPtr, K);
+                return ltsSearch(RootPtr->LPtr, K);
             }
         }
     }
 }
 
-/* vlozenie prvku K do LTS (works?)*/
-int LTSInsert(LTSNodePtr *RootPtr, string *K) {//, int type, int* i) {
+/**
+ * Insert variable K into LTS.
+ * @param RootPtr - LTS
+ * @param K - variable name
+ * @return SUCCESS if the variable was inserted
+ * @return ERROR_INSERTED if the variable has already been inserted before
+ * @return INT_ERR if there was an memory allocation problem
+ */
+int ltsInsert(LTSNodePtr *RootPtr, string *K) {//, int type, int* i) {
 
     LTSNodePtr tmp = (*RootPtr);        //ulozenie ukazatela na BVS
     if ((*RootPtr) != NULL) {
@@ -91,28 +111,14 @@ int LTSInsert(LTSNodePtr *RootPtr, string *K) {//, int type, int* i) {
         free(newitem);
         return INT_ERR;
     }
-    //vlozenie datoveho typu premennej
-    //newitem->data.varType = type;
-    /*
-    switch(type) {
-        case KW_INTEGER:
-            newitem->data.varValue.iVal = 0;
-            break;
-        case KW_DOUBLE:
-            newitem->data.varValue.dVal = 0.0;
-            break;
-        case KW_STRING:
-            strInit(&(newitem->data.varValue.sVal));
-            break;
-    }
-    */
 
+    //defaultne nastavenie nedefinovaneho typu
+    newitem->type = -1;
     //inicializacia ukazatelov na podstromy
     newitem->LPtr = NULL;
     newitem->RPtr = NULL;
 
     //strom je prazdny, vkladame korenovy uzol
-    //change *RootPtr == NULL a aj pri newitem
     if ((*RootPtr) == NULL) {
         *RootPtr = newitem;
     }
@@ -135,12 +141,15 @@ int LTSInsert(LTSNodePtr *RootPtr, string *K) {//, int type, int* i) {
     return SUCCESS;
 }
 
-// TODO check for SIGSEGV
-void LTSDelete(LTSNodePtr* RootPtr) {
+/**
+ * Frees the memory allocated for LTS and strings
+ * @param RootPtr - LTS
+ */
+void ltsDelete(LTSNodePtr* RootPtr) {   // TODO check for SIGSEGV
     if(*RootPtr != NULL) {
         // rekurzivne odstranenie oboch podstromov
-        LTSDelete(&((*RootPtr)->LPtr));
-        LTSDelete(&((*RootPtr)->RPtr));
+        ltsDelete(&((*RootPtr)->LPtr));
+        ltsDelete(&((*RootPtr)->RPtr));
 
         // uvolnenie pamate kluca
         strFree(&((*RootPtr)->key));
@@ -156,8 +165,15 @@ void LTSDelete(LTSNodePtr* RootPtr) {
     }
 }
 
-/* vlozenie prvku K do GTS */
-int GTSInsert (GTSNodePtr *RootPtr, string* K, int argCount){
+/**
+ * Insert variable K into GTS.
+ * @param RootPtr - GTS
+ * @param K - variable name
+ * @return SUCCESS if the variable was inserted
+ * @return ERROR_INSERTED if the variable has already been inserted before
+ * @return INT_ERR if there was an memory allocation problem
+ */
+int gtsInsert (GTSNodePtr *RootPtr, string* K){
 
     GTSNodePtr tmp = (*RootPtr);        //uloženie ukazateľa na BVS
 
@@ -209,12 +225,12 @@ int GTSInsert (GTSNodePtr *RootPtr, string* K, int argCount){
     newitem->RPtr = NULL;
 
     //inicializacia datovej struktury
-    newitem->argCount = argCount;
+    newitem->paramCount = 0;
     newitem->defined = 0;
 
     //strom je prazdny, vkladame korenovy uzol
     if ((*RootPtr) == NULL) {
-        *RootPtr = newitem;
+        *RootPtr = newitem;//, GTSNode**);
         //*inserted = newitem;
     }
         //neprazny strom, vkladame ako syna
@@ -237,7 +253,14 @@ int GTSInsert (GTSNodePtr *RootPtr, string* K, int argCount){
     return SUCCESS;
 }
 
-GTSNodePtr GTSSearch (GTSNodePtr RootPtr, string* K){
+/**
+ * Search the variable K in GTS.
+ * @param RootPtr - GTS
+ * @param K - variable name
+ * @return pointer on the node containing variable K
+ * @return NULL if the GTS is empty or variable K wasn't found
+ */
+GTSNodePtr gtsSearch (GTSNodePtr RootPtr, string* K){
     if (RootPtr == NULL) {
         return NULL;
     } else {
@@ -247,12 +270,130 @@ GTSNodePtr GTSSearch (GTSNodePtr RootPtr, string* K){
         } else {
             //kluc vacsi, pokracujem doprava
             if (strcmp(K->str, (RootPtr->key.str)) > 0) {
-                return GTSSearch(RootPtr->RPtr, K);
+                return gtsSearch(RootPtr->RPtr, K);
             }
                 //kluc mensi, pokracujem dolava
             else {
-                return GTSSearch(RootPtr->LPtr, K);
+                return gtsSearch(RootPtr->LPtr, K);
             }
         }
+    }
+}
+
+/**
+ * Sets the type of variable K in LTS.
+ * @param RootPtr - LTS
+ * @param K - variable name
+ * @param type - variable type
+ * @return EXIT_FAILURE if the variable isn't in LTS and exits
+ */
+void ltsSetIdType (LTSNodePtr RootPtr, string* K, int type) {
+    LTSNodePtr tmp = NULL;
+    if ((tmp = ltsSearch(RootPtr, K)) == NULL){
+        fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign type to a nonexisting variable!\n");
+        exit(EXIT_FAILURE);
+    }
+    tmp->type = type;
+}
+
+/**
+ * Returns the type of variable K in LTS.
+ * @param RootPtr - LTS
+ * @param K - variable name
+ * @return type of variable (int)
+ * @return EXIT_FAILURE if the variable isn't in LTS and exits
+ */
+int ltsGetIdType (LTSNodePtr RootPtr, string* K) {
+    LTSNodePtr tmp = NULL;
+    if ((tmp = ltsSearch(RootPtr, K)) == NULL){
+        fprintf(stderr, "ERROR_SYMTAMBLE! Variable doesn't exist in LTS!\n");
+        exit(EXIT_FAILURE);
+    }
+    return tmp->type;
+}
+
+/**
+ * Sets the number of function K parameters in GTS.
+ * @param RootPtr - GTS
+ * @param K - function name
+ * @param paramCount - number of function params
+ * @returns EXIT_FAILURE if the function isn't in GTS and exits
+ */
+void gtsSetParamCount (GTSNodePtr RootPtr, string *K, int paramCount) {
+    GTSNodePtr tmp = NULL;
+    if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
+        fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign parameters count to a nonexisting function!\n");
+        exit(EXIT_FAILURE);
+    }
+    tmp->paramCount = paramCount;
+}
+
+/**
+ * Returns params count of function K in GTS.
+ * @param RootPtr - GTS
+ * @param K - name of function
+ * @return function params count
+ * @returns EXIT_FAILURE if the function isn't in GTS and exits
+ */
+int gtsGetParamCount (GTSNodePtr RootPtr, string *K) {
+    GTSNodePtr tmp = NULL;
+    if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
+        fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign parameters count to a nonexisting function!\n");
+        exit(EXIT_FAILURE);
+    }
+    return tmp->paramCount;
+}
+
+/**
+ * Sets the K function as defined.
+ * @param RootPtr - GTS
+ * @param K - function name
+ */
+void gtsSetDefined (GTSNodePtr RootPtr, string *K) {
+    GTSNodePtr tmp = NULL;
+    if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
+        fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign defined value to a nonexisting function!\n");
+        exit(EXIT_FAILURE);
+    }
+    tmp->defined = 1;
+}
+
+/**
+ * Returns the defined param of function K.
+ * @param RootPtr - GTS
+ * @param K - function name
+ * @return 1 if the function was defined, otherwise 0
+ */
+int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K) {
+    GTSNodePtr tmp = NULL;
+    if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
+        fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign defined value to a nonexisting function!\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("function %s is %s\n", tmp->key.str, tmp->defined ? "defined" : "undefined");
+    return tmp->defined;
+}
+
+/**
+ * Frees the memory allocated for GTS and strings
+ * @param RootPtr - GTS
+ */
+void gtsDelete(GTSNodePtr* RootPtr) {   //TODO check for SIGSEGV on merlin
+    if(*RootPtr != NULL) {
+        // rekurzivne odstranenie oboch podstromov
+        gtsDelete(&((*RootPtr)->LPtr));
+        gtsDelete(&((*RootPtr)->RPtr));
+
+        // uvolnenie pamate kluca
+        strFree(&((*RootPtr)->key));
+
+        // ak je v strukture string
+        //if((RootPtr)->data.varType == KW_STRING) {
+        //    strFree(&((RootPtr)->data.varValue.sVal));
+        //}
+
+        // uvolnenie pamate uzla, uvolnenie pamate
+        free(*RootPtr);
+        *RootPtr = NULL;
     }
 }
