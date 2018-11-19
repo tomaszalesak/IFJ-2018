@@ -19,7 +19,7 @@
 #include <ctype.h>
 #include <string.h>
 
-//#include "string.c"
+#include "string.c"
 
 
 /*#include "scanner.h"*/
