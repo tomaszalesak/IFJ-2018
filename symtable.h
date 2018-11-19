@@ -41,15 +41,28 @@
 #define SIZE            10
 
 
+typedef struct ts_var{
+   int varType;        // dat. typ promenne
+   int varOffset;      // offset v prog. zasobniku
+   //tValue varValue;    // unie bude obsahovat data
+} TSVar;
+
+
 typedef struct LTSNode{
-    string key;                                           
-    //TSVar data;                                           
-    struct LTSNode * LPtr, *RPtr;
+    string key;     ///node (variable) name
+    int type;       ///variable type
+    struct LTSNode * LPtr, *RPtr;   ///pointers to child nodes
 } *LTSNodePtr;
+
+typedef struct GTSNode{
+    string key;     ///node (variable) name
+    int paramCount; ///number of function parameters
+    int defined;    /// 0 for undefined, 1 for defined function
+    struct GTSNode * LPtr, *RPtr;   ///pointers to child nodes
+} *GTSNodePtr;
 
 //typedef  LTSNode tLTS;
 
-/*
 typedef struct {
    int argCount;        // pocet parametru fce
    int retType;         // dat. typ navratove hodnoty fce
@@ -60,24 +73,51 @@ typedef struct {
    int varReserved;     // po vlozeni rezervace jmena lokalni promenne = 1
    string types;        // string s typy parametru - pro kontrolu pri volani funkce
 } TSFunction;
-*/
-
-typedef struct GTSNode{
-    string key;                                           
-    int argCount;
-    int defined;
-    struct GTSNode * LPtr, *RPtr;
-} *GTSNodePtr;
 
 //typedef  GTSNode tGTS;
 
-void LTSInit (LTSNodePtr *);
-LTSNodePtr LTSSearch (LTSNodePtr, string*);
-int LTSInsert (LTSNodePtr *, string*);
-void LTSDelete(LTSNodePtr*);
+/**
+ * Functions for LTS.
+ */
+void ltsInit (LTSNodePtr *);
+LTSNodePtr ltsSearch (LTSNodePtr, string*);
+int ltsInsert (LTSNodePtr *, string*);
+void ltsDelete(LTSNodePtr*);
+void ltsSetIdType (LTSNodePtr RootPtr, string* K, int type);
+int ltsGetIdType (LTSNodePtr RootPtr, string* K);
 
-void GTSInit(GTSNodePtr *);
-GTSNodePtr GTSSearch (GTSNodePtr, string*);
-int GTSInsert (GTSNodePtr *, string*, int);//, GTSNode**);
+/**
+ * Functions for GTS.
+ */
+void gtsInit(GTSNodePtr *);
+GTSNodePtr gtsSearch (GTSNodePtr, string*);
+int gtsInsert (GTSNodePtr *, string*);
+void gtsSetParamCount (GTSNodePtr RootPtr, string *K, int paramCount);
+int gtsGetParamCount (GTSNodePtr RootPtr, string *K);
+void gtsSetDefined (GTSNodePtr RootPtr, string *K);
+int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K);
+void gtsDelete(GTSNodePtr* RootPtr);
+
+/**TODO check and delete
+//int GTSInsertVar(tGTS**, string*);
+void GTSDelete(GTSNodePtr*);
+int lts_getVariableType(GTSNodePtr, string*);
+LTSNodePtr lts_getVarNode(GTSNodePtr , string*);
+int gts_setVariable(GTSNodePtr*, GTSNodePtr, int, string*);
+LTSNodePtr lts_setVarNode(GTSNodePtr*, GTSNodePtr, int);
+//tLTS* lts_setConst(GTSNodePtr*, GTSNodePtr, int, string*);
+int gts_setArgument(GTSNodePtr*, GTSNodePtr, int, string*);
+int gts_checkArgs(GTSNodePtr, int, string*, int);
+int gts_setReturnValue(GTSNodePtr, int);
+int gts_checkReturnValue(GTSNodePtr, int);
+void gts_setDefinition(GTSNodePtr);
+int gts_checkDefinition(GTSNodePtr);
+int gts_checkAllDefinitions(GTSNodePtr);
+//int lts_getVariableType(GTSNode *, string*);
+int Length(char *s);
+char* SubStr(char *, int, int);
+int Asc(char *, int);
+char* Chr(int);
+*/
 
 #endif
