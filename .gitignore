@@ -1,6 +1,9 @@
 # VSC
 *.vscode
 
+# docx
+~$*.docx
+
 # Prerequisites
 *.d
 
