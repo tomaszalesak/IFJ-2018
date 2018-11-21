@@ -74,6 +74,7 @@ Token getToken() {
 
     // Token return value
     Token token;
+    token.type = T_ERROR;
 
     while (state != AS_DONE && state != AS_ERROR) {
         //printf("Going trough the loop.\n");
@@ -573,6 +574,6 @@ Token getToken() {
         token.type = T_ERROR;
     }
 
-    tester(token);
+    //tester(token);
     return token;
 }
