@@ -4,7 +4,7 @@
 #include "errors.h"
 
 
-void prec_anal(Token t, Token t2, int give_me_old_tokens)
+Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 {
     // init stack
     tDLList stack;
@@ -72,7 +72,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                         {
                             if(handle->lptr == stack.First)
                             {
-                                printf("E -> T\n");
+                                fprintf(stderr, "E -> T\n");
                                 DLDeleteFirst(&stack);
                                 DLDeleteFirst(&stack);
                                 DLInsertFirst(&stack, PR_E);
@@ -93,7 +93,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                     case PR_LEFTBRACKET:
                                         if((handle->lptr->lptr->data == PR_E) && (handle->lptr->lptr->lptr->data == PR_RIGHTBRACKET))
                                         {
-                                            printf("E -> ( E )\n");
+                                            fprintf(stderr, "E -> ( E )\n");
                                             DLDeleteFirst(&stack);
                                             DLDeleteFirst(&stack);
                                             DLDeleteFirst(&stack);
@@ -113,7 +113,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                             switch (handle->lptr->lptr->data)
                                             {
                                                 case PR_MULTIPLAY:
-                                                    printf("E -> E * E\n");
+                                                    fprintf(stderr, "E -> E * E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -121,7 +121,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_DIVISION:
-                                                    printf("E -> E / E\n");
+                                                    fprintf(stderr, "E -> E / E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -129,7 +129,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_PLUS:
-                                                    printf("E -> E + E\n");
+                                                    fprintf(stderr, "E -> E + E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -137,7 +137,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_MINUS:
-                                                    printf("E -> E - E\n");
+                                                    fprintf(stderr, "E -> E - E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -145,7 +145,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_EQUAL:
-                                                    printf("E -> E == E\n");
+                                                    fprintf(stderr, "E -> E == E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -153,7 +153,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_NOTEQUAL:
-                                                    printf("E -> E != E\n");
+                                                    fprintf(stderr, "E -> E != E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -161,7 +161,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_LESS:
-                                                    printf("E -> E < E\n");
+                                                    fprintf(stderr, "E -> E < E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -169,7 +169,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_LESSEQUAL:
-                                                    printf("E -> E <= E\n");
+                                                    fprintf(stderr, "E -> E <= E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -177,7 +177,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_GREATEREQUAL:
-                                                    printf("E -> E >= E\n");
+                                                    fprintf(stderr, "E -> E >= E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -185,7 +185,7 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_GREATER:
-                                                    printf("E -> E > E\n");
+                                                    fprintf(stderr, "E -> E > E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -262,7 +262,8 @@ void prec_anal(Token t, Token t2, int give_me_old_tokens)
 
     // dispose stack
     DLDisposeList(&stack);
-    printf("SUCCESS\n");
+    fprintf(stderr, "SUCCESS\n");
+    return token;
 }
 
 tDLElemPtr topElem(tDLList *s)
@@ -280,7 +281,7 @@ tDLElemPtr topElem(tDLList *s)
         DLSucc(s);
     }
 
-    printf("NO TOP FOUND\n");
+    fprintf(stderr, "NO TOP FOUND\n");
     return NULL;
 
 }
@@ -300,7 +301,7 @@ tDLElemPtr findHandle(tDLList *s)
         DLSucc(s);
     }
 
-    printf("NO HANDLE FOUND\n");
+    fprintf(stderr, "NO HANDLE FOUND\n");
     return NULL;
 }
 

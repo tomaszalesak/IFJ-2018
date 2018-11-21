@@ -48,7 +48,7 @@ static const char prec_table [PREC_TABLE_SIZE][PREC_TABLE_SIZE] = {
 };
 
 
-void prec_anal(Token, Token, int);
+Token prec_anal(Token, Token, int);
 tDLElemPtr topElem(tDLList *);
 int isTerminal(int);
 int tokenTypeToInt(TokenType);
