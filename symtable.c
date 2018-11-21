@@ -370,7 +370,7 @@ int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign defined value to a nonexisting function!\n");
         exit(EXIT_FAILURE);
     }
-    printf("function %s is %s\n", tmp->key.str, tmp->defined ? "defined" : "undefined");
+    printf("Function %s is already %s!\n", tmp->key.str, tmp->defined ? "defined" : "undefined");
     return tmp->defined;
 }
 

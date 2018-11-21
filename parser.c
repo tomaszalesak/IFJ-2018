@@ -66,6 +66,7 @@ void parse_function() {//3// TODO Define function with no brackets?
 
     if ((token.type == T_IDENTIFIER) && (getToken().type) == T_LBRACKET) {
         //Call function for <param-l>
+
         string K = createString (token);
         //check if function was already inserted into gts
         if (gtsSearch(gts, &K) != NULL) {
@@ -79,6 +80,7 @@ void parse_function() {//3// TODO Define function with no brackets?
             gtsInsert(&gts, &K);
         }
         gtsSetDefined(gts, &K);
+
         parse_param_list_1();
         if ((getToken().type) == T_EOL) {
             //Call function for <st-list>
@@ -265,8 +267,8 @@ void parse_st_list(int position_helper) {
 
 //Parse for <param-l> LL
 void parse_param_list_1() {//58
-    int checker = parse_param(); //Checker for if ( ) validation
-    if (checker == 0) {
+    //Check for if ( ) validation
+    if (!parse_param()) {
         parse_param_list_2();
     }
 }
