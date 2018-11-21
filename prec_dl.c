@@ -30,15 +30,15 @@ void print_elements_of_list(tDLList TL)	{
 
     tDLList TempList=TL;
 
-    printf("-----------------");
+    fprintf(stderr, "-----------------");
 
     while (TempList.First!=NULL)	{
-        printf("\n \t%d",TempList.First->data);
+        fprintf(stderr, "\n \t%d",TempList.First->data);
         if ((TempList.First==TL.Act) && (TL.Act!=NULL))
-            printf("\t <= toto je aktivní prvek ");
+            fprintf(stderr, "\t <= toto je aktivní prvek ");
         TempList.First=TempList.First->rptr;
     }
-    printf("\n-----------------\n");
+    fprintf(stderr, "\n-----------------\n");
 }
 
 void DLError() {
@@ -46,7 +46,7 @@ void DLError() {
 ** Vytiskne upozornění na to, že došlo k chybě.
 ** Tato funkce bude volána z některých dále implementovaných operací.
 **/
-    //printf("*ERROR* The program has performed an illegal operation.\n");
+    //fprintf(stderr, "*ERROR* The program has performed an illegal operation.\n");
     exit(ERR_INTERNAL);
 }
 
