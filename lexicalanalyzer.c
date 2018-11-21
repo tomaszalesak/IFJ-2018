@@ -556,6 +556,6 @@ Token getToken() {
 
     /*token.type = 1;
     token.data = "XD\n";*/
-    //tester(token);
+    tester(token);
     return token;
 }
