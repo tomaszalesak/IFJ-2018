@@ -62,7 +62,7 @@ Token getToken() {
 
     // Stores whether the last char was EOL to detect multiline comments.
     // Multiline comments have to begin and end on new new lines.
-    static int wasEOL = 0;
+    static int wasEOL = 1;
 
     // Current state of Lexical Analyzer
     AnalyzerState state = AS_EMPTY;
@@ -110,6 +110,9 @@ Token getToken() {
                 } else if (c == EOL) {
                     token.type = T_EOL;
                     wasEOL = 1;
+                    state = AS_DONE;
+                } else if (c == EOF) {
+                    token.type = T_EOF;
                     state = AS_DONE;
                 } else if (c == ',') {
                     token.type = T_COMMA;
@@ -506,14 +509,22 @@ Token getToken() {
             case AS_COMMENT_LINE:
                 if (c == EOL) {
                     token.type = T_EOL;
+                    wasEOL = 1;
                     state = AS_DONE;
                 }
                 break;
 
 
+            // Tests for "=beginWHITESPACE" or "=beginEOL" at the beginning of a line.
+            // If it is successful than opens a multiline comment, if not returns Lexical Error.
             case AS_COMMENT_BLOCK_BEGIN:
-                if (c == 'b' && getc(stdin) == 'e' && getc(stdin) == 'g' && getc(stdin) == 'i' && getc(stdin) == 'n')
-                    state = AS_COMMENT_BLOCK;
+                if (c == 'b' && getc(stdin) == 'e' && getc(stdin) == 'g' && getc(stdin) == 'i' && getc(stdin) == 'n') {
+                    int c2 = getc(stdin);
+                    if (IS_WHITESPACE(c2) || c2 == EOL)
+                        state = AS_COMMENT_BLOCK;
+                    else
+                        state = AS_ERROR;
+                }
                 else
                     state = AS_ERROR;
                 break;
@@ -524,15 +535,26 @@ Token getToken() {
                 break;
 
             case AS_COMMENT_BLOCK_EOL:
-                if (c == '=' && getc(stdin) == 'e' && getc(stdin) == 'n' && getc(stdin) == 'd')
-                    state = AS_COMMENT_BLOCK_END;
+                if (c == '=' && getc(stdin) == 'e' && getc(stdin) == 'n' && getc(stdin) == 'd') {
+                    int c2 = getc(stdin);
+                    if (IS_WHITESPACE(c2))
+                        state = AS_COMMENT_BLOCK_END;
+                    else if (c2 == EOL) {
+                        state = AS_EMPTY;
+                        wasEOL = 1;
+                    }
+                    else
+                        state = AS_ERROR;
+                }
                 else
                     state = AS_COMMENT_BLOCK;
                 break;
 
             case AS_COMMENT_BLOCK_END:
-                if (c == EOL)
+                if (c == EOL) {
                     state = AS_EMPTY;
+                    wasEOL = 1;
+                }
                 break;
 
 
@@ -556,6 +578,6 @@ Token getToken() {
 
     /*token.type = 1;
     token.data = "XD\n";*/
-    tester(token);
+    //tester(token);
     return token;
 }
