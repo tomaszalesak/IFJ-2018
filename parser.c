@@ -6,6 +6,7 @@
 */
 
 #include "lexicalanalyzer.h"
+#include "symtable.h"
 
 void parse_main();
 
