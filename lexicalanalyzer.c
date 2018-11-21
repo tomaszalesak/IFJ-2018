@@ -574,6 +574,6 @@ Token getToken() {
         token.type = T_ERROR;
     }
 
-    //tester(token);
+    tester(token);
     return token;
 }
