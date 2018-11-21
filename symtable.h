@@ -18,8 +18,9 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include "lexicalanalyzer.h"
 
-#include "string.c"
+//#include "string.c"
 
 
 /*#include "scanner.h"*/
@@ -97,6 +98,8 @@ int gtsGetParamCount (GTSNodePtr RootPtr, string *K);
 void gtsSetDefined (GTSNodePtr RootPtr, string *K);
 int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K);
 void gtsDelete(GTSNodePtr* RootPtr);
+
+string createString (Token token);
 
 /**TODO check and delete
 //int GTSInsertVar(tGTS**, string*);

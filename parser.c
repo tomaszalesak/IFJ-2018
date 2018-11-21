@@ -1,11 +1,12 @@
-/*
-**	IFJ
-**	Syntax analysis
-**	---------------------------
-**	Robin Skaličan - xskali19
+/**
+ *	IFJ
+ *	Syntax analysis
+ *	---------------------------
+ *	Robin Skaličan - xskali19
 */
 
 #include "lexicalanalyzer.h"
+#include "symtable.h"
 
 void parse_main();
 
@@ -30,6 +31,8 @@ void parse_arg_list_switcher();
 int precedence_table_fake(int fake);
 
 Token token;
+int paramsCounter = 0;
+GTSNodePtr gts;
 
 
 //TODO Changes old pointer value to actual token and gets new token for actual token, use instead of global and for prec table calls
@@ -68,6 +71,19 @@ void parse_function() {//3
 
     if ((token.type == T_IDENTIFIER) && (getToken().type) == T_LBRACKET) {
         //Call function for <param-l>
+        string K = createString (token);
+        //check if function was already inserted into gts
+        if (gtsSearch(gts, &K) != NULL) {
+            //if it was inserted, it cannot be defined
+            if (gtsCheckIfDefined(gts, &K)) {
+                exit(3);
+            }
+        }
+        //if it wasn't inserted
+        else {
+            gtsInsert(&gts, &K);
+        }
+        gtsSetDefined(gts, &K);
         parse_param_list_1();
         if ((getToken().type) == T_EOL) {
             //Call function for <st-list>

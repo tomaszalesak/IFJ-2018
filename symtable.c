@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "symtable.h"
+#include "lexicalanalyzer.h"
 
 /**
  * Initialization of LTS.
@@ -396,4 +397,17 @@ void gtsDelete(GTSNodePtr* RootPtr) {   //TODO check for SIGSEGV on merlin
         free(*RootPtr);
         *RootPtr = NULL;
     }
+}
+
+//TODO add to string.c maybe
+/**
+ * Transforms data from token.data into struct string.
+ * @param token - token to transform
+ * @return struct string
+ */
+string createString (Token token){
+    string K;
+    strInit(&K);
+    strAddString(&K, (char *) token.data);
+    return K;
 }
