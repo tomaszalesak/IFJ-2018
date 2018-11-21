@@ -565,7 +565,7 @@ Token getToken() {
     }
 
     if (state == AS_DONE) {
-        if (token.type != EOL && wasEOL == 1)
+        if (token.type != T_EOL && wasEOL == 1)
             wasEOL = 0;
     }
 
@@ -573,11 +573,6 @@ Token getToken() {
         token.type = T_ERROR;
     }
 
-    //int c = getc(stdin);
-    //printf("\nDone %d\n", token.type);
-
-    /*token.type = 1;
-    token.data = "XD\n";*/
     tester(token);
     return token;
 }
