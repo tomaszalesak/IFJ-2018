@@ -289,9 +289,10 @@ int parse_param() {//61
     token = getToken();
     if (token.type == T_RBRACKET) {
         return 1;
-    }else if (token.type != T_IDENTIFIER) {
+    }else if (token.type != T_IDENTIFIER) { //TODO add checks for string int float if(ifValid)
         exit(2);
     }
+    paramsCounter++;
     return 0;
 }
 
