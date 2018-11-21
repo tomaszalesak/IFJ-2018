@@ -17,7 +17,7 @@ void tester(Token token)
                 break;
             case T_IDENTIFIER:
                 printf("%s(id) ", (char *) (token.data));
-                free(token.data);
+                //free(token.data);
                 break;
             case T_LBRACKET:
                 printf("( ");
