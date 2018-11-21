@@ -7,6 +7,7 @@
 
 #include "lexicalanalyzer.h"
 #include "symtable.h"
+#include "prec_anal.h"
 
 void parse_main();
 
@@ -27,9 +28,6 @@ void parse_arg_list2();
 void parse_arg_list2b();
 
 void parse_arg_list_switcher(int print_checker);
-
-int precedence_table_fake(int fake);
-
 
 Token token;// TODO extend to my .h or not?
 int paramsCounter = 0;
@@ -67,7 +65,7 @@ void parse_function() {//3// TODO Define function with no brackets?
     if ((token.type == T_IDENTIFIER) && (getToken().type) == T_LBRACKET) {
         //Call function for <param-l>
 
-        string K = createString (token);
+        string K = createString(token);
         //check if function was already inserted into gts
         if (gtsSearch(gts, &K) != NULL) {
             //if it was inserted, it cannot be defined
@@ -75,7 +73,7 @@ void parse_function() {//3// TODO Define function with no brackets?
                 exit(3);
             }
         }
-        //if it wasn't inserted
+            //if it wasn't inserted
         else {
             gtsInsert(&gts, &K);
         }
@@ -114,8 +112,21 @@ void parse_st_list(int position_helper) {
                     switch (token.type) {
 
                         case T_IDENTIFIER: //27 -> 28 29 !TRAP! I do not know if its function or identifier
+                            paramsCounter = paramsCounter; //TODO Wait WHAT???
+                            Token token_old = token;
                             token = getToken();
-                            parse_arg_list_switcher(0);
+                            switch (token.type) {
+
+                                case T_LBRACKET:
+                                case T_IDENTIFIER:
+                                case T_EOL:
+                                    parse_arg_list_switcher(0);
+                                    break;
+
+                                default:
+                                    token = prec_anal(token_old, token, 1);
+                                    break;
+                            }
                             break;
 
                             //BIF Handling
@@ -135,7 +146,7 @@ void parse_st_list(int position_helper) {
                             }
 
                         case BIF_PRINT://35
-                            token=getToken();
+                            token = getToken();
                             parse_arg_list_switcher(1);
                             break;
 
@@ -153,8 +164,10 @@ void parse_st_list(int position_helper) {
                             break;//TODO Implement
 
                         default: //16
-                            (precedence_table_fake(token.type)) ? exit(4) : 0;
+                            paramsCounter = paramsCounter; //TODO Wait WHAT???
+                            token_old = token;
                             token = getToken();
+                            token = prec_anal(token_old, token, 1);
                     }
 
                     /* if (token.type != T_EOL) {//Solved by precedence right?
@@ -182,9 +195,7 @@ void parse_st_list(int position_helper) {
             break;
 
         case KW_IF:// 19
-            token = getToken();
-            (precedence_table_fake(token.type)) ? exit(4) : 0;
-            token = getToken();
+            token = prec_anal(token, token, 0);
             if ((token.type == KW_THEN) && (getToken().type) == T_EOL) {
                 parse_st_list(0);
                 parse_st_list(2);
@@ -194,9 +205,7 @@ void parse_st_list(int position_helper) {
             break;
 
         case KW_WHILE:// 24
-            token = getToken();
-            (precedence_table_fake(token.type)) ? exit(4) : 0;
-            token = getToken();
+            token = prec_anal(token, token, 0);
             if ((token.type == KW_DO) && (getToken().type) == T_EOL) {
                 parse_st_list(2);
                 if ((getToken().type) != T_EOL) {
@@ -242,7 +251,7 @@ void parse_st_list(int position_helper) {
             }
 
         case BIF_PRINT://35
-            token=getToken();
+            token = getToken();
             parse_arg_list_switcher(1);
             break;
 
@@ -289,7 +298,7 @@ int parse_param() {//61
     token = getToken();
     if (token.type == T_RBRACKET) {
         return 1;
-    }else if (token.type != T_IDENTIFIER) {
+    } else if (token.type != T_IDENTIFIER) {
         exit(2);
     }
     return 0;
@@ -298,12 +307,11 @@ int parse_param() {//61
 //Function for choosing, if send it to <arg-list2> or <arg-list2b>
 //int print_checker used for check if called from print, then it cant be without arguments
 void parse_arg_list_switcher(int print_checker) {
-    //token=getToken();// 19.11 ?
+
     if (token.type == T_LBRACKET) {
         //Solves <arg-listb> LL
         token = getToken();
-        int checker = parse_arg(token.type);//47
-        if (checker==0) {
+        if (!parse_arg(token.type)) {//47
 
             //Call function for <arg-list2b>
             parse_arg_list2b();//44,45
@@ -364,11 +372,6 @@ void parse_arg_list2b() {
     } else if (token.type != T_RBRACKET) {//49
         exit(2);
     }
-}
-
-//Just for testing purposes, will be replaced by real precedence table
-int precedence_table_fake(int fake) {
-    return 0;
 }
 
 //Just main, nothing special
