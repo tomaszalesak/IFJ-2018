@@ -14,19 +14,19 @@
 #define LEX_H
 
 /// Enum defining different types of tokens.
-typedef enum {
-	T_IDENTIFIER,       // data jsou string s názvem                X
-	T_INT,              // data jsou int s hodnotou literálu        X
-	T_FLOAT,            // data jsou float s hodnotou literálu      X
-	T_STRING,           // data jsou string s hodnotou literálu     X
-	T_LBRACKET,         // no data      X
-	T_RBRACKET,         // no data      X
+typedef enum {          // token.data for the token.type (empty means no data)
+    T_ERROR, // = 0,
+	T_IDENTIFIER,       // string containing the name
+	T_INT,              // int containing int literal value
+	T_FLOAT,            // float containing float literal value
+	T_STRING,           // char* containing string literal value
+	T_LBRACKET,
+	T_RBRACKET,
 	T_COMMA,
-	T_EOL,              // no data      X
-	T_EOF,              // no data      X
-	T_ERROR,             // no data
+	T_EOL,
+	T_EOF,
 	// Keywords:
-    KW_DEF,
+    KW_DEF, // = 10,
     KW_DO,
     KW_ELSE,
     KW_END,
@@ -36,7 +36,7 @@ typedef enum {
     KW_THEN,
     KW_WHILE,
     // Operators:
-    OP_ADD,
+    OP_ADD, // = 19,
     OP_SUB,
     OP_MUL,
     OP_DIV,
@@ -48,7 +48,7 @@ typedef enum {
     OP_NEQ,
     OP_ASS,
     // Built-in Functions
-    BIF_INPUTS,
+    BIF_INPUTS, // = 30,
     BIF_INPUTI,
     BIF_INPUTF,
     BIF_PRINT,
