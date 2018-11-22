@@ -26,6 +26,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
     // get token
     int token_no = 0;
     Token token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
+    // todo tabulka
+
+    // todo
 
     // b = token from scanner
     int b = tokenTypeToInt(token.type);
@@ -48,6 +51,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
                 // get token
                 token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
+                // todo tabulka
+
+                // todo
 
                 break;
             case '<':
@@ -60,6 +66,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
                 // get token
                 token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
+                // todo tabulka
+
+                // todo
 
                 break;
             case '>':
