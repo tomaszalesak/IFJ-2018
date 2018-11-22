@@ -1,3 +1,10 @@
+//
+// Created by zales on 22.11.2018.
+//
+
+#ifndef PREC_AN_ERRORS_H
+#define PREC_AN_ERRORS_H
+
 // Error definitions
 
 #define SUCCESS                 0
@@ -9,3 +16,7 @@
 #define ERR_OTHER_SEMANTIC      6   // ostatní sémantické chyby
 #define ERR_ZERO_DIVISION       9   // běhová chyba dělení nulou
 #define ERR_INTERNAL            99  // interní chyba překladače tj. neovlivněná vstupním programem (např. chyba alokace paměti, atd.)
+
+void compiler_exit(int);
+
+#endif //PREC_AN_ERRORS_H

@@ -72,7 +72,7 @@ void parse_function() {//3// TODO Define function with no brackets?
         if (gtsSearch(gts, &K) != NULL) {
             //if it was inserted, it cannot be defined
             if (gtsCheckIfDefined(gts, &K)) {
-                exit(3);
+                compiler_exit(ERR_UNDEF_REDEF);
             }
         }
             //if it wasn't inserted
@@ -88,10 +88,10 @@ void parse_function() {//3// TODO Define function with no brackets?
             //Call function for <st-list>
             parse_st_list(2);//TODO Check this
         } else {
-            exit(2);
+            compiler_exit(ERR_SYNTAX);
         }
     } else {
-        exit(2);
+        compiler_exit(ERR_SYNTAX);
     }
 }
 
@@ -144,12 +144,12 @@ void parse_st_list(int position_helper) {
                                 if ((getToken().type) == T_RBRACKET) {
                                     break;//TODO Check this
                                 } else {
-                                    exit(2);
+                                    compiler_exit(ERR_SYNTAX);
                                 }
                             } else if (token.type == T_EOL) {
                                 break;
                             } else {
-                                exit(2);
+                                compiler_exit(ERR_SYNTAX);
                             }
 
                         case BIF_PRINT://35
@@ -168,7 +168,11 @@ void parse_st_list(int position_helper) {
                             break;//TODO Implement
 
                         case BIF_CHR://40
-                            break;//TODO Implement
+                            token=getToken();
+                            if (token.type != T_LBRACKET || getToken().type != T_INT || getToken().type != T_RBRACKET) {//TODO Must be in <0,255>, but check because we dont need to check it
+                              compiler_exit(ERR_SYNTAX);
+                            }
+                            break;
 
                         default: //16
                             paramsCounter = paramsCounter; //TODO Wait WHAT???
@@ -178,7 +182,7 @@ void parse_st_list(int position_helper) {
                     }
 
                     /* if (token.type != T_EOL) {//Solved by precedence right?
-                         exit(2);
+                         compiler_exit(ERR_SYNTAX);
                      }*/
                     //If position_helper is 4, which means its call from main, it goes back
                     if (position_helper == 0) {
@@ -207,7 +211,7 @@ void parse_st_list(int position_helper) {
                 parse_st_list(0);
                 parse_st_list(2);
             } else {
-                exit(2);
+                compiler_exit(ERR_SYNTAX);
             }
             break;
 
@@ -216,26 +220,26 @@ void parse_st_list(int position_helper) {
             if ((token.type == KW_DO) && (getToken().type) == T_EOL) {
                 parse_st_list(2);
                 if ((getToken().type) != T_EOL) {
-                    exit(2);
+                    compiler_exit(ERR_SYNTAX);
                 }
             } else {
-                exit(2);
+                compiler_exit(ERR_SYNTAX);
             }
             break;
 
         case KW_ELSE:
             if (position_helper != 0) {
-                exit(2);
+                compiler_exit(ERR_SYNTAX);
             } else if (getToken().type != T_EOL) {
-                exit(2);
+                compiler_exit(ERR_SYNTAX);
             }
             break;
 
         case KW_END:
             if (position_helper <= 0) {
-                exit(2);
+                compiler_exit(ERR_SYNTAX);
             } else if (getToken().type != T_EOL) {
-                exit(2);
+                compiler_exit(ERR_SYNTAX);
             }
             break;
 
@@ -248,13 +252,13 @@ void parse_st_list(int position_helper) {
                     parse_st_list(position_helper);
                     break;//TODO Check this
                 } else {
-                    exit(2);
+                    compiler_exit(ERR_SYNTAX);
                 }
             } else if (token.type == T_EOL) {
                 parse_st_list(position_helper);
                 break;
             } else {
-                exit(2);
+                compiler_exit(ERR_SYNTAX);
             }
 
         case BIF_PRINT://35
@@ -277,7 +281,7 @@ void parse_st_list(int position_helper) {
 
         default:
 
-            exit(2);
+            compiler_exit(ERR_SYNTAX);
     }
 }
 
@@ -296,7 +300,7 @@ void parse_param_list_2() {
         parse_param();
         parse_param_list_2();
     } else if (token.type != T_RBRACKET) {
-        exit(2);
+        compiler_exit(ERR_SYNTAX);
     }//60
 }
 
@@ -306,7 +310,7 @@ int parse_param() {//61
     if (token.type == T_RBRACKET) {
         return 1;
     } else if (token.type != T_IDENTIFIER) { //TODO add checks for string int float if(ifValid)
-        exit(2);
+        compiler_exit(ERR_SYNTAX);
     }
     paramsCounter++;
     return 0;
@@ -335,7 +339,7 @@ void parse_arg_list_switcher(int print_checker) {
         paramsCounter = 0;
 
         if (getToken().type != T_EOL) {
-            exit(2);//TODO Check this
+            compiler_exit(ERR_SYNTAX);//TODO Check this
         }
 
     } else if (token.type != T_EOL) {
@@ -344,7 +348,7 @@ void parse_arg_list_switcher(int print_checker) {
         //Call function for <arg-list2>
         parse_arg_list2();//48,49
     } else if (print_checker == 1) {//35
-        exit(2);
+        compiler_exit(ERR_SYNTAX);
     }
 }
 
@@ -367,7 +371,7 @@ int parse_arg(int token_type) {
         case T_RBRACKET:
             return 1;
         default:
-            exit(2);
+            compiler_exit(ERR_SYNTAX);
     }
     return 0;
 }
@@ -379,7 +383,7 @@ void parse_arg_list2() {
         parse_arg(399);
         parse_arg_list2();
     } else if (token.type != T_EOL) {//45
-        exit(2);
+        compiler_exit(ERR_SYNTAX);
     }
 }
 
@@ -390,7 +394,7 @@ void parse_arg_list2b() {
         parse_arg(399);
         parse_arg_list2b();
     } else if (token.type != T_RBRACKET) {//49
-        exit(2);
+        compiler_exit(ERR_SYNTAX);
     }
 }
 

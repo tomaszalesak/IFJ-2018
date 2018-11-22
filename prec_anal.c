@@ -20,7 +20,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
     {
         // dispose stack
         DLDisposeList(&stack);
-        exit(ERR_INTERNAL);
+        compiler_exit(ERR_INTERNAL);
     }
     int a = top_term->data;
 
@@ -28,13 +28,25 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
     int token_no = 0;
     Token token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
 
+    // if first token type is EOF or EOL or THEN, exit
+    if(firstTokenTypeEnd(token.type))
+    {
+        // dispose stack
+        DLDisposeList(&stack);
+        compiler_exit(ERR_SYNTAX);
+    }
+
+    // todo tabulka
+
+    // end of todo
+
     // b = token from scanner
     int b = tokenTypeToInt(token.type);
     if(b == -1)
     {
         // dispose stack
         DLDisposeList(&stack);
-        exit(ERR_SYNTAX);
+        compiler_exit(ERR_SYNTAX);
     }
 
     tDLElemPtr handle = NULL;
@@ -49,6 +61,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
                 // get token
                 token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
+                // todo tabulka
+
+                // end of todo
 
                 break;
             case '<':
@@ -61,6 +76,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
                 // get token
                 token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
+                // todo tabulka
+
+                // end of todo
 
                 break;
             case '>':
@@ -82,7 +100,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                             {
                                 // dispose stack
                                 DLDisposeList(&stack);
-                                exit(ERR_SYNTAX);
+                                compiler_exit(ERR_SYNTAX);
                             }
                         }
                         else
@@ -105,7 +123,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         {
                                             // dispose stack
                                             DLDisposeList(&stack);
-                                            exit(ERR_SYNTAX);
+                                            compiler_exit(ERR_SYNTAX);
                                         }
                                         break;
                                     case PR_E:
@@ -196,28 +214,28 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                 default:
                                                     // dispose stack
                                                     DLDisposeList(&stack);
-                                                    exit(ERR_SYNTAX);
+                                                    compiler_exit(ERR_SYNTAX);
                                             }
                                         }
                                         else
                                         {
                                             // dispose stack
                                             DLDisposeList(&stack);
-                                            exit(ERR_SYNTAX);
+                                            compiler_exit(ERR_SYNTAX);
                                         }
 
                                         break;
                                     default:
                                         // dispose stack
                                         DLDisposeList(&stack);
-                                        exit(ERR_SYNTAX);
+                                        compiler_exit(ERR_SYNTAX);
                                 }
                             }
                             else
                             {
                                 // dispose stack
                                 DLDisposeList(&stack);
-                                exit(ERR_SYNTAX);
+                                compiler_exit(ERR_SYNTAX);
                             }
                         }
                     }
@@ -225,20 +243,20 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                     {
                         // dispose stack
                         DLDisposeList(&stack);
-                        exit(ERR_SYNTAX);
+                        compiler_exit(ERR_SYNTAX);
                     }
                 }
                 else
                 {
                     // dispose stack
                     DLDisposeList(&stack);
-                    exit(ERR_SYNTAX);
+                    compiler_exit(ERR_SYNTAX);
                 }
                 break;
             default:
                 // dispose stack
                 DLDisposeList(&stack);
-                exit(ERR_SYNTAX);
+                compiler_exit(ERR_SYNTAX);
         }
 
         // a = top
@@ -247,7 +265,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
         {
             // dispose stack
             DLDisposeList(&stack);
-            exit(ERR_INTERNAL);
+            compiler_exit(ERR_INTERNAL);
         }
         a = top_term->data;
 
@@ -257,7 +275,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
         {
             // dispose stack
             DLDisposeList(&stack);
-            exit(ERR_SYNTAX);
+            compiler_exit(ERR_SYNTAX);
         }
     }
 
@@ -368,6 +386,20 @@ int tokenTypeToInt(TokenType t)
             return PR_DOLLAR;
         default:
             return -1;
+    }
+
+}
+
+int firstTokenTypeEnd(TokenType t)
+{
+    switch(t)
+    {
+        case KW_THEN:
+        case T_EOL:
+        case T_EOF:
+            return 1;
+        default:
+            return 0;
     }
 
 }
