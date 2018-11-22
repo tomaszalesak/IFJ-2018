@@ -2,6 +2,7 @@
 #include "prec_anal.h"
 #include "lexicalanalyzer.h"
 #include "errors.h"
+#include "symtable.h"
 
 
 Token prec_anal(Token t, Token t2, int give_me_old_tokens)

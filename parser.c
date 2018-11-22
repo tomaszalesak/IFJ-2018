@@ -8,6 +8,7 @@
 #include "lexicalanalyzer.h"
 #include "symtable.h"
 #include "prec_anal.h"
+#include "errors.h"
 
 void parse_main();
 
@@ -32,6 +33,7 @@ void parse_arg_list_switcher(int print_checker);
 Token token;// TODO extend to my .h or not?
 int paramsCounter = 0;
 GTSNodePtr gts;
+string K;
 
 //Parse for <main> LL
 void parse_main() {
@@ -80,6 +82,8 @@ void parse_function() {//3// TODO Define function with no brackets?
         gtsSetDefined(gts, &K);
 
         parse_param_list_1();
+        gtsSetParamCount(gts, &K, paramsCounter);
+        paramsCounter = 0;
         if ((getToken().type) == T_EOL) {
             //Call function for <st-list>
             parse_st_list(2);//TODO Check this
@@ -102,6 +106,9 @@ void parse_st_list(int position_helper) {
     switch (token.type) {
 
         case T_IDENTIFIER:// 16 17 27
+            paramsCounter = paramsCounter;  //TODO Waj u du dis Clion?
+            K = createString(token);
+            //gtsSearch(gts, &K);
             token = getToken();
 
             switch (token.type) {
@@ -317,6 +324,16 @@ void parse_arg_list_switcher(int print_checker) {
             //Call function for <arg-list2b>
             parse_arg_list2b();//44,45
         }
+
+        //added for semantic analysis
+        //check if the function call has correct number of parameters
+        if (gtsGetParamCount(gts, &K) != paramsCounter) {
+            fprintf(stderr, "ERROR! Bad number of arguments for function %s!\nExpected %d parameters but %d have been inserted.\n", K.str, gtsGetParamCount(gts, &K), paramsCounter);
+            exit(ERR_NO_OF_ARGS);
+        }
+        //reset params counter for another func. check
+        paramsCounter = 0;
+
         if (getToken().type != T_EOL) {
             exit(2);//TODO Check this
         }
@@ -344,6 +361,8 @@ int parse_arg(int token_type) {
         case T_FLOAT://53
         case T_STRING://54
             //free(token.data) //TODO can be done here??
+            //increment counter for NO. of parameters
+            paramsCounter++;
             break;
         case T_RBRACKET:
             return 1;

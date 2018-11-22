@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "symtable.h"
+#include "errors.h"
 
 /**
  * Initialization of LTS.
@@ -307,7 +308,7 @@ int ltsGetIdType (LTSNodePtr RootPtr, string* K) {
     LTSNodePtr tmp = NULL;
     if ((tmp = ltsSearch(RootPtr, K)) == NULL){
         fprintf(stderr, "ERROR_SYMTAMBLE! Variable doesn't exist in LTS!\n");
-        exit(EXIT_FAILURE);
+        exit(ERR_UNDEF_REDEF);
     }
     return tmp->type;
 }
