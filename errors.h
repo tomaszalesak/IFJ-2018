@@ -17,6 +17,6 @@
 #define ERR_ZERO_DIVISION       9   // běhová chyba dělení nulou
 #define ERR_INTERNAL            99  // interní chyba překladače tj. neovlivněná vstupním programem (např. chyba alokace paměti, atd.)
 
-void robinuv_exit(int);
+void compiler_exit(int);
 
 #endif //PREC_AN_ERRORS_H

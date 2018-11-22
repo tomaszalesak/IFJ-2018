@@ -5,7 +5,11 @@
 #include <stdlib.h>
 #include "errors.h"
 
-void robinuv_exit(int error_code)
+void compiler_exit(int error_code)
 {
+    // todo
+    // clean everything
+
+    // exit with given error code
     exit(error_code);
 }
