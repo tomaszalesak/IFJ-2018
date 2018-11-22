@@ -26,8 +26,17 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
     // get token
     int token_no = 0;
     Token token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
+
+    // if first token type is EOF or EOL or THEN, exit
+    if(firstTokenTypeEnd(token.type))
+    {
+        // dispose stack
+        DLDisposeList(&stack);
+        exit(ERR_SYNTAX);
+    }
+
     // todo tabulka
-    
+
     // todo
 
     // b = token from scanner
@@ -376,6 +385,20 @@ int tokenTypeToInt(TokenType t)
             return PR_DOLLAR;
         default:
             return -1;
+    }
+
+}
+
+int firstTokenTypeEnd(TokenType t)
+{
+    switch(t)
+    {
+        case KW_THEN:
+        case T_EOL:
+        case T_EOF:
+            return 1;
+        default:
+            return 0;
     }
 
 }

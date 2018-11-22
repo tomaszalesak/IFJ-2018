@@ -54,5 +54,6 @@ int isTerminal(int);
 int tokenTypeToInt(TokenType);
 tDLElemPtr findHandle(tDLList *);
 Token giveMeToken(int, int *, Token, Token);
+int firstTokenTypeEnd(TokenType);
 
 #endif //PREC_AN_PREC_ANAL_H
