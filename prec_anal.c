@@ -27,7 +27,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
     int token_no = 0;
     Token token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
     // todo tabulka
-
+    
     // todo
 
     // b = token from scanner
