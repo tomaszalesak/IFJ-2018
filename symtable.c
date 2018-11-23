@@ -10,7 +10,7 @@
 */
 
 #include <stdbool.h>
-#include <string.h>
+//#include <string.h>
 #include "symtable.h"
 #include "errors.h"
 

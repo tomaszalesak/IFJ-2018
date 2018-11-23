@@ -112,6 +112,7 @@ void parse_st_list(int position_helper) {
         case T_IDENTIFIER:// 16 17 27
 
             K = createString(token);
+            ltsInsert(&ltsMain, &K);
             //gtsSearch(gts, &K);
             token = getToken();
 
@@ -155,27 +156,32 @@ void parse_st_list(int position_helper) {
                                 compiler_exit(ERR_SYNTAX);
                             }
 
-                        case BIF_PRINT://35
+                        case BIF_PRINT://35 TODO PRINT!!!
+                            K.str = "print";
                             token = getToken();
                             parse_arg_list_switcher(1);
                             break;
 
                         case BIF_LENGTH://37 //TODO Check STRING
+                            K.str = "length";
                             token = getToken();
                             parse_arg_list_switcher(0);
                             break;
 
                         case BIF_SUBSTR://38 //TODO Check STRING,INT,INT
+                            K.str = "substr";
                             token = getToken();
                             parse_arg_list_switcher(0);
                             break;
 
                         case BIF_ORD://39 //TODO Check STRING,INT
+                            K.str = "ord";
                             token = getToken();
                             parse_arg_list_switcher(0);
                             break;
 
                         case BIF_CHR://40  //TODO Check INT
+                            K.str = "chr";
                             token = getToken();
                             parse_arg_list_switcher(0);
                             break;
@@ -273,27 +279,32 @@ void parse_st_list(int position_helper) {
                 compiler_exit(ERR_SYNTAX);
             }
 
-        case BIF_PRINT://35
+        case BIF_PRINT://35 TODO PRINT!!!
+            K.str = "print";
             token = getToken();
             parse_arg_list_switcher(1);
             break;
 
         case BIF_LENGTH://37 //TODO Check STRING
+            K.str = "length";
             token = getToken();
             parse_arg_list_switcher(0);
             break;
 
         case BIF_SUBSTR://38 //TODO Check STRING,INT,INT
+            K.str = "substr";
             token = getToken();
             parse_arg_list_switcher(0);
             break;
 
         case BIF_ORD://39 //TODO Check STRING,INT
+            K.str = "ord";
             token = getToken();
             parse_arg_list_switcher(0);
             break;
 
         case BIF_CHR://40  //TODO Check INT
+            K.str = "chr";
             token = getToken();
             parse_arg_list_switcher(0);
             break;
