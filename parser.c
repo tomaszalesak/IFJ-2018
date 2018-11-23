@@ -101,14 +101,16 @@ void parse_function() {//3// TODO Define function with no brackets?
 //position_helper used for check if get new token and go back to main(4) and if its in if(0) or in else(2) part
 void parse_st_list(int position_helper) {
 
-    if (position_helper != 4) {//TODO Change to bool check or?
+    if (position_helper != 4) {
         token = getToken();
+    }else{
+        position_helper=0;
     }
-
+    Token token_old = token;
     switch (token.type) {
 
         case T_IDENTIFIER:// 16 17 27
-            paramsCounter = paramsCounter;  //TODO Waj u du dis Clion?
+
             K = createString(token);
             //gtsSearch(gts, &K);
             token = getToken();
@@ -117,7 +119,7 @@ void parse_st_list(int position_helper) {
 
                 case OP_ASS://16 27
                     token = getToken();
-                    Token token_old = token;
+                    token_old = token;
                     switch (token.type) {
 
                         case T_IDENTIFIER: //27 -> 28 29 !TRAP! I do not know if its function or identifier
@@ -196,6 +198,14 @@ void parse_st_list(int position_helper) {
                     break;
 
                 case T_EOL:// 17
+                //token = getToken();
+                break;
+
+                case OP_ADD:
+                case OP_SUB:
+                case OP_MUL:
+                case OP_DIV:
+                    token = prec_anal(token_old, token, 1);
                     break;
 
                 default://11 12
@@ -205,7 +215,6 @@ void parse_st_list(int position_helper) {
             break;
 
         case T_EOL:// 6
-            parse_st_list(position_helper);
             break;
 
         case KW_IF:// 19
@@ -250,17 +259,17 @@ void parse_st_list(int position_helper) {
         case BIF_INPUTS://32
         case BIF_INPUTI://33
         case BIF_INPUTF://34
-            if ((token = getToken()).type == T_LBRACKET) {
-                if ((getToken().type) == T_RBRACKET) {
+            if (((token = getToken()).type) == T_LBRACKET) {
+                if (((getToken().type) == T_RBRACKET) &&  ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))){
                     parse_st_list(position_helper);
                     break;//TODO Check this
                 } else {
-                    compiler_exit(ERR_SYNTAX);
+                    compiler_exit(ERR_NO_OF_ARGS);
                 }
             } else if (token.type == T_EOL) {
                 parse_st_list(position_helper);
                 break;
-            } else {
+            } else {// TODO SEMANTIC TODO, THIS DOES NOT COUNT WITH BAD NUMBER OF ARGS
                 compiler_exit(ERR_SYNTAX);
             }
 
@@ -290,7 +299,8 @@ void parse_st_list(int position_helper) {
             break;
 
         default:
-            compiler_exit(ERR_SYNTAX);
+            token = getToken();
+            token = prec_anal(token_old, token, 1);
     }
 }
 
