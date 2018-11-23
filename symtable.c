@@ -13,7 +13,6 @@
 #include <string.h>
 #include "symtable.h"
 #include "errors.h"
-#include "string.h"
 
 /**
  * Initialization of LTS.
