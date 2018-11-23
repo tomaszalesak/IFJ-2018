@@ -383,6 +383,7 @@ int tokenTypeToInt(TokenType t)
         case KW_THEN:
         case T_EOL:
         case T_EOF:
+        case KW_DO:
             return PR_DOLLAR;
         default:
             return -1;
@@ -397,6 +398,7 @@ int firstTokenTypeEnd(TokenType t)
         case KW_THEN:
         case T_EOL:
         case T_EOF:
+        case KW_DO:
             return 1;
         default:
             return 0;
