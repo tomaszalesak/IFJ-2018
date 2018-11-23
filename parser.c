@@ -183,7 +183,6 @@ void parse_st_list(int position_helper) {
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
                     }
-
                     /* if (token.type != T_EOL) {//Solved by precedence right?
                          compiler_exit(ERR_SYNTAX);
                      }*/
