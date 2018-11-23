@@ -117,14 +117,12 @@ void parse_st_list(int position_helper) {
 
                 case OP_ASS://16 27
                     token = getToken();
-
+                    Token token_old = token;
                     switch (token.type) {
 
                         case T_IDENTIFIER: //27 -> 28 29 !TRAP! I do not know if its function or identifier
-                            paramsCounter = paramsCounter; //TODO Wait WHAT???
-                            Token token_old = token;
-                            K = createString(token);
-                            token = getToken();
+                        K = createString(token);
+                        token = getToken();
                             switch (token.type) {
 
                                 case T_LBRACKET:
@@ -160,25 +158,27 @@ void parse_st_list(int position_helper) {
                             parse_arg_list_switcher(1);
                             break;
 
-                        case BIF_LENGTH://37
-                            parse_arg_list_switcher(0);//TODO Check this
+                        case BIF_LENGTH://37 //TODO Check STRING
+                            token = getToken();
+                            parse_arg_list_switcher(0);
                             break;
 
-                        case BIF_SUBSTR://38
-                            break;//TODO Implement
+                        case BIF_SUBSTR://38 //TODO Check STRING,INT,INT
+                            token = getToken();
+                            parse_arg_list_switcher(0);
+                            break;
 
-                        case BIF_ORD://39
-                            break;//TODO Implement
+                        case BIF_ORD://39 //TODO Check STRING,INT
+                            token = getToken();
+                            parse_arg_list_switcher(0);
+                            break;
 
-                        case BIF_CHR://40
-                            token=getToken();
-                            if (token.type != T_LBRACKET || getToken().type != T_INT || getToken().type != T_RBRACKET) {//TODO Must be in <0,255>, but check because we dont need to check it
-                              compiler_exit(ERR_SYNTAX);
-                            }
+                        case BIF_CHR://40  //TODO Check INT
+                            token = getToken();
+                            parse_arg_list_switcher(0);
                             break;
 
                         default: //16
-                            paramsCounter = paramsCounter; //TODO Wait WHAT???
                             token_old = token;
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
@@ -187,7 +187,6 @@ void parse_st_list(int position_helper) {
                     /* if (token.type != T_EOL) {//Solved by precedence right?
                          compiler_exit(ERR_SYNTAX);
                      }*/
-
                     //If position_helper is 4, which means its call from main, it goes back
                     if (position_helper == 0) {
                         parse_st_list(position_helper);
@@ -270,21 +269,27 @@ void parse_st_list(int position_helper) {
             parse_arg_list_switcher(1);
             break;
 
-        case BIF_LENGTH://37
-            parse_arg_list_switcher(0);//TODO Check this
+        case BIF_LENGTH://37 //TODO Check STRING
+            token = getToken();
+            parse_arg_list_switcher(0);
             break;
 
-        case BIF_SUBSTR://38
-            break;//TODO Implement
+        case BIF_SUBSTR://38 //TODO Check STRING,INT,INT
+            token = getToken();
+            parse_arg_list_switcher(0);
+            break;
 
-        case BIF_ORD://39
-            break;//TODO Implement
+        case BIF_ORD://39 //TODO Check STRING,INT
+            token = getToken();
+            parse_arg_list_switcher(0);
+            break;
 
-        case BIF_CHR://40
-            break;//TODO Implement
+        case BIF_CHR://40  //TODO Check INT
+            token = getToken();
+            parse_arg_list_switcher(0);
+            break;
 
         default:
-
             compiler_exit(ERR_SYNTAX);
     }
 }
@@ -336,7 +341,9 @@ void parse_arg_list_switcher(int print_checker) {
         //added for semantic analysis
         //check if the function call has correct number of parameters
         if (gtsGetParamCount(gts, &K) != paramsCounter) {
-            fprintf(stderr, "ERROR! Bad number of arguments for function %s!\nExpected %d parameters but %d have been inserted.\n", K.str, gtsGetParamCount(gts, &K), paramsCounter);
+            fprintf(stderr,
+                    "ERROR! Bad number of arguments for function %s!\nExpected %d parameters but %d have been inserted.\n",
+                    K.str, gtsGetParamCount(gts, &K), paramsCounter);
             exit(ERR_NO_OF_ARGS);
         }
         //reset params counter for another func. check
@@ -354,11 +361,10 @@ void parse_arg_list_switcher(int print_checker) {
     } else if (print_checker == 1) {//35
         compiler_exit(ERR_SYNTAX);
     } else {
-        //semantic analysis for function without brackets/variable
-        if (gtsSearch(gts, &K) == NULL){
-            //if (ltsSearch()) TODO add LTS support
-        }
-        else {
+//semantic analysis for function without brackets/variable
+        if (gtsSearch(gts, &K) == NULL) {
+//if (ltsSearch()) TODO add LTS support
+        } else {
             if (gtsGetParamCount(gts, &K) != paramsCounter) {
                 fprintf(stderr,
                         "ERROR! Bad number of arguments for function %s!\nExpected %d parameters but %d have been inserted.\n",
