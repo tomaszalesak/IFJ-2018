@@ -183,9 +183,11 @@ void parse_st_list(int position_helper) {
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
                     }
+
                     /* if (token.type != T_EOL) {//Solved by precedence right?
                          compiler_exit(ERR_SYNTAX);
                      }*/
+
                     //If position_helper is 4, which means its call from main, it goes back
                     if (position_helper == 0) {
                         parse_st_list(position_helper);
