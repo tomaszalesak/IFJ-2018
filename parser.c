@@ -34,6 +34,8 @@ Token token;// TODO extend to my .h or not?
 int paramsCounter = 0;
 GTSNodePtr gts;
 string K;
+LTSNodePtr ltsMain;
+LTSNodePtr ltsFunc;
 
 //Parse for <main> LL
 void parse_main() {
@@ -121,6 +123,7 @@ void parse_st_list(int position_helper) {
                         case T_IDENTIFIER: //27 -> 28 29 !TRAP! I do not know if its function or identifier
                             paramsCounter = paramsCounter; //TODO Wait WHAT???
                             Token token_old = token;
+                            K = createString(token);
                             token = getToken();
                             switch (token.type) {
 
@@ -349,6 +352,19 @@ void parse_arg_list_switcher(int print_checker) {
         parse_arg_list2();//48,49
     } else if (print_checker == 1) {//35
         compiler_exit(ERR_SYNTAX);
+    } else {
+        //semantic analysis for function without brackets/variable
+        if (gtsSearch(gts, &K) == NULL){
+            //if (ltsSearch()) TODO add LTS support
+        }
+        else {
+            if (gtsGetParamCount(gts, &K) != paramsCounter) {
+                fprintf(stderr,
+                        "ERROR! Bad number of arguments for function %s!\nExpected %d parameters but %d have been inserted.\n",
+                        K.str, gtsGetParamCount(gts, &K), paramsCounter);
+                exit(ERR_NO_OF_ARGS);
+            }
+        }
     }
 }
 
@@ -400,6 +416,10 @@ void parse_arg_list2b() {
 
 //Just main, nothing special
 int main() {
+    gtsInit(&gts);
+    ltsInit(&ltsMain);
+    ltsInit(&ltsFunc);
+    insertBIF(&gts);
     parse_main();
     return 0;
 }

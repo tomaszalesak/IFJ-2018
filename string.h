@@ -6,6 +6,9 @@
 #ifndef TEST_STRING_H
 #define TEST_STRING_H
 
+#define STR_ERROR   1
+#define STR_SUCCESS 0
+
 typedef struct
 {
     char* str;		// string ending with '\0'

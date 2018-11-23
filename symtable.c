@@ -13,6 +13,7 @@
 #include <string.h>
 #include "symtable.h"
 #include "errors.h"
+#include "string.h"
 
 /**
  * Initialization of LTS.
@@ -62,8 +63,8 @@ LTSNodePtr ltsSearch(LTSNodePtr RootPtr, string *K) {
  * @param RootPtr - LTS
  * @param K - variable name
  * @return SUCCESS if the variable was inserted
- * @return ERROR_INSERTED if the variable has already been inserted before
- * @return INT_ERR if there was an memory allocation problem
+ * @return -1 if the variable has already been inserted before
+ * @return ERR_INTERNAL if there was an memory allocation problem
  */
 int ltsInsert(LTSNodePtr *RootPtr, string *K) {//, int type, int* i) {
 
@@ -89,7 +90,7 @@ int ltsInsert(LTSNodePtr *RootPtr, string *K) {//, int type, int* i) {
                 //kluc najdeny, fail
             else if (strcmp(K->str, ((*RootPtr)->key.str)) == 0) {
                 //found = 1;
-                return ERROR_INSERTED;
+                return -1;
             }
         }
     }
@@ -98,19 +99,19 @@ int ltsInsert(LTSNodePtr *RootPtr, string *K) {//, int type, int* i) {
     LTSNodePtr newitem = malloc(sizeof(struct LTSNode));
     if (newitem == NULL) {
         fprintf(stderr, "CHYBA_SYM: Chyba alokacie pamate pre novu polozku tabulky symbolov.\n");
-        return INT_ERR;
+        return ERR_INTERNAL;
     }
     //inicializovanie kluca
-    if (strInit(&(newitem->key)) == INT_ERR) {
+    if (strInit(&(newitem->key)) == STR_ERROR) {
         fprintf(stderr, "CHYBA_SYM: Chyba inicializacie polozky kluca.\n");
         free(newitem);
-        return INT_ERR;
+        return ERR_INTERNAL;
     }
     //vlozenie hodnoty kluca
-    if (strCopyString(&(newitem->key), K) == INT_ERR) {
+    if (strCopyString(&(newitem->key), K) == STR_ERROR) {
         fprintf(stderr, "CHYBA_SYM: Chyba kopirovania kluca do tabulky symbolov.\n");
         free(newitem);
-        return INT_ERR;
+        return ERR_INTERNAL;
     }
 
     //defaultne nastavenie nedefinovaneho typu
@@ -171,8 +172,8 @@ void ltsDelete(LTSNodePtr* RootPtr) {   // TODO check for SIGSEGV
  * @param RootPtr - GTS
  * @param K - variable name
  * @return SUCCESS if the variable was inserted
- * @return ERROR_INSERTED if the variable has already been inserted before
- * @return INT_ERR if there was an memory allocation problem
+ * @return -1 if the variable has already been inserted before
+ * @return ERR_INTERNAL if there was an memory allocation problem
  */
 int gtsInsert (GTSNodePtr *RootPtr, string* K){
 
@@ -197,7 +198,7 @@ int gtsInsert (GTSNodePtr *RootPtr, string* K){
                 //kluc najdeny
             else if (strcmp(K->str, ((*RootPtr)->key.str)) == 0) {
                 //found = 1;
-                return ERROR_INSERTED;
+                return -1;
             }
         }
     }
@@ -206,19 +207,19 @@ int gtsInsert (GTSNodePtr *RootPtr, string* K){
     GTSNodePtr newitem = malloc(sizeof(struct GTSNode));
     if (newitem == NULL) {
         fprintf(stderr, "CHYBA_SYM: Chyba alokace pameti pro novou polozku globalni tabulky symbolu.\n");
-        return INT_ERR;
+        return ERR_INTERNAL;
     }
     //inicializovanie kluca
-    if (strInit(&(newitem->key)) == INT_ERR) {
+    if (strInit(&(newitem->key)) == STR_ERROR) {
         fprintf(stderr, "CHYBA_SYM: Chyba inicializace polozky klice.\n");
         free(newitem);
-        return INT_ERR;
+        return ERR_INTERNAL;
     }
     //vlozenie hodnoty kluca
-    if (strCopyString(&(newitem->key), K) == INT_ERR) {
+    if (strCopyString(&(newitem->key), K) == STR_ERROR) {
         fprintf(stderr, "CHYBA_SYM: Chyba kopirovani klice do tabulky symbolu.\n");
         free(newitem);
-        return INT_ERR;
+        return ERR_INTERNAL;
     }
 
     //inicializacia ukazatelov na podstromy
@@ -292,7 +293,7 @@ void ltsSetIdType (LTSNodePtr RootPtr, string* K, int type) {
     LTSNodePtr tmp = NULL;
     if ((tmp = ltsSearch(RootPtr, K)) == NULL){
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign type to a nonexisting variable!\n");
-        exit(EXIT_FAILURE);
+        exit(ERR_UNDEF_REDEF);
     }
     tmp->type = type;
 }
@@ -324,7 +325,7 @@ void gtsSetParamCount (GTSNodePtr RootPtr, string *K, int paramCount) {
     GTSNodePtr tmp = NULL;
     if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign parameters count to a nonexisting function!\n");
-        exit(EXIT_FAILURE);
+        exit(ERR_UNDEF_REDEF);
     }
     tmp->paramCount = paramCount;
 }
@@ -340,7 +341,7 @@ int gtsGetParamCount (GTSNodePtr RootPtr, string *K) {
     GTSNodePtr tmp = NULL;
     if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign parameters count to a nonexisting function!\n");
-        exit(EXIT_FAILURE);
+        exit(ERR_UNDEF_REDEF);
     }
     return tmp->paramCount;
 }
@@ -354,7 +355,7 @@ void gtsSetDefined (GTSNodePtr RootPtr, string *K) {
     GTSNodePtr tmp = NULL;
     if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign defined value to a nonexisting function!\n");
-        exit(EXIT_FAILURE);
+        exit(ERR_UNDEF_REDEF);
     }
     tmp->defined = 1;
 }
@@ -369,7 +370,7 @@ int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K) {
     GTSNodePtr tmp = NULL;
     if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign defined value to a nonexisting function!\n");
-        exit(EXIT_FAILURE);
+        exit(ERR_UNDEF_REDEF);
     }
     printf("Function %s is %s!\n", tmp->key.str, tmp->defined ? "already defined" : "undefined");
     return tmp->defined;
@@ -410,4 +411,65 @@ string createString (Token token){
     strInit(&K);
     strAddString(&K, (char *) token.data);
     return K;
+}
+
+/**
+ * Inserts Built in Functions into gts.
+ * @param RootPtr - GTS
+ */
+void insertBIF (GTSNodePtr *RootPtr) {
+    string k;
+    strInit(&k);
+
+    //inputs()
+    strAddString(&k, "inputs");
+    gtsInsert(RootPtr, &k);
+    gtsSetDefined(*RootPtr, &k);
+    gtsSetParamCount(*RootPtr, &k, 0);
+    strClear(&k);
+
+    //inputi()
+    strAddString(&k, "inputi");
+    gtsInsert(RootPtr, &k);
+    gtsSetDefined(*RootPtr, &k);
+    gtsSetParamCount(*RootPtr, &k, 0);
+    strClear(&k);
+
+    //inputf()
+    strAddString(&k, "inputf");
+    gtsInsert(RootPtr, &k);
+    gtsSetDefined(*RootPtr, &k);
+    gtsSetParamCount(*RootPtr, &k, 0);
+    strClear(&k);
+
+    //TODO print
+
+    //length(s)
+    strAddString(&k, "length");
+    gtsInsert(RootPtr, &k);
+    gtsSetDefined(*RootPtr, &k);
+    gtsSetParamCount(*RootPtr, &k, 1);
+    strClear(&k);
+
+    //substr(s, i, n)
+    strAddString(&k, "substr");
+    gtsInsert(RootPtr, &k);
+    gtsSetDefined(*RootPtr, &k);
+    gtsSetParamCount(*RootPtr, &k, 3);
+    strClear(&k);
+
+    //ord(s, i)
+    strAddString(&k, "ord");
+    gtsInsert(RootPtr, &k);
+    gtsSetDefined(*RootPtr, &k);
+    gtsSetParamCount(*RootPtr, &k, 2);
+    strClear(&k);
+
+    //chr(i)
+    strAddString(&k, "chr");
+    gtsInsert(RootPtr, &k);
+    gtsSetDefined(*RootPtr, &k);
+    gtsSetParamCount(*RootPtr, &k, 1);
+    strClear(&k);
+
 }

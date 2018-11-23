@@ -99,6 +99,8 @@ void gtsSetDefined (GTSNodePtr RootPtr, string *K);
 int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K);
 void gtsDelete(GTSNodePtr* RootPtr);
 
+void insertBIF (GTSNodePtr *RootPtr);
+
 string createString (Token token);
 
 /**TODO check and delete
