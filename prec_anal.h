@@ -55,5 +55,6 @@ int tokenTypeToInt(TokenType);
 tDLElemPtr findHandle(tDLList *);
 Token giveMeToken(int, int *, Token, Token);
 int firstTokenTypeEnd(TokenType);
+int isComparing(int);
 
 #endif //PREC_AN_PREC_ANAL_H

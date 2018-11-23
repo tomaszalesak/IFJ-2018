@@ -49,6 +49,17 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
         compiler_exit(ERR_SYNTAX);
     }
 
+    // if '=' there cannot be comparing, exit
+    if(give_me_old_tokens)
+    {
+        if(isComparing(b))
+        {
+            // dispose stack
+            DLDisposeList(&stack);
+            compiler_exit(ERR_INCOMPATIBLE_TYPE);
+        }
+    }
+
     tDLElemPtr handle = NULL;
 
     while((a != PR_DOLLAR) || (b != PR_DOLLAR))
@@ -277,6 +288,17 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
             DLDisposeList(&stack);
             compiler_exit(ERR_SYNTAX);
         }
+
+        // if '=' there cannot be comparing, exit
+        if(give_me_old_tokens)
+        {
+            if(isComparing(b))
+            {
+                // dispose stack
+                DLDisposeList(&stack);
+                compiler_exit(ERR_INCOMPATIBLE_TYPE);
+            }
+        }
     }
 
     // dispose stack
@@ -340,6 +362,20 @@ int isTerminal(int t){
         case PR_RIGHTBRACKET:
         case PR_TERM:
         case PR_DOLLAR:
+            return 1;
+        default:
+            return 0;
+    }
+}
+
+int isComparing(int t){
+    switch(t){
+        case PR_LESS:
+        case PR_LESSEQUAL:
+        case PR_GREATER:
+        case PR_GREATEREQUAL:
+        case PR_EQUAL:
+        case PR_NOTEQUAL:
             return 1;
         default:
             return 0;
