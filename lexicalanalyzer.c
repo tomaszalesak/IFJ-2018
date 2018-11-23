@@ -18,6 +18,7 @@
 
 /// EOL
 #define EOL 10
+#define OLDC_EMPTY -255
 
 /// Number buffer size
 #define NBUFFER_MAX 64
@@ -58,7 +59,7 @@ typedef enum {
 Token getToken() {
 
     // Stores the last character of the last call of getToken.
-    static int oldC = EOF;
+    static int oldC = OLDC_EMPTY;
 
     // Stores whether the last char was EOL to detect multiline comments.
     // Multiline comments have to begin and end on new new lines.
@@ -77,26 +78,26 @@ Token getToken() {
     token.type = T_ERROR;
 
     while (state != AS_DONE && state != AS_ERROR) {
-        //printf("Going trough the loop.\n");
+
         // variable containing character that is currently being inspected
         int c;
 
-        // The last character of each call of getToken is stored in oldC.
+        // The last character of some calls of getToken is stored in oldC.
         // When getToken is called, the first character is loaded from this variable
         // instead of geting it for STDIN.
-        if (oldC != EOF) {
+        if (oldC != OLDC_EMPTY) {
             c = oldC;
-            oldC = EOF;
+            oldC = OLDC_EMPTY;
         } else
             c = getc(stdin);
 
-        //printf("c: %c, state: %d, type: %d\n", c, state, token.type);
-        // State machine logic:
+        // STATE MACHINE LOGIC
+        // AS is Analyzer State
         switch (state) {
             case AS_EMPTY:
                 if (c == '_' || IS_CHAR(c)) {
                     strInit(&sBuffer);
-                    strAddChar(&sBuffer, c);
+                    strAddChar(&sBuffer, (char)c);
                     state = AS_ID;;
                 } else if (IS_NUMBER(c) && c != '0') {
                     nBuffer[nBuffer_i] = (char) c;
@@ -156,6 +157,8 @@ Token getToken() {
                 }
                 break;
 
+            // Analyzer found number on input
+            // Number can stay as an int literal or it can transform into float.
             case AS_NUMBER:
                 if (IS_NUMBER(c)) {
                     if (nBuffer_i < NBUFFER_MAX) {
@@ -166,6 +169,7 @@ Token getToken() {
                         token.type = T_ERROR;
                         break;
                     }
+
                 } else if (c == '.') {
                     if (nBuffer_i < NBUFFER_MAX) {
                         nBuffer[nBuffer_i] = (char) c;
@@ -175,8 +179,8 @@ Token getToken() {
                         token.type = T_ERROR;
                         break;
                     }
-
                     state = AS_FLOAT;
+
                 } else if (c == 'e' || c == 'E') {
                     if (nBuffer_i < NBUFFER_MAX) {
                         nBuffer[nBuffer_i] = (char) c;
@@ -186,13 +190,11 @@ Token getToken() {
                         token.type = T_ERROR;
                         break;
                     }
-
                     state = AS_FLOAT_E;
+
                 } else if (IS_TOKENEND(c)) {
                     token.type = T_INT;
-                    //printf("STRING: %s\n", nBuffer);
                     int value = (int) strtol(nBuffer, NULL, 10);
-                    //printf("VALUE: %d\n", value);
                     token.data = malloc(sizeof(int));
                     *(int *) (token.data) = value;
                     oldC = c;
@@ -201,7 +203,7 @@ Token getToken() {
                     state = AS_ERROR;
                 break;
 
-
+            // If a token starts with 0, it can only be 0.
             case AS_ZERO:
                 if (IS_TOKENEND(c)) {
                     token.data = malloc(sizeof(int));
@@ -213,8 +215,7 @@ Token getToken() {
                 }
                 break;
 
-
-                // Cases for float data type.
+            // Cases for float literal.
             case AS_FLOAT:
                 if (IS_NUMBER(c)) {
                     if (nBuffer_i < NBUFFER_MAX) {
@@ -301,21 +302,19 @@ Token getToken() {
                 }
                 break;
 
-
+            // Cases for string literal.
             case AS_STRING:
-
                 if (c == '\"') {
                     state = AS_STRINGEND;
                 } else if (c == '\\') {
                     state = AS_ESCAPE;
                 } else if (c > 31) {
-                    strAddChar(&sBuffer, c);
+                    strAddChar(&sBuffer, (char)c);
                 } else {
                     strFree(&sBuffer);
                     state = AS_ERROR;
                 }
                 break;
-
 
             case AS_STRINGEND:
                 if (IS_TOKENEND(c)) {
@@ -329,10 +328,10 @@ Token getToken() {
                 }
                 break;
 
-
+            // Cases for escape sequences in string literals.
             case AS_ESCAPE:
                 if (c == '\"' || c == '\\') {
-                    strAddChar(&sBuffer, c);
+                    strAddChar(&sBuffer, (char)c);
                     state = AS_STRING;
                 } else if (c == 't') {
                     strAddChar(&sBuffer, '\t');
@@ -347,7 +346,6 @@ Token getToken() {
                     state = AS_ERROR;
                 }
                 break;
-
 
             case AS_ESCAPEHEX1:
                 if (IS_NUMBER(c)) {
@@ -364,7 +362,6 @@ Token getToken() {
                     state = AS_ERROR;
                 }
                 break;
-
 
             case AS_ESCAPEHEX2:
                 if (IS_NUMBER(c)) {
@@ -387,22 +384,25 @@ Token getToken() {
                 } else if (c == '\\') {
                     state = AS_ESCAPE;
                 } else if (c > 31) {
-                    strAddChar(&sBuffer, c);
+                    strAddChar(&sBuffer, (char)c);
                     state = AS_STRING;
                 } else {
                     strFree(&sBuffer);
                     state = AS_ERROR;
                 }
-
                 break;
 
-
+            // Case for identifier token.
             case AS_ID:
                 if (IS_CHAR(c) || IS_NUMBER(c) || c == '_') {
-                    strAddChar(&sBuffer, c);
+                    strAddChar(&sBuffer, (char)c);
+
+                // Characters ! and ? can only be at the end of an identifier token.
                 } else if (c == '!' || c == '?') {
-                    strAddChar(&sBuffer, c);
+                    strAddChar(&sBuffer, (char)c);
                     state = AS_IDFUNC;
+
+                // When a ID token ends, it is tested for keywords.
                 } else if (IS_TOKENEND(c)) {
                     if (strCmpConstStr(&sBuffer, "def") == 0) {
                         token.type = KW_DEF;
@@ -463,6 +463,7 @@ Token getToken() {
                 }
                 break;
 
+            // Cases for different operators.
             case AS_OPERATOR_LT:
                 if (c == '=') {
                     token.type = OP_LTE;
@@ -483,7 +484,6 @@ Token getToken() {
                     oldC = c;
                     state = AS_DONE;
                 }
-
                 break;
 
             case AS_OPERATOR_NOT:
@@ -504,9 +504,10 @@ Token getToken() {
                     oldC = c;
                     state = AS_DONE;
                 }
-
                 break;
 
+            // Case for single line comment.
+            // Line breaks at the end of single line comments are sent as EOL tokens.
             case AS_COMMENT_LINE:
                 if (c == EOL) {
                     token.type = T_EOL;
@@ -516,6 +517,7 @@ Token getToken() {
                 break;
 
 
+            // Multiline comment cases.
             // Tests for "=beginWHITESPACE" or "=beginEOL" at the beginning of a line.
             // If it is successful than opens a multiline comment, if not returns Lexical Error.
             case AS_COMMENT_BLOCK_BEGIN:
@@ -558,20 +560,24 @@ Token getToken() {
                 }
                 break;
 
-
+            // Invalid analyzer state case.
             default:
                 state = AS_ERROR;
                 break;
         }
     }
 
+    // wasEOL is only relevant for the first token after the EOL,
+    // after that it has to be reset.
     if (state == AS_DONE) {
         if (token.type != T_EOL && wasEOL == 1)
             wasEOL = 0;
     }
 
+    // If the analyzer finishes in error state, exits with lexical analysis error code 1.
     if (state == AS_ERROR) {
-        token.type = T_ERROR;
+        exit(1);
+        //token.type = T_ERROR;
     }
 
     tester(token);
