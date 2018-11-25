@@ -5,8 +5,8 @@
 **	Tomáš Zálešák - xzales13
 */
 
-#ifndef PREC_AN_PREC_ANAL_H
-#define PREC_AN_PREC_ANAL_H
+#ifndef PREC_ANAL_H
+#define PREC_ANAL_H
 
 #include <string.h>
 #include "prec_dl.h"
