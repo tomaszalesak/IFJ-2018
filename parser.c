@@ -10,6 +10,12 @@
 #include "prec_anal.h"
 #include "errors.h"
 
+#define PH_MAIN_TOKEN -1        //MAIN already took TOKEN, dont take another one
+#define PH_ELSE 0               //ELSE is valid now
+#define PH_END 2                //END is valid now
+#define PH_MAIN 8               //Get back to main
+#define PH_TAKE 399             //Take TOKEN
+
 void parse_main(int x);
 
 void parse_function();
@@ -36,6 +42,7 @@ GTSNodePtr gts;
 string K;
 LTSNodePtr ltsMain;
 LTSNodePtr ltsFunc;
+int i=0;
 
 //Parse for <main> LL
 void parse_main(int x) {
@@ -53,11 +60,11 @@ void parse_main(int x) {
             break;
 
         case T_EOF: // 7 TODO End of INPUT, check SEM Analysis etc.
-            exit(0);
+            exit(SUCCESS);
 
             //Unique options for <main> checked, now goes into <stat> to check rest
         default :
-            x=parse_st_list(-1);
+            x=parse_st_list(PH_MAIN_TOKEN);
             break;
     }
     parse_main(x);//Calling myself, stopped by T_EOF or error EXIT
@@ -90,7 +97,7 @@ void parse_function() {//3// TODO Define function with no brackets?
         paramsCounter = 0;
         if ((getToken().type) == T_EOL) {
             //Call function for <st-list>
-            parse_st_list(2);//TODO Check this
+            parse_st_list(PH_END);//TODO Check this
         } else {
             compiler_exit(ERR_SYNTAX);
         }
@@ -103,14 +110,13 @@ void parse_function() {//3// TODO Define function with no brackets?
 //actual_position_helper used for check if get new token and go back to main(4) and if its in if(0) or in else(2) part
 int parse_st_list(int actual_position_helper) {
 
-   /* if (actual_position_helper == 8) {
-        return 0;
-    }*/
-
-    if (actual_position_helper != -1) {
+     if (actual_position_helper == PH_MAIN) {
+         return 0;
+     }
+    if (actual_position_helper != PH_MAIN_TOKEN) {
         token = getToken();
     } else {
-        actual_position_helper = 8;
+        actual_position_helper = PH_MAIN;
     }
     Token token_old = token;
     switch (token.type) {
@@ -246,16 +252,16 @@ int parse_st_list(int actual_position_helper) {
 
         case KW_IF:// 19
             token = prec_anal(token, token, 0);
+            i++;
+            int x = i;
             if ((token.type == KW_THEN) && (getToken().type) == T_EOL) {
-                //printf("IF 1 call no. %d    %d %d\n",x,actual_position_helper,old_position_helper);
-                parse_st_list(0);
-                //parse_st_list(2);
-                //printf("IF 2 call no. %d    %d %d\n",x,actual_position_helper,old_position_helper);
-                if (actual_position_helper != 8) {
+                parse_st_list(PH_ELSE);
+                parse_st_list(PH_END);
+                //if (actual_position_helper != PH_MAIN) {
                     parse_st_list(actual_position_helper);//TODO FIX IT HERE
-                }else {
-                    return 1;
-                }
+               // }else {
+                //    return 1;
+               // }
             } else {
                 compiler_exit(ERR_SYNTAX);
             }
@@ -264,7 +270,7 @@ int parse_st_list(int actual_position_helper) {
         case KW_WHILE:// 24
             token = prec_anal(token, token, 0);
             if ((token.type == KW_DO) && (getToken().type) == T_EOL) {
-                parse_st_list(2);
+                parse_st_list(PH_END);
             } else {
                 compiler_exit(ERR_SYNTAX);
             }
@@ -276,7 +282,7 @@ int parse_st_list(int actual_position_helper) {
             } else if (getToken().type != T_EOL) {
                 compiler_exit(ERR_SYNTAX);
             }
-            parse_st_list(2);
+            //parse_st_list(PH_END);
             break;
 
         case KW_END:
@@ -347,7 +353,7 @@ int parse_st_list(int actual_position_helper) {
             parse_st_list(actual_position_helper);
     }
     return 0;
-    /* if(actual_position_helper != 8) {
+    /* if(actual_position_helper != PH_MAIN) {
          parse_st_list(actual_position_helper);
      }*/
 }
@@ -436,7 +442,7 @@ void parse_arg_list_switcher(int print_checker) {
 //Parse for <arg> LL
 int parse_arg(int token_type) {
     //TODO Make this one better / Checks if token is taken or should take
-    if (token_type == 399) {
+    if (token_type == PH_TAKE) {
         token = getToken();
     }
 
@@ -461,7 +467,7 @@ int parse_arg(int token_type) {
 void parse_arg_list2() {
     token = getToken();
     if (token.type == T_COMMA) {//44
-        parse_arg(399);
+        parse_arg(PH_TAKE);
         parse_arg_list2();
     } else if (token.type != T_EOL) {//45
         compiler_exit(ERR_SYNTAX);
@@ -472,7 +478,7 @@ void parse_arg_list2() {
 void parse_arg_list2b() {
     token = getToken();
     if (token.type == T_COMMA) {//48
-        parse_arg(399);
+        parse_arg(PH_TAKE);
         parse_arg_list2b();
     } else if (token.type != T_RBRACKET) {//49
         compiler_exit(ERR_SYNTAX);
