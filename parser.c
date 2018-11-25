@@ -10,11 +10,11 @@
 #include "prec_anal.h"
 #include "errors.h"
 
-void parse_main();
+void parse_main(int x);
 
 void parse_function();
 
-void parse_st_list(int position_helper);
+int parse_st_list(int actual_position_helper);
 
 int parse_param();
 
@@ -38,9 +38,11 @@ LTSNodePtr ltsMain;
 LTSNodePtr ltsFunc;
 
 //Parse for <main> LL
-void parse_main() {
-    token = getToken();
-
+void parse_main(int x) {
+    if (!x) {
+        token = getToken();
+        x = 0;
+    }
     switch (token.type) {
 
         case KW_DEF://3
@@ -55,10 +57,10 @@ void parse_main() {
 
             //Unique options for <main> checked, now goes into <stat> to check rest
         default :
-            parse_st_list(4);
+            x=parse_st_list(-1);
             break;
     }
-    parse_main();//Calling myself, stopped by T_EOF or error EXIT
+    parse_main(x);//Calling myself, stopped by T_EOF or error EXIT
 }
 
 //Parse for <func> LL
@@ -98,13 +100,17 @@ void parse_function() {//3// TODO Define function with no brackets?
 }
 
 //Parse for <st-list> LL
-//position_helper used for check if get new token and go back to main(4) and if its in if(0) or in else(2) part
-void parse_st_list(int position_helper) {
+//actual_position_helper used for check if get new token and go back to main(4) and if its in if(0) or in else(2) part
+int parse_st_list(int actual_position_helper) {
 
-    if (position_helper != 4) {
+   /* if (actual_position_helper == 8) {
+        return 0;
+    }*/
+
+    if (actual_position_helper != -1) {
         token = getToken();
-    }else{
-        position_helper=0;
+    } else {
+        actual_position_helper = 8;
     }
     Token token_old = token;
     switch (token.type) {
@@ -124,18 +130,20 @@ void parse_st_list(int position_helper) {
                     switch (token.type) {
 
                         case T_IDENTIFIER: //27 -> 28 29 !TRAP! I do not know if its function or identifier
-                        K = createString(token);
-                        token = getToken();
+                            K = createString(token);
+                            token = getToken();
                             switch (token.type) {
 
                                 case T_LBRACKET:
                                 case T_IDENTIFIER:
                                 case T_EOL:
                                     parse_arg_list_switcher(0);
+                                    parse_st_list(actual_position_helper);
                                     break;
 
                                 default:
                                     token = prec_anal(token_old, token, 1);
+                                    parse_st_list(actual_position_helper);
                                     break;
                             }
                             break;
@@ -144,15 +152,18 @@ void parse_st_list(int position_helper) {
                         case BIF_INPUTS://32
                         case BIF_INPUTI://33
                         case BIF_INPUTF://34
-                            if ((token = getToken()).type == T_LBRACKET) {
-                                if ((getToken().type) == T_RBRACKET) {
+                            if (((token = getToken()).type) == T_LBRACKET) {
+                                if (((getToken().type) == T_RBRACKET) &&
+                                    ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
+                                    parse_st_list(actual_position_helper);
                                     break;//TODO Check this
                                 } else {
-                                    compiler_exit(ERR_SYNTAX);
+                                    compiler_exit(ERR_NO_OF_ARGS);
                                 }
                             } else if (token.type == T_EOL) {
+                                parse_st_list(actual_position_helper);
                                 break;
-                            } else {
+                            } else {// TODO SEMANTIC TODO, THIS DOES NOT COUNT WITH BAD NUMBER OF ARGS
                                 compiler_exit(ERR_SYNTAX);
                             }
 
@@ -160,74 +171,91 @@ void parse_st_list(int position_helper) {
                             K.str = "print";
                             token = getToken();
                             parse_arg_list_switcher(1);
+                            parse_st_list(actual_position_helper);
                             break;
 
                         case BIF_LENGTH://37 //TODO Check STRING
                             K.str = "length";
                             token = getToken();
                             parse_arg_list_switcher(0);
+                            parse_st_list(actual_position_helper);
                             break;
 
                         case BIF_SUBSTR://38 //TODO Check STRING,INT,INT
                             K.str = "substr";
                             token = getToken();
                             parse_arg_list_switcher(0);
+                            parse_st_list(actual_position_helper);
                             break;
 
                         case BIF_ORD://39 //TODO Check STRING,INT
                             K.str = "ord";
                             token = getToken();
                             parse_arg_list_switcher(0);
+                            parse_st_list(actual_position_helper);
                             break;
 
                         case BIF_CHR://40  //TODO Check INT
                             K.str = "chr";
                             token = getToken();
                             parse_arg_list_switcher(0);
+                            parse_st_list(actual_position_helper);
                             break;
 
                         default: //16
                             token_old = token;
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
+                            parse_st_list(actual_position_helper);
                     }
 
                     /* if (token.type != T_EOL) {//Solved by precedence right?
                          compiler_exit(ERR_SYNTAX);
                      }*/
-                    //If position_helper is 4, which means its call from main, it goes back
-                    if (position_helper == 0) {
-                        parse_st_list(position_helper);
-                    } else if (position_helper == 2) {
-                        parse_st_list(position_helper);
+                    //If actual_position_helper is 4, which means its call from main, it goes back
+                    /*if (actual_position_helper == 0) {
+                        parse_st_list(actual_position_helper,old_position_helper);
+                    } else if (actual_position_helper == 2) {
+                        parse_st_list(actual_position_helper,old_position_helper);
                     }
-                    break;
+                    break;*///TODO CHANGED THIS
 
                 case T_EOL:// 17
-                //token = getToken();
-                break;
+                    //token = getToken();
+                    parse_st_list(actual_position_helper);
+                    break;
 
                 case OP_ADD:
                 case OP_SUB:
                 case OP_MUL:
                 case OP_DIV:
                     token = prec_anal(token_old, token, 1);
+                    parse_st_list(actual_position_helper);
                     break;
 
                 default://11 12
                     parse_arg_list_switcher(0);
+                    parse_st_list(actual_position_helper);
                     break;
             }
             break;
 
         case T_EOL:// 6
+            parse_st_list(actual_position_helper);
             break;
 
         case KW_IF:// 19
             token = prec_anal(token, token, 0);
             if ((token.type == KW_THEN) && (getToken().type) == T_EOL) {
+                //printf("IF 1 call no. %d    %d %d\n",x,actual_position_helper,old_position_helper);
                 parse_st_list(0);
-                parse_st_list(2);
+                //parse_st_list(2);
+                //printf("IF 2 call no. %d    %d %d\n",x,actual_position_helper,old_position_helper);
+                if (actual_position_helper != 8) {
+                    parse_st_list(actual_position_helper);//TODO FIX IT HERE
+                }else {
+                    return 1;
+                }
             } else {
                 compiler_exit(ERR_SYNTAX);
             }
@@ -237,24 +265,22 @@ void parse_st_list(int position_helper) {
             token = prec_anal(token, token, 0);
             if ((token.type == KW_DO) && (getToken().type) == T_EOL) {
                 parse_st_list(2);
-                if ((getToken().type) != T_EOL) {
-                    compiler_exit(ERR_SYNTAX);
-                }
             } else {
                 compiler_exit(ERR_SYNTAX);
             }
             break;
 
         case KW_ELSE:
-            if (position_helper != 0) {
+            if (actual_position_helper != 0) {
                 compiler_exit(ERR_SYNTAX);
             } else if (getToken().type != T_EOL) {
                 compiler_exit(ERR_SYNTAX);
             }
+            parse_st_list(2);
             break;
 
         case KW_END:
-            if (position_helper <= 0) {
+            if (actual_position_helper != 2) {
                 compiler_exit(ERR_SYNTAX);
             } else if (getToken().type != T_EOL) {
                 compiler_exit(ERR_SYNTAX);
@@ -266,14 +292,15 @@ void parse_st_list(int position_helper) {
         case BIF_INPUTI://33
         case BIF_INPUTF://34
             if (((token = getToken()).type) == T_LBRACKET) {
-                if (((getToken().type) == T_RBRACKET) &&  ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))){
-                    parse_st_list(position_helper);
+                if (((getToken().type) == T_RBRACKET) &&
+                    ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
+                    parse_st_list(actual_position_helper);
                     break;//TODO Check this
                 } else {
                     compiler_exit(ERR_NO_OF_ARGS);
                 }
             } else if (token.type == T_EOL) {
-                parse_st_list(position_helper);
+                parse_st_list(actual_position_helper);
                 break;
             } else {// TODO SEMANTIC TODO, THIS DOES NOT COUNT WITH BAD NUMBER OF ARGS
                 compiler_exit(ERR_SYNTAX);
@@ -283,36 +310,46 @@ void parse_st_list(int position_helper) {
             K.str = "print";
             token = getToken();
             parse_arg_list_switcher(1);
+            parse_st_list(actual_position_helper);
             break;
 
         case BIF_LENGTH://37 //TODO Check STRING
             K.str = "length";
             token = getToken();
             parse_arg_list_switcher(0);
+            parse_st_list(actual_position_helper);
             break;
 
         case BIF_SUBSTR://38 //TODO Check STRING,INT,INT
             K.str = "substr";
             token = getToken();
             parse_arg_list_switcher(0);
+            parse_st_list(actual_position_helper);
             break;
 
         case BIF_ORD://39 //TODO Check STRING,INT
             K.str = "ord";
             token = getToken();
             parse_arg_list_switcher(0);
+            parse_st_list(actual_position_helper);
             break;
 
         case BIF_CHR://40  //TODO Check INT
             K.str = "chr";
             token = getToken();
             parse_arg_list_switcher(0);
+            parse_st_list(actual_position_helper);
             break;
 
         default:
             token = getToken();
             token = prec_anal(token_old, token, 1);
+            parse_st_list(actual_position_helper);
     }
+    return 0;
+    /* if(actual_position_helper != 8) {
+         parse_st_list(actual_position_helper);
+     }*/
 }
 
 //Parse for <param-l> LL
@@ -448,6 +485,9 @@ int main() {
     ltsInit(&ltsMain);
     ltsInit(&ltsFunc);
     insertBIF(&gts);
-    parse_main();
+    // init stack
+    tDLList func_stack;
+    DLInitList(&func_stack);
+    parse_main(0);
     return 0;
 }
