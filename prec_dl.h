@@ -1,3 +1,9 @@
+/*
+**	IFJ
+**	Stack - Double-Linked List
+**	---------------------------
+**	Tomáš Zálešák - xzales13
+*/
 
 #include<stdio.h>
 #include<stdlib.h>

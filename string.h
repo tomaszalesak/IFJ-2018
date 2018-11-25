@@ -1,6 +1,10 @@
-// Tomáš Zálešák
-// Header file for dealing with infinite strings
-// Inspired by https://www.fit.vutbr.cz/study/courses/IFJ/private/projekt/jednoduchy_interpret.zip
+/*
+**	IFJ
+**	Implementation of dealing with infinite strings
+**	---------------------------
+**	Tomáš Zálešák - xzales13
+**  Inspired by https://www.fit.vutbr.cz/study/courses/IFJ/private/projekt/jednoduchy_interpret.zip
+*/
 
 
 #ifndef TEST_STRING_H

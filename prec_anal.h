@@ -1,3 +1,9 @@
+/*
+**	IFJ
+**	Precedence analysis
+**	---------------------------
+**	Tomáš Zálešák - xzales13
+*/
 
 #ifndef PREC_AN_PREC_ANAL_H
 #define PREC_AN_PREC_ANAL_H
@@ -5,6 +11,7 @@
 #include <string.h>
 #include "prec_dl.h"
 #include "lexicalanalyzer.h"
+
 #define PREC_TABLE_SIZE 14
 
 #define PR_PLUS 0
