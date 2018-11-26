@@ -91,6 +91,11 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
                 // push b
                 DLInsertFirst(&stack, b);
+                if(b == PR_TERM)
+                {
+                    stack.First->expressionToken = token;
+                    //fprintf(stderr, "%d\n", token.type);
+                }
 
                 // get token
                 token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
