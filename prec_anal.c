@@ -1,4 +1,11 @@
-//
+/*
+**	IFJ
+**	Precedence analysis
+**	---------------------------
+**	Tomáš Zálešák - xzales13
+*/
+
+
 #include "prec_anal.h"
 #include "lexicalanalyzer.h"
 #include "errors.h"

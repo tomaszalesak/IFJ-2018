@@ -1,3 +1,12 @@
+/*
+**	IFJ
+**	Stack - Double-Linked List
+**	---------------------------
+**	Tomáš Zálešák - xzales13
+*/
+
+#ifndef PREC_DL_H
+#define PREC_DL_H
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -38,3 +47,4 @@ int DLActive (tDLList *);
 
 void print_elements_of_list(tDLList);
 
+#endif
