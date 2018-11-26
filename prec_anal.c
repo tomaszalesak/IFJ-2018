@@ -35,6 +35,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
     int token_no = 0;
     Token token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
 
+    // help token for generating code
+    Token tmp, tmp2;
+
     // if first token type is EOF or EOL or THEN, exit
     if(firstTokenTypeEnd(token.type))
     {
@@ -114,10 +117,16 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                         {
                             if(handle->lptr == stack.First)
                             {
+                                // Token tmp contains the data
+                                tmp = handle->lptr->expressionToken;
+
                                 fprintf(stderr, "E -> T\n");
                                 DLDeleteFirst(&stack);
                                 DLDeleteFirst(&stack);
                                 DLInsertFirst(&stack, PR_E);
+
+                                // first elem contains the data - expression
+                                stack.First->expressionToken = tmp;
                             }
                             else
                             {
@@ -135,12 +144,18 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                     case PR_LEFTBRACKET:
                                         if((handle->lptr->lptr->data == PR_E) && (handle->lptr->lptr->lptr->data == PR_RIGHTBRACKET))
                                         {
+                                            // Token tmp contains the data
+                                            tmp = handle->lptr->lptr->expressionToken;
+
                                             fprintf(stderr, "E -> ( E )\n");
                                             DLDeleteFirst(&stack);
                                             DLDeleteFirst(&stack);
                                             DLDeleteFirst(&stack);
                                             DLDeleteFirst(&stack);
                                             DLInsertFirst(&stack, PR_E);
+
+                                            // first elem contains the data - expression
+                                            stack.First->expressionToken = tmp;
                                         }
                                         else
                                         {
@@ -155,6 +170,14 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                             switch (handle->lptr->lptr->data)
                                             {
                                                 case PR_MULTIPLAY:
+                                                    // MULTIPLICATION
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
                                                     fprintf(stderr, "E -> E * E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -163,6 +186,14 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_DIVISION:
+                                                    // DIVISION
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
                                                     fprintf(stderr, "E -> E / E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -171,6 +202,15 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_PLUS:
+                                                    // ADDITION / CONCATENATION
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
+
                                                     fprintf(stderr, "E -> E + E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -179,6 +219,14 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_MINUS:
+                                                    // MINUS
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
                                                     fprintf(stderr, "E -> E - E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -187,6 +235,14 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_EQUAL:
+                                                    // EQUAL
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
                                                     fprintf(stderr, "E -> E == E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -195,6 +251,14 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_NOTEQUAL:
+                                                    // NOT EQUAL
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
                                                     fprintf(stderr, "E -> E != E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -203,6 +267,14 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_LESS:
+                                                    // LESS
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
                                                     fprintf(stderr, "E -> E < E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -211,6 +283,14 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_LESSEQUAL:
+                                                    // LESS EQUAL
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
                                                     fprintf(stderr, "E -> E <= E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -219,6 +299,14 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_GREATEREQUAL:
+                                                    // GREATER EQUAL
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
                                                     fprintf(stderr, "E -> E >= E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -227,6 +315,14 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_GREATER:
+                                                    // GREATER
+                                                    // this is the left one
+                                                    tmp = handle->lptr->expressionToken;
+
+                                                    // this is the right one
+                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
+
+
                                                     fprintf(stderr, "E -> E > E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
