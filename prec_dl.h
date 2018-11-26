@@ -10,6 +10,7 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include "lexicalanalyzer.h"
 
 
 typedef struct tDLElem {                 /* prvek dvousměrně vázaného seznamu */
