@@ -17,19 +17,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include "lexicalanalyzer.h"
 
 /*#include "scanner.h"*/
 
 /* chybove hlasenia */
-#define ERROR_INSERTED             1  // chyba pri vkladani do TS 
+#define ERROR_INSERTED             1  // chyba pri vkladani do TS
 
-#define  SUCCESS                   0  //  překlad proběhl bez chyb 1 
+#define  SUCCESS                   0  //  překlad proběhl bez chyb 1
 // chyba v programu v rámci lexikální analýzy (chybná struktura aktuálního lexému)
 #define  ERROR_LEX                 1
 // chyba v programu v rámci syntaktické analýzy (chybná syntaxe programu)
 #define  SYN_ERR                   2
-#define  SEM_ERR                   3   // sémantická chyba v programu 
+#define  SEM_ERR                   3   // sémantická chyba v programu
 // sémantická chyba typové kompatibility v aritmetických, řetězcových a relačních výrazech
 #define  ERR_INCOMPATIBLE_TYPE     4
 #define  ERR_SEMANTIC              6   // ostatne sémantické chyby

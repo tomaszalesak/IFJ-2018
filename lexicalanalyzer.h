@@ -1,4 +1,3 @@
-#pragma once
 /*
 **	IFJ
 **	Lexical analysis
@@ -6,12 +5,12 @@
 **	Vojtěch Novotný - xnovot1f
 */
 
+#ifndef LEX_H
+#define LEX_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "string.h"
-
-#ifndef LEX_H
-#define LEX_H
 
 /// Enum defining different types of tokens.
 typedef enum {          // token.data for the token.type (empty means no data)

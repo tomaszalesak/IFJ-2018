@@ -97,9 +97,9 @@ int strGetLength(string *s)
 }
 
 int strAddString(string *s1, char *s2)
-// pridej konstantni string s2 do s1 
+// pridej konstantni string s2 do s1
 {
-    for (int i = 0; i < strlen(s2); i++)
+    for (unsigned i = 0; i < strlen(s2); i++)
     {
         strAddChar(s1, s2[i]);
     }
