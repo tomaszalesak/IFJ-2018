@@ -5,6 +5,7 @@
 **	Robin Skaličan - xskali19
 */
 
+#include <string.h>
 #include "lexicalanalyzer.h"
 #include "symtable.h"
 #include "prec_anal.h"
@@ -69,6 +70,7 @@ void parse_function() {//3// TODO Define function with no brackets?
     if ((token.type == T_IDENTIFIER) && (getToken().type) == T_LBRACKET) {
         //Call function for <param-l>
 
+        //semantic
         string K = createString(token);
         //check if function was already inserted into gts
         if (gtsSearch(gts, &K) != NULL) {
@@ -103,17 +105,19 @@ void parse_st_list(int position_helper) {
 
     if (position_helper != 4) {
         token = getToken();
-    }else{
-        position_helper=0;
+    } else {
+        position_helper = 0;
     }
     Token token_old = token;
     switch (token.type) {
 
         case T_IDENTIFIER:// 16 17 27
 
+            //semantic
             K = createString(token);
             ltsInsert(&ltsMain, &K);
             //gtsSearch(gts, &K);
+
             token = getToken();
 
             switch (token.type) {
@@ -124,8 +128,9 @@ void parse_st_list(int position_helper) {
                     switch (token.type) {
 
                         case T_IDENTIFIER: //27 -> 28 29 !TRAP! I do not know if its function or identifier
-                        K = createString(token);
-                        token = getToken();
+                            //semantic - get identifier name/value
+                            K = createString(token);
+                            token = getToken();
                             switch (token.type) {
 
                                 case T_LBRACKET:
@@ -156,6 +161,7 @@ void parse_st_list(int position_helper) {
                                 compiler_exit(ERR_SYNTAX);
                             }
 
+                            //semantic for BIF
                         case BIF_PRINT://35 TODO PRINT!!!
                             K.str = "print";
                             token = getToken();
@@ -163,30 +169,39 @@ void parse_st_list(int position_helper) {
                             break;
 
                         case BIF_LENGTH://37 //TODO Check STRING
+                            //semantic set variable type
+                            ltsSetIdType(ltsMain, &K, T_INT);
                             K.str = "length";
                             token = getToken();
                             parse_arg_list_switcher(0);
                             break;
 
                         case BIF_SUBSTR://38 //TODO Check STRING,INT,INT
+                            //semantic set variable type
+                            ltsSetIdType(ltsMain, &K, T_STRING);
                             K.str = "substr";
                             token = getToken();
                             parse_arg_list_switcher(0);
                             break;
 
                         case BIF_ORD://39 //TODO Check STRING,INT
+                            //semantic set variable type
+                            ltsSetIdType(ltsMain, &K, T_INT);
                             K.str = "ord";
                             token = getToken();
                             parse_arg_list_switcher(0);
                             break;
 
                         case BIF_CHR://40  //TODO Check INT
+                            //semantic set variable type
+                            ltsSetIdType(ltsMain, &K, T_STRING);
                             K.str = "chr";
                             token = getToken();
                             parse_arg_list_switcher(0);
                             break;
 
                         default: //16
+                            ltsSetIdType(ltsMain, &K, token.type);
                             token_old = token;
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
@@ -204,8 +219,8 @@ void parse_st_list(int position_helper) {
                     break;
 
                 case T_EOL:// 17
-                //token = getToken();
-                break;
+                    //token = getToken(); //TODO What is this and why doesn't it check KW_END?
+                    break;
 
                 case OP_ADD:
                 case OP_SUB:
@@ -266,7 +281,8 @@ void parse_st_list(int position_helper) {
         case BIF_INPUTI://33
         case BIF_INPUTF://34
             if (((token = getToken()).type) == T_LBRACKET) {
-                if (((getToken().type) == T_RBRACKET) &&  ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))){
+                if (((getToken().type) == T_RBRACKET) &&
+                    ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
                     parse_st_list(position_helper);
                     break;//TODO Check this
                 } else {
@@ -279,6 +295,7 @@ void parse_st_list(int position_helper) {
                 compiler_exit(ERR_SYNTAX);
             }
 
+            //semantic for BIF
         case BIF_PRINT://35 TODO PRINT!!!
             K.str = "print";
             token = getToken();
@@ -355,17 +372,23 @@ void parse_arg_list_switcher(int print_checker) {
         token = getToken();
         if (!parse_arg(token.type)) {//47
 
+            //semantic control of param types
+            //if (token.type == T_INT)
+
+
             //Call function for <arg-list2b>
             parse_arg_list2b();//44,45
         }
 
         //added for semantic analysis
         //check if the function call has correct number of parameters
-        if (gtsGetParamCount(gts, &K) != paramsCounter) {
-            fprintf(stderr,
-                    "ERROR! Bad number of arguments for function %s!\nExpected %d parameters but %d have been inserted.\n",
-                    K.str, gtsGetParamCount(gts, &K), paramsCounter);
-            exit(ERR_NO_OF_ARGS);
+        if (print_checker != 1) {
+            if (gtsGetParamCount(gts, &K) != paramsCounter) {
+                fprintf(stderr,
+                        "ERROR! Bad number of arguments for function %s!\nExpected %d parameters but %d have been inserted.\n",
+                        K.str, gtsGetParamCount(gts, &K), paramsCounter);
+                exit(ERR_NO_OF_ARGS);
+            }
         }
         //reset params counter for another func. check
         paramsCounter = 0;
@@ -379,6 +402,8 @@ void parse_arg_list_switcher(int print_checker) {
         parse_arg(token.type);//43
         //Call function for <arg-list2>
         parse_arg_list2();//48,49
+        //solves BIF without brackets (hopefully)
+        paramsCounter = 0;
     } else if (print_checker == 1) {//35
         compiler_exit(ERR_SYNTAX);
     } else {
@@ -405,12 +430,234 @@ int parse_arg(int token_type) {
 
     switch (token.type) {
         case T_IDENTIFIER://51
+            paramsCounter++;
+
+            //semantic BIF params check TODO put it onto function maybe?!
+            //BIF chr
+            if (strcmp(K.str, "chr") == 0) {
+                string a = createString(token);
+                //chr accepts 1 integer parameter
+                if (paramsCounter != 1) {
+                    fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                    compiler_exit(ERR_NO_OF_ARGS);
+                }
+                if ((ltsGetIdType(ltsMain, &a) != T_INT) && (ltsGetIdType(ltsMain, &a) != T_FLOAT)) {
+                    fprintf(stderr, "Semantic Error! Bad parameter type for function %s!\n", K.str);
+                    compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                }
+            }
+
+            //BIF ord
+            if (strcmp(K.str, "ord") == 0) {
+                string a = createString(token);
+                switch (paramsCounter) {
+                    case 1:
+                        if (ltsGetIdType(ltsMain, &a) != T_STRING) {
+                            fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                            compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        }
+                        break;
+                    case 2:
+                        if ((ltsGetIdType(ltsMain, &a) != T_INT) && (ltsGetIdType(ltsMain, &a) != T_FLOAT)) {
+                            fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                            compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        }
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR! Function %s! Expected %d parameters but %d have been inserted!\n",
+                                K.str, 2, paramsCounter);
+                        compiler_exit(ERR_NO_OF_ARGS);
+                        break;
+                }
+            }
+
+            //BIF length
+            if (strcmp(K.str, "length") == 0) {
+                string a = createString(token);
+                //chr accepts 1 integer parameter
+                if (paramsCounter != 1) {
+                    fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                    compiler_exit(ERR_NO_OF_ARGS);
+                }
+                if (ltsGetIdType(ltsMain, &a) != T_STRING) {
+                    fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                    compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                }
+            }
+
+            //BIF substr
+            if (strcmp(K.str, "substr") == 0) {
+                string a = createString(token);
+                switch (paramsCounter) {
+                    case 1:
+                        if (ltsGetIdType(ltsMain, &a) != T_STRING) {
+                            fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                            compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        }
+                        break;
+                    case 2:
+                        if (ltsGetIdType(ltsMain, &a) != T_INT && ltsGetIdType(ltsMain, &a) != T_FLOAT) {
+                            fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                            compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        }
+                        break;
+                    case 3:
+                        if (ltsGetIdType(ltsMain, &a) != T_INT && ltsGetIdType(ltsMain, &a) != T_FLOAT) {
+                            fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                            compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        }
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR! Function %s! Expected %d parameters but %d have been inserted!\n",
+                                K.str, 3, paramsCounter);
+                        compiler_exit(ERR_NO_OF_ARGS);
+                        break;
+                }
+            }
+            break;
         case T_INT://52
-        case T_FLOAT://53
+            paramsCounter++;
+
+            //BIF ord
+            if (strcmp(K.str, "ord") == 0) {
+                //string a = createString(token);
+                switch (paramsCounter) {
+                    case 1:
+                        fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                        compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR! Function %s! Expected %d parameters but %d have been inserted!\n",
+                                K.str, 2, paramsCounter);
+                        compiler_exit(ERR_NO_OF_ARGS);
+                        break;
+                }
+            }
+
+            //BIF length
+            if (strcmp(K.str, "length") == 0) {
+                fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                compiler_exit(ERR_INCOMPATIBLE_TYPE);
+            }
+
+            //BIF substr
+            if (strcmp(K.str, "substr") == 0) {
+                //string a = createString(token);
+                switch (paramsCounter) {
+                    case 1:
+                        fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                        compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR! Function %s! Expected %d parameters but %d have been inserted!\n",
+                                K.str, 3, paramsCounter);
+                        compiler_exit(ERR_NO_OF_ARGS);
+                        break;
+                }
+            }
+            break;
+
+        case T_FLOAT://53 TODO
+            paramsCounter++;
+
+            //BIF ord
+            if (strcmp(K.str, "ord") == 0) {
+                //string a = createString(token);
+                switch (paramsCounter) {
+                    case 1:
+                        fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                        compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        break;
+                    case 2:
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR! Function %s! Expected %d parameters but %d have been inserted!\n",
+                                K.str, 2, paramsCounter);
+                        compiler_exit(ERR_NO_OF_ARGS);
+                        break;
+                }
+            }
+
+            //BIF length
+            if (strcmp(K.str, "length") == 0) {
+                fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                compiler_exit(ERR_INCOMPATIBLE_TYPE);
+            }
+
+            //BIF substr
+            if (strcmp(K.str, "substr") == 0) {
+                //string a = createString(token);
+                switch (paramsCounter) {
+                    case 1:
+                        fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                        compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR! Function %s! Expected %d parameters but %d have been inserted!\n",
+                                K.str, 3, paramsCounter);
+                        compiler_exit(ERR_NO_OF_ARGS);
+                        break;
+                }
+            }
+            break;
         case T_STRING://54
             //free(token.data) //TODO can be done here??
             //increment counter for NO. of parameters
             paramsCounter++;
+
+            //BIF chr
+            if (strcmp(K.str, "chr") == 0) {
+                fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                compiler_exit(ERR_INCOMPATIBLE_TYPE);
+            }
+
+            //BIF ord
+            if (strcmp(K.str, "ord") == 0) {
+                switch (paramsCounter) {
+                    case 1:
+                        break;
+                    case 2:
+                        fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                        compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR! Function %s! Expected %d parameters but %d have been inserted!\n",
+                                K.str, 2, paramsCounter);
+                        compiler_exit(ERR_NO_OF_ARGS);
+                        break;
+                }
+            }
+
+            //BIF substr
+            if (strcmp(K.str, "substr") == 0) {
+                switch (paramsCounter) {
+                    case 1:
+                        break;
+                    case 2:
+                        fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                        compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        break;
+                    case 3:
+                        fprintf(stderr, "ERROR! Function %s!\n", K.str);
+                        compiler_exit(ERR_INCOMPATIBLE_TYPE);
+                        break;
+                    default:
+                        fprintf(stderr, "ERROR! Function %s! Expected %d parameters but %d have been inserted!\n",
+                                K.str, 3, paramsCounter);
+                        compiler_exit(ERR_NO_OF_ARGS);
+                        break;
+                }
+            }
             break;
         case T_RBRACKET:
             return 1;

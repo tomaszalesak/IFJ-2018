@@ -307,7 +307,7 @@ void ltsSetIdType (LTSNodePtr RootPtr, string* K, int type) {
 int ltsGetIdType (LTSNodePtr RootPtr, string* K) {
     LTSNodePtr tmp = NULL;
     if ((tmp = ltsSearch(RootPtr, K)) == NULL){
-        fprintf(stderr, "ERROR_SYMTAMBLE! Variable doesn't exist in LTS!\n");
+        fprintf(stderr, "ERROR_SYMTAMBLE! Variable %s wasn't declared!\n", K->str);
         exit(ERR_UNDEF_REDEF);
     }
     return tmp->type;
@@ -371,7 +371,7 @@ int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign defined value to a nonexisting function!\n");
         exit(ERR_UNDEF_REDEF);
     }
-    printf("Function %s is %s!\n", tmp->key.str, tmp->defined ? "already defined" : "undefined");
+    fprintf(stderr,"Function %s is %s!\n", tmp->key.str, tmp->defined ? "already defined" : "undefined");
     return tmp->defined;
 }
 
@@ -469,6 +469,13 @@ void insertBIF (GTSNodePtr *RootPtr) {
     gtsInsert(RootPtr, &k);
     gtsSetDefined(*RootPtr, &k);
     gtsSetParamCount(*RootPtr, &k, 1);
+    strClear(&k);
+
+    //print
+    strAddString(&k, "print");
+    gtsInsert(RootPtr, &k);
+    gtsSetDefined(*RootPtr, &k);
+    gtsSetParamCount(*RootPtr, &k, 0);
     strClear(&k);
 
 }
