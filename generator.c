@@ -74,7 +74,7 @@ void gen_argument(Token token, int argumentNumber) {
 /*
  * Generates code to create a new temporary frame.
  */
-inline void gen_TF() {
+void gen_TF() {
     printf("CREATE FRAME\n");
 }
 
@@ -82,7 +82,7 @@ inline void gen_TF() {
  * Generates code to define a new label.
  * @param token - token.data character string is used as the name for the label
  */
-inline void gen_label(Token token) {
+void gen_label(Token token) {
     printf("LABEL $%s\n", (char*)token.data);
 }
 
@@ -113,21 +113,21 @@ void gen_parameter(Token token, int parameterNumber) {
  * Generates code that calls function.
  * @param token - Represents the function.
  */
-inline void gen_call(Token token) {
+void gen_call(Token token) {
     printf("CALL $%s\n", (char*)(token.data));
 }
 
 /*
  * Generates code for return value variable definition.
  */
-inline void gen_retval() {
+void gen_retval() {
     printf("DEFVAR LF@%%retval\nMOVE LF@%%retval nil@nil\n");
 }
 
 /*
  * Generates code for return statement.
  */
-inline void gen_return() {
+void gen_return() {
     printf("RETURN\n");
 }
 
@@ -135,21 +135,21 @@ inline void gen_return() {
  * Generates code that moves return value to the left-side variable of assignment.
  * @param token - Token representing the left-side variable.
  */
-inline void gen_getretval(Token token) {
+void gen_getretval(Token token) {
     printf("MOVE LF@%s TF@%%retval\n", (char*)(token.data));
 }
 
 /*
  * Generates code for pushing temporary frame onto the frame stack.
  */
-inline void gen_pushframe() {
+void gen_pushframe() {
     printf("PUSHFRAME\n");
 }
 
 /*
  * Generates code for poping top of the frame stack onto the temporary frame.
  */
-inline void gen_popframe() {
+void gen_popframe() {
     printf("POPFRAME\n");
 }
 
@@ -157,7 +157,7 @@ inline void gen_popframe() {
  * Generates code that defines a new variable.
  * @param token - Token representing the variable that is to be defined.
  */
-inline void gen_defvar(Token token) {
+void gen_defvar(Token token) {
     printf("DEFVAR LF@%s\n", (char*)(token.data));
 }
 
@@ -226,55 +226,55 @@ void gen_while_endLabel(int endID, int doID) {
 /*
  * Generates code for built-in function INPUTS().
  */
-inline void gen_bif_inputs(Token token) {
+void gen_bif_inputs(Token token) {
     printf("READ LF@%s string\n", (char*)(token.data));
 }
 
 /*
  * Generates code for built-in function INPUTI().
  */
-inline void gen_bif_inputi(Token token){
+void gen_bif_inputi(Token token){
     printf("READ LF@%s int\n", (char*)(token.data));
 }
 
 /*
  * Generates code for built-in function INPUTF().
  */
-inline void gen_bif_inputf(Token token){
+void gen_bif_inputf(Token token){
     printf("READ LF@%s float\n", (char*)(token.data));
 }
 
 /*
  * Generates code for built-in function PRINT().
  */
-inline void gen_bif_print(){
+void gen_bif_print(){
     printf("WRITE lol");
 }
 
 /*
  * Generates code for built-in function LENGTH().
  */
-inline void gen_bif_length(){
+void gen_bif_length(){
     printf("");
 }
 
 /*
  * Generates code for built-in function SUBSTR().
  */
-inline void gen_bif_substr(){
+void gen_bif_substr(){
     printf("");
 }
 
 /*
  * Generates code for built-in function ORD().
  */
-inline void gen_bif_ord(){
+void gen_bif_ord(){
     printf("");
 }
 
 /*
  * Generates code for built-in function CHR().
  */
-inline void gen_bif_chr(){
+void gen_bif_chr(){
     printf("");
 }
