@@ -62,7 +62,7 @@ typedef enum {          // token.data for the token.type (empty means no data)
 typedef enum {
     E_INVALID,
     E_MEMORY,
-    E_NUMBER_TOO_BIG,
+    E_NUMBER_TOO_BIG
 } ErrorType;
 
 /// Token structure that is used as the return value of the the getToken function.
