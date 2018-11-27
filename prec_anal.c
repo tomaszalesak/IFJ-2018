@@ -142,7 +142,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                             stack.First->useGenData = 1;
 
                             // todo generating set genData to generated variable in code
-                            stack.First->genData = YOUR_GENERATED_INT;
+                            // stack.First->genData = YOUR_GENERATED_INT;
                         }
                         else
                         {
@@ -186,7 +186,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                     stack.First->useGenData = 1;
 
                                     // todo generating set genData to generated variable in code
-                                    stack.First->genData = YOUR_GENERATED_INT;
+                                    // stack.First->genData = YOUR_GENERATED_INT;
                                 }
                                 else
                                 {
@@ -256,7 +256,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        // stack.First->genData = YOUR_GENERATED_INT;
 
                                         break;
                                     case PR_DIVISION:
@@ -315,7 +315,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        // stack.First->genData = YOUR_GENERATED_INT;
 
                                         break;
                                     case PR_PLUS:
@@ -374,7 +374,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        // stack.First->genData = YOUR_GENERATED_INT;
 
                                         break;
                                     case PR_MINUS:
@@ -433,7 +433,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        // stack.First->genData = YOUR_GENERATED_INT;
 
                                         break;
                                     case PR_EQUAL:
@@ -493,7 +493,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        // stack.First->genData = YOUR_GENERATED_INT;
 
                                         break;
                                     case PR_NOTEQUAL:
@@ -553,7 +553,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        // stack.First->genData = YOUR_GENERATED_INT;
 
                                         break;
                                     case PR_LESS:
@@ -613,7 +613,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        // stack.First->genData = YOUR_GENERATED_INT;
 
                                         break;
                                     case PR_LESSEQUAL:
@@ -673,7 +673,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        // stack.First->genData = YOUR_GENERATED_INT;
 
                                         break;
                                     case PR_GREATEREQUAL:
@@ -733,7 +733,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        // stack.First->genData = YOUR_GENERATED_INT;
 
                                         break;
                                     case PR_GREATER:
@@ -793,8 +793,8 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->useGenData = 1;
 
                                         // todo generating set genData to generated variable in code
-                                        stack.First->genData = YOUR_GENERATED_INT;
-                                        
+                                        // stack.First->genData = YOUR_GENERATED_INT;
+
                                         break;
                                     default:
                                         // dispose stack
