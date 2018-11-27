@@ -5,12 +5,10 @@
 **	Tomáš Zálešák - xzales13
 */
 
-
 #include "prec_anal.h"
 #include "lexicalanalyzer.h"
 #include "errors.h"
 #include "symtable.h"
-
 
 Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 {
@@ -23,23 +21,24 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
     // a = top
     tDLElemPtr top_term = topElem(&stack);
-    if(top_term == NULL)
+    if (top_term == NULL)
     {
         // dispose stack
         DLDisposeList(&stack);
         compiler_exit(ERR_INTERNAL);
     }
-    int a = top_term->data;
+    int a = top_term->precData;
 
     // get token
     int token_no = 0;
     Token token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
 
-    // help token for generating code
-    Token tmp, tmp2;
+    // help token for generating code, help int for generating code
+    Token tmpToken, tmpToken2;
+    int tmpInt, tmpInt2;
 
     // if first token type is EOF or EOL or THEN, exit
-    if(firstTokenTypeEnd(token.type))
+    if (firstTokenTypeEnd(token.type))
     {
         // dispose stack
         DLDisposeList(&stack);
@@ -52,7 +51,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
     // b = token from scanner
     int b = tokenTypeToInt(token.type);
-    if(b == -1)
+    if (b == -1)
     {
         // dispose stack
         DLDisposeList(&stack);
@@ -60,9 +59,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
     }
 
     // if '=' there cannot be comparing, exit
-    if(give_me_old_tokens)
+    if (give_me_old_tokens)
     {
-        if(isComparing(b))
+        if (isComparing(b))
         {
             // dispose stack
             DLDisposeList(&stack);
@@ -72,64 +71,746 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
     tDLElemPtr handle = NULL;
 
-    while((a != PR_DOLLAR) || (b != PR_DOLLAR))
+    while ((a != PR_DOLLAR) || (b != PR_DOLLAR))
     {
         switch (prec_table[a][b])
         {
-            case '=':
-                // push b
-                DLInsertFirst(&stack, b);
+        case '=':
+            // push b
+            DLInsertFirst(&stack, b);
 
-                // get token
-                token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
-                // todo tabulka
+            // get token
+            token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
+            // todo tabulka
 
-                // end of todo
+            // end of todo
 
-                break;
-            case '<':
-                // a -> a<
-                stack.Act = top_term;
-                DLPreInsert(&stack, PR_HANDLE);
+            break;
+        case '<':
+            // a -> a<
+            stack.Act = top_term;
+            DLPreInsert(&stack, PR_HANDLE);
 
-                // push b
-                DLInsertFirst(&stack, b);
-                if(b == PR_TERM)
+            // push b
+            DLInsertFirst(&stack, b);
+            if (b == PR_TERM)
+            {
+                stack.First->expressionToken = token;
+                stack.First->useGenData = 0;
+                stack.First->genData = 0;
+                //fprintf(stderr, "%d\n", token.type);
+            }
+
+            // get token
+            token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
+            // todo tabulka
+
+            // end of todo
+
+            break;
+        case '>':
+            handle = findHandle(&stack);
+            if (handle != NULL)
+            {
+                if (handle->lptr != NULL)
                 {
-                    stack.First->expressionToken = token;
-                    //fprintf(stderr, "%d\n", token.type);
-                }
-
-                // get token
-                token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
-                // todo tabulka
-
-                // end of todo
-
-                break;
-            case '>':
-                handle = findHandle(&stack);
-                if(handle != NULL)
-                {
-                    if(handle->lptr != NULL)
+                    if (handle->lptr->precData == PR_TERM)
                     {
-                        if(handle->lptr->data == PR_TERM)
+                        if (handle->lptr == stack.First)
                         {
-                            if(handle->lptr == stack.First)
+                            if (handle->lptr->useGenData)
                             {
-                                // Token tmp contains the data
-                                tmp = handle->lptr->expressionToken;
+                                // use tmpInt for generating code
+                                tmpInt = handle->lptr->genData;
 
-                                fprintf(stderr, "E -> T\n");
-                                DLDeleteFirst(&stack);
-                                DLDeleteFirst(&stack);
-                                DLInsertFirst(&stack, PR_E);
-
-                                // first elem contains the data - expression
-                                stack.First->expressionToken = tmp;
+                                // todo generating
                             }
                             else
                             {
+                                // use tmpToken data for generating code
+                                tmpToken = handle->lptr->expressionToken;
+
+                                // todo generating
+                            }
+
+                            fprintf(stderr, "E -> T\n");
+                            DLDeleteFirst(&stack);
+                            DLDeleteFirst(&stack);
+                            DLInsertFirst(&stack, PR_E);
+
+                            // set useGenData to TRUE
+                            stack.First->useGenData = 1;
+
+                            // todo generating set genData to generated variable in code
+                            stack.First->genData = YOUR_GENERATED_INT;
+                        }
+                        else
+                        {
+                            // dispose stack
+                            DLDisposeList(&stack);
+                            compiler_exit(ERR_SYNTAX);
+                        }
+                    }
+                    else
+                    {
+                        if ((handle->lptr->lptr != NULL) && (handle->lptr->lptr->lptr == stack.First))
+                        {
+                            switch (handle->lptr->precData)
+                            {
+                            case PR_LEFTBRACKET:
+                                if ((handle->lptr->lptr->precData == PR_E) && (handle->lptr->lptr->lptr->precData == PR_RIGHTBRACKET))
+                                {
+                                    if (handle->lptr->lptr->useGenData)
+                                    {
+                                        // use tmpInt for generating code
+                                        tmpInt = handle->lptr->lptr->genData;
+
+                                        // todo generating
+                                    }
+                                    else
+                                    {
+                                        // use tmpToken data for generating code
+                                        tmpToken = handle->lptr->lptr->expressionToken;
+
+                                        // todo generating
+                                    }
+
+                                    fprintf(stderr, "E -> ( E )\n");
+                                    DLDeleteFirst(&stack);
+                                    DLDeleteFirst(&stack);
+                                    DLDeleteFirst(&stack);
+                                    DLDeleteFirst(&stack);
+                                    DLInsertFirst(&stack, PR_E);
+
+                                    // set useGenData to TRUE
+                                    stack.First->useGenData = 1;
+
+                                    // todo generating set genData to generated variable in code
+                                    stack.First->genData = YOUR_GENERATED_INT;
+                                }
+                                else
+                                {
+                                    // dispose stack
+                                    DLDisposeList(&stack);
+                                    compiler_exit(ERR_SYNTAX);
+                                }
+                                break;
+                            case PR_E:
+                                if (handle->lptr->lptr->lptr->precData == PR_E)
+                                {
+                                    switch (handle->lptr->lptr->precData)
+                                    {
+                                    case PR_MULTIPLAY:
+                                        // MULTIPLICATION
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E * E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+
+                                        break;
+                                    case PR_DIVISION:
+                                        // DIVISION
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E / E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+
+                                        break;
+                                    case PR_PLUS:
+                                        // ADDITION / CONCATENATION
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E + E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+
+                                        break;
+                                    case PR_MINUS:
+                                        // MINUS
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E - E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+
+                                        break;
+                                    case PR_EQUAL:
+                                        // EQUAL
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                                
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E == E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+
+                                        break;
+                                    case PR_NOTEQUAL:
+                                        // NOT EQUAL
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                                
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E != E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+
+                                        break;
+                                    case PR_LESS:
+                                        // LESS
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                                
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E < E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+
+                                        break;
+                                    case PR_LESSEQUAL:
+                                        // LESS EQUAL
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                                
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E <= E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+
+                                        break;
+                                    case PR_GREATEREQUAL:
+                                        // GREATER EQUAL
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                                
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E >= E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+
+                                        break;
+                                    case PR_GREATER:
+                                        // GREATER
+                                        if (handle->lptr->useGenData)
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 1 1
+                                                // use tmpInt and tmpInt2 for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 1 0
+                                                // use tmpInt and tmpToken for generating code
+                                                tmpInt = handle->lptr->genData;
+                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (handle->lptr->lptr->lptr->useGenData)
+                                            {
+                                                // 0 1
+                                                // use tmpToken and tmpInt for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpInt = handle->lptr->lptr->lptr->genData;
+
+                                                // todo generating
+                                            }
+                                            else
+                                            {
+                                                // 0 0
+                                                // use tmpToken and tmpToken2 for generating code
+                                                tmpToken = handle->lptr->expressionToken;
+                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
+
+                                                // todo generating
+                                                
+                                            }
+                                        }
+
+                                        fprintf(stderr, "E -> E > E\n");
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLDeleteFirst(&stack);
+                                        DLInsertFirst(&stack, PR_E);
+
+                                        // set useGenData to TRUE
+                                        stack.First->useGenData = 1;
+
+                                        // todo generating set genData to generated variable in code
+                                        stack.First->genData = YOUR_GENERATED_INT;
+                                        
+                                        break;
+                                    default:
+                                        // dispose stack
+                                        DLDisposeList(&stack);
+                                        compiler_exit(ERR_SYNTAX);
+                                    }
+                                }
+                                else
+                                {
+                                    // dispose stack
+                                    DLDisposeList(&stack);
+                                    compiler_exit(ERR_SYNTAX);
+                                }
+
+                                break;
+                            default:
                                 // dispose stack
                                 DLDisposeList(&stack);
                                 compiler_exit(ERR_SYNTAX);
@@ -137,232 +818,10 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                         }
                         else
                         {
-                            if((handle->lptr->lptr != NULL) && (handle->lptr->lptr->lptr == stack.First))
-                            {
-                                switch (handle->lptr->data)
-                                {
-                                    case PR_LEFTBRACKET:
-                                        if((handle->lptr->lptr->data == PR_E) && (handle->lptr->lptr->lptr->data == PR_RIGHTBRACKET))
-                                        {
-                                            // Token tmp contains the data
-                                            tmp = handle->lptr->lptr->expressionToken;
-
-                                            fprintf(stderr, "E -> ( E )\n");
-                                            DLDeleteFirst(&stack);
-                                            DLDeleteFirst(&stack);
-                                            DLDeleteFirst(&stack);
-                                            DLDeleteFirst(&stack);
-                                            DLInsertFirst(&stack, PR_E);
-
-                                            // first elem contains the data - expression
-                                            stack.First->expressionToken = tmp;
-                                        }
-                                        else
-                                        {
-                                            // dispose stack
-                                            DLDisposeList(&stack);
-                                            compiler_exit(ERR_SYNTAX);
-                                        }
-                                        break;
-                                    case PR_E:
-                                        if(handle->lptr->lptr->lptr->data == PR_E)
-                                        {
-                                            switch (handle->lptr->lptr->data)
-                                            {
-                                                case PR_MULTIPLAY:
-                                                    // MULTIPLICATION
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-                                                    fprintf(stderr, "E -> E * E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                case PR_DIVISION:
-                                                    // DIVISION
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-                                                    fprintf(stderr, "E -> E / E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                case PR_PLUS:
-                                                    // ADDITION / CONCATENATION
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-
-                                                    fprintf(stderr, "E -> E + E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                case PR_MINUS:
-                                                    // MINUS
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-                                                    fprintf(stderr, "E -> E - E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                case PR_EQUAL:
-                                                    // EQUAL
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-                                                    fprintf(stderr, "E -> E == E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                case PR_NOTEQUAL:
-                                                    // NOT EQUAL
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-                                                    fprintf(stderr, "E -> E != E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                case PR_LESS:
-                                                    // LESS
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-                                                    fprintf(stderr, "E -> E < E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                case PR_LESSEQUAL:
-                                                    // LESS EQUAL
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-                                                    fprintf(stderr, "E -> E <= E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                case PR_GREATEREQUAL:
-                                                    // GREATER EQUAL
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-                                                    fprintf(stderr, "E -> E >= E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                case PR_GREATER:
-                                                    // GREATER
-                                                    // this is the left one
-                                                    tmp = handle->lptr->expressionToken;
-
-                                                    // this is the right one
-                                                    tmp2 = handle->lptr->lptr->lptr->expressionToken;
-
-
-                                                    fprintf(stderr, "E -> E > E\n");
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLDeleteFirst(&stack);
-                                                    DLInsertFirst(&stack, PR_E);
-                                                    break;
-                                                default:
-                                                    // dispose stack
-                                                    DLDisposeList(&stack);
-                                                    compiler_exit(ERR_SYNTAX);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // dispose stack
-                                            DLDisposeList(&stack);
-                                            compiler_exit(ERR_SYNTAX);
-                                        }
-
-                                        break;
-                                    default:
-                                        // dispose stack
-                                        DLDisposeList(&stack);
-                                        compiler_exit(ERR_SYNTAX);
-                                }
-                            }
-                            else
-                            {
-                                // dispose stack
-                                DLDisposeList(&stack);
-                                compiler_exit(ERR_SYNTAX);
-                            }
+                            // dispose stack
+                            DLDisposeList(&stack);
+                            compiler_exit(ERR_SYNTAX);
                         }
-                    }
-                    else
-                    {
-                        // dispose stack
-                        DLDisposeList(&stack);
-                        compiler_exit(ERR_SYNTAX);
                     }
                 }
                 else
@@ -371,26 +830,33 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                     DLDisposeList(&stack);
                     compiler_exit(ERR_SYNTAX);
                 }
-                break;
-            default:
+            }
+            else
+            {
                 // dispose stack
                 DLDisposeList(&stack);
                 compiler_exit(ERR_SYNTAX);
+            }
+            break;
+        default:
+            // dispose stack
+            DLDisposeList(&stack);
+            compiler_exit(ERR_SYNTAX);
         }
 
         // a = top
         top_term = topElem(&stack);
-        if(top_term == NULL)
+        if (top_term == NULL)
         {
             // dispose stack
             DLDisposeList(&stack);
             compiler_exit(ERR_INTERNAL);
         }
-        a = top_term->data;
+        a = top_term->precData;
 
         // b = token from scanner
         b = tokenTypeToInt(token.type);
-        if(b == -1)
+        if (b == -1)
         {
             // dispose stack
             DLDisposeList(&stack);
@@ -398,9 +864,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
         }
 
         // if '=' there cannot be comparing, exit
-        if(give_me_old_tokens)
+        if (give_me_old_tokens)
         {
-            if(isComparing(b))
+            if (isComparing(b))
             {
                 // dispose stack
                 DLDisposeList(&stack);
@@ -423,7 +889,7 @@ tDLElemPtr topElem(tDLList *s)
     while (DLActive(s))
     {
         DLCopy(s, &i);
-        if(isTerminal(i))
+        if (isTerminal(i))
         {
             return s->Act;
         }
@@ -432,7 +898,6 @@ tDLElemPtr topElem(tDLList *s)
 
     fprintf(stderr, "NO TOP FOUND\n");
     return NULL;
-
 }
 
 tDLElemPtr findHandle(tDLList *s)
@@ -443,7 +908,7 @@ tDLElemPtr findHandle(tDLList *s)
     while (DLActive(s))
     {
         DLCopy(s, &i);
-        if(i == PR_HANDLE)
+        if (i == PR_HANDLE)
         {
             return s->Act;
         }
@@ -454,118 +919,119 @@ tDLElemPtr findHandle(tDLList *s)
     return NULL;
 }
 
-int isTerminal(int t){
-    switch(t){
-        case PR_PLUS:
-        case PR_MINUS:
-        case PR_MULTIPLAY:
-        case PR_DIVISION:
-        case PR_LESS:
-        case PR_LESSEQUAL:
-        case PR_GREATER:
-        case PR_GREATEREQUAL:
-        case PR_EQUAL:
-        case PR_NOTEQUAL:
-        case PR_LEFTBRACKET:
-        case PR_RIGHTBRACKET:
-        case PR_TERM:
-        case PR_DOLLAR:
-            return 1;
-        default:
-            return 0;
+int isTerminal(int t)
+{
+    switch (t)
+    {
+    case PR_PLUS:
+    case PR_MINUS:
+    case PR_MULTIPLAY:
+    case PR_DIVISION:
+    case PR_LESS:
+    case PR_LESSEQUAL:
+    case PR_GREATER:
+    case PR_GREATEREQUAL:
+    case PR_EQUAL:
+    case PR_NOTEQUAL:
+    case PR_LEFTBRACKET:
+    case PR_RIGHTBRACKET:
+    case PR_TERM:
+    case PR_DOLLAR:
+        return 1;
+    default:
+        return 0;
     }
 }
 
-int isComparing(int t){
-    switch(t){
-        case PR_LESS:
-        case PR_LESSEQUAL:
-        case PR_GREATER:
-        case PR_GREATEREQUAL:
-        case PR_EQUAL:
-        case PR_NOTEQUAL:
-            return 1;
-        default:
-            return 0;
+int isComparing(int t)
+{
+    switch (t)
+    {
+    case PR_LESS:
+    case PR_LESSEQUAL:
+    case PR_GREATER:
+    case PR_GREATEREQUAL:
+    case PR_EQUAL:
+    case PR_NOTEQUAL:
+        return 1;
+    default:
+        return 0;
     }
 }
 
 int tokenTypeToInt(TokenType t)
 {
-    switch(t)
+    switch (t)
     {
-        case OP_ADD:
-            return PR_PLUS;
-        case OP_SUB:
-            return PR_MINUS;
-        case OP_MUL:
-            return PR_MULTIPLAY;
-        case OP_DIV:
-            return  PR_DIVISION;
-        case OP_LT:
-            return PR_LESS;
-        case OP_LTE:
-            return PR_LESSEQUAL;
-        case OP_GT:
-            return PR_GREATER;
-        case OP_GTE:
-            return PR_GREATEREQUAL;
-        case OP_EQ:
-            return PR_EQUAL;
-        case OP_NEQ:
-            return PR_NOTEQUAL;
-        case T_LBRACKET:
-            return PR_LEFTBRACKET;
-        case T_RBRACKET:
-            return PR_RIGHTBRACKET;
-        case T_IDENTIFIER:
-        case T_INT:
-        case T_FLOAT:
-        case T_STRING:
-        case KW_NIL:
-            return PR_TERM;
-        case KW_THEN:
-        case T_EOL:
-        case T_EOF:
-        case KW_DO:
-            return PR_DOLLAR;
-        default:
-            return -1;
+    case OP_ADD:
+        return PR_PLUS;
+    case OP_SUB:
+        return PR_MINUS;
+    case OP_MUL:
+        return PR_MULTIPLAY;
+    case OP_DIV:
+        return PR_DIVISION;
+    case OP_LT:
+        return PR_LESS;
+    case OP_LTE:
+        return PR_LESSEQUAL;
+    case OP_GT:
+        return PR_GREATER;
+    case OP_GTE:
+        return PR_GREATEREQUAL;
+    case OP_EQ:
+        return PR_EQUAL;
+    case OP_NEQ:
+        return PR_NOTEQUAL;
+    case T_LBRACKET:
+        return PR_LEFTBRACKET;
+    case T_RBRACKET:
+        return PR_RIGHTBRACKET;
+    case T_IDENTIFIER:
+    case T_INT:
+    case T_FLOAT:
+    case T_STRING:
+    case KW_NIL:
+        return PR_TERM;
+    case KW_THEN:
+    case T_EOL:
+    case T_EOF:
+    case KW_DO:
+        return PR_DOLLAR;
+    default:
+        return -1;
     }
-
 }
 
 int firstTokenTypeEnd(TokenType t)
 {
-    switch(t)
+    switch (t)
     {
-        case KW_THEN:
-        case T_EOL:
-        case T_EOF:
-        case KW_DO:
-            return 1;
-        default:
-            return 0;
+    case KW_THEN:
+    case T_EOL:
+    case T_EOF:
+    case KW_DO:
+        return 1;
+    default:
+        return 0;
     }
-
 }
 
 Token giveMeToken(int give_old_token, int *no_of_token, Token t, Token t2)
 {
-    if(give_old_token)
+    if (give_old_token)
     {
-        switch(*no_of_token)
+        switch (*no_of_token)
         {
-            case 0:
-                *no_of_token = *no_of_token + 1;
-                return t;
-            case 1:
-                *no_of_token = *no_of_token + 1;
-                return t2;
-            default:
-                return getToken();
+        case 0:
+            *no_of_token = *no_of_token + 1;
+            return t;
+        case 1:
+            *no_of_token = *no_of_token + 1;
+            return t2;
+        default:
+            return getToken();
         }
-
     }
     else
     {
