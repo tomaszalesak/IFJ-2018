@@ -35,7 +35,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
     // help token for generating code, help int for generating code
     Token tmpToken, tmpToken2;
-    int tmpInt, tmpInt2;
+
+    // help
+    int genResult;
 
     // if first token type is EOF or EOL or THEN, exit
     if (firstTokenTypeEnd(token.type))
@@ -126,7 +128,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                             DLInsertFirst(&stack, PR_E);
 
                             // set token type PREC_C
-                            stack.First->expressionToken.type = PREC_E;
+                            stack.First->expressionToken = tmpToken;
 
                             // todo generating: set token
                         }
@@ -158,7 +160,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                     DLInsertFirst(&stack, PR_E);
 
                                     // set token type PREC_C
-                                    stack.First->expressionToken.type = PREC_E;
+                                    stack.First->expressionToken = tmpToken;
 
                                     // todo generating: set token
                                 }
@@ -181,7 +183,13 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         tmpToken = handle->lptr->expressionToken;
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                        // todo generating
+                                        printf("Question %d, %d\n", tmpToken.type, tmpToken2.type);
+
+                                        // generating
+                                        genResult = gen_exp_MUL();
+                                        gen_exp_putArg(tmpToken);
+                                        gen_exp_putArg(tmpToken2);
+                                        gen_exp_finalize();
 
                                         fprintf(stderr, "E -> E * E\n");
                                         DLDeleteFirst(&stack);
@@ -194,6 +202,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->expressionToken.type = PREC_E;
 
                                         // todo generating: set token
+                                        stack.First->expressionToken.data = (void*)genResult;
 
                                         break;
                                     case PR_DIVISION:
@@ -203,7 +212,11 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         tmpToken = handle->lptr->expressionToken;
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                        // todo generating
+                                        // generating
+                                        genResult = gen_exp_DIV();
+                                        gen_exp_putArg(tmpToken);
+                                        gen_exp_putArg(tmpToken2);
+                                        gen_exp_finalize();
 
                                         fprintf(stderr, "E -> E / E\n");
                                         DLDeleteFirst(&stack);
@@ -216,17 +229,21 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         stack.First->expressionToken.type = PREC_E;
 
                                         // todo generating: set token
+                                        stack.First->expressionToken.data = (void*)genResult;
 
                                         break;
                                     case PR_PLUS:
                                         // ADDITION / CONCATENATION
-                                        
+
                                         // use tmpToken and tmpToken2 for generating code
                                         tmpToken = handle->lptr->expressionToken;
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                        // todo generating
-
+                                        // generating
+                                        genResult = gen_exp_ADD();
+                                        gen_exp_putArg(tmpToken);
+                                        gen_exp_putArg(tmpToken2);
+                                        gen_exp_finalize();
 
                                         fprintf(stderr, "E -> E + E\n");
                                         DLDeleteFirst(&stack);
@@ -238,18 +255,22 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         // set token type PREC_C
                                         stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating: set token
+                                        // generating: set token
+                                        stack.First->expressionToken.data = (void*)genResult;
 
                                         break;
                                     case PR_MINUS:
                                         // MINUS
-                                        
+
                                         // use tmpToken and tmpToken2 for generating code
                                         tmpToken = handle->lptr->expressionToken;
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                        // todo generating
-
+                                        // generating
+                                        genResult = gen_exp_SUB();
+                                        gen_exp_putArg(tmpToken);
+                                        gen_exp_putArg(tmpToken2);
+                                        gen_exp_finalize();
 
                                         fprintf(stderr, "E -> E - E\n");
                                         DLDeleteFirst(&stack);
@@ -261,12 +282,13 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         // set token type PREC_C
                                         stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating: set token
+                                        // generating: set token
+                                        stack.First->expressionToken.data = (void*)genResult;
 
                                         break;
                                     case PR_EQUAL:
                                         // EQUAL
-                                        
+
                                         // use tmpToken and tmpToken2 for generating code
                                         tmpToken = handle->lptr->expressionToken;
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
@@ -289,7 +311,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         break;
                                     case PR_NOTEQUAL:
                                         // NOT EQUAL
-                                        
+
                                         // use tmpToken and tmpToken2 for generating code
                                         tmpToken = handle->lptr->expressionToken;
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
@@ -313,7 +335,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         break;
                                     case PR_LESS:
                                         // LESS
-                                        
+
                                         // use tmpToken and tmpToken2 for generating code
                                         tmpToken = handle->lptr->expressionToken;
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
@@ -337,7 +359,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         break;
                                     case PR_LESSEQUAL:
                                         // LESS EQUAL
-                                        
+
                                         // use tmpToken and tmpToken2 for generating code
                                         tmpToken = handle->lptr->expressionToken;
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
@@ -366,7 +388,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
                                         // todo generating
-                                        
+
 
                                         fprintf(stderr, "E -> E >= E\n");
                                         DLDeleteFirst(&stack);
@@ -383,7 +405,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         break;
                                     case PR_GREATER:
                                         // GREATER
-                                        
+
                                         // use tmpToken and tmpToken2 for generating code
                                         tmpToken = handle->lptr->expressionToken;
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
@@ -482,6 +504,8 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
             }
         }
     }
+
+    gen_exp_result(genResult);
 
     // dispose stack
     DLDisposeList(&stack);
