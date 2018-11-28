@@ -96,8 +96,6 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
             if (b == PR_TERM)
             {
                 stack.First->expressionToken = token;
-                stack.First->useGenData = 0;
-                stack.First->genData = 0;
                 //fprintf(stderr, "%d\n", token.type);
             }
 
@@ -118,31 +116,19 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                     {
                         if (handle->lptr == stack.First)
                         {
-                            if (handle->lptr->useGenData)
-                            {
-                                // use tmpInt for generating code
-                                tmpInt = handle->lptr->genData;
+                            tmpToken = handle->lptr->expressionToken;
 
-                                // todo generating
-                            }
-                            else
-                            {
-                                // use tmpToken data for generating code
-                                tmpToken = handle->lptr->expressionToken;
-
-                                // todo generating
-                            }
+                            // todo generating
 
                             fprintf(stderr, "E -> T\n");
                             DLDeleteFirst(&stack);
                             DLDeleteFirst(&stack);
                             DLInsertFirst(&stack, PR_E);
 
-                            // set useGenData to TRUE
-                            stack.First->useGenData = 1;
+                            // set token type PREC_C
+                            stack.First->expressionToken.type = PREC_E;
 
-                            // todo generating set genData to generated variable in code
-                            // stack.First->genData = YOUR_GENERATED_INT;
+                            // todo generating: set token
                         }
                         else
                         {
@@ -160,20 +146,9 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                             case PR_LEFTBRACKET:
                                 if ((handle->lptr->lptr->precData == PR_E) && (handle->lptr->lptr->lptr->precData == PR_RIGHTBRACKET))
                                 {
-                                    if (handle->lptr->lptr->useGenData)
-                                    {
-                                        // use tmpInt for generating code
-                                        tmpInt = handle->lptr->lptr->genData;
+                                    tmpToken = handle->lptr->lptr->expressionToken;
 
-                                        // todo generating
-                                    }
-                                    else
-                                    {
-                                        // use tmpToken data for generating code
-                                        tmpToken = handle->lptr->lptr->expressionToken;
-
-                                        // todo generating
-                                    }
+                                    // todo generating
 
                                     fprintf(stderr, "E -> ( E )\n");
                                     DLDeleteFirst(&stack);
@@ -182,11 +157,10 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                     DLDeleteFirst(&stack);
                                     DLInsertFirst(&stack, PR_E);
 
-                                    // set useGenData to TRUE
-                                    stack.First->useGenData = 1;
+                                    // set token type PREC_C
+                                    stack.First->expressionToken.type = PREC_E;
 
-                                    // todo generating set genData to generated variable in code
-                                    // stack.First->genData = YOUR_GENERATED_INT;
+                                    // todo generating: set token
                                 }
                                 else
                                 {
@@ -202,48 +176,12 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                     {
                                     case PR_MULTIPLAY:
                                         // MULTIPLICATION
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                            }
-                                        }
+                                        // todo generating
 
                                         fprintf(stderr, "E -> E * E\n");
                                         DLDeleteFirst(&stack);
@@ -252,57 +190,20 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
 
                                         break;
                                     case PR_DIVISION:
                                         // DIVISION
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                            }
-                                        }
+                                        // todo generating
 
                                         fprintf(stderr, "E -> E / E\n");
                                         DLDeleteFirst(&stack);
@@ -311,57 +212,21 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
 
                                         break;
                                     case PR_PLUS:
                                         // ADDITION / CONCATENATION
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+                                        
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // todo generating
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                            }
-                                        }
 
                                         fprintf(stderr, "E -> E + E\n");
                                         DLDeleteFirst(&stack);
@@ -370,57 +235,21 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
 
                                         break;
                                     case PR_MINUS:
                                         // MINUS
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+                                        
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // todo generating
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                            }
-                                        }
 
                                         fprintf(stderr, "E -> E - E\n");
                                         DLDeleteFirst(&stack);
@@ -429,58 +258,21 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
 
                                         break;
                                     case PR_EQUAL:
                                         // EQUAL
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+                                        
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // todo generating
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                                
-                                            }
-                                        }
 
                                         fprintf(stderr, "E -> E == E\n");
                                         DLDeleteFirst(&stack);
@@ -489,58 +281,21 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
 
                                         break;
                                     case PR_NOTEQUAL:
                                         // NOT EQUAL
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+                                        
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // todo generating
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                                
-                                            }
-                                        }
 
                                         fprintf(stderr, "E -> E != E\n");
                                         DLDeleteFirst(&stack);
@@ -549,58 +304,22 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
+
 
                                         break;
                                     case PR_LESS:
                                         // LESS
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+                                        
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // todo generating
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                                
-                                            }
-                                        }
 
                                         fprintf(stderr, "E -> E < E\n");
                                         DLDeleteFirst(&stack);
@@ -609,58 +328,22 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
+
 
                                         break;
                                     case PR_LESSEQUAL:
                                         // LESS EQUAL
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+                                        
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // todo generating
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                                
-                                            }
-                                        }
 
                                         fprintf(stderr, "E -> E <= E\n");
                                         DLDeleteFirst(&stack);
@@ -669,58 +352,21 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
 
                                         break;
                                     case PR_GREATEREQUAL:
                                         // GREATER EQUAL
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                                
-                                            }
-                                        }
+                                        // todo generating
+                                        
 
                                         fprintf(stderr, "E -> E >= E\n");
                                         DLDeleteFirst(&stack);
@@ -729,58 +375,21 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
 
                                         break;
                                     case PR_GREATER:
                                         // GREATER
-                                        if (handle->lptr->useGenData)
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 1 1
-                                                // use tmpInt and tmpInt2 for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpInt2 = handle->lptr->lptr->lptr->genData;
+                                        
+                                        // use tmpToken and tmpToken2 for generating code
+                                        tmpToken = handle->lptr->expressionToken;
+                                        tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 1 0
-                                                // use tmpInt and tmpToken for generating code
-                                                tmpInt = handle->lptr->genData;
-                                                tmpToken = handle->lptr->lptr->lptr->expressionToken;
+                                        // todo generating
 
-                                                // todo generating
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (handle->lptr->lptr->lptr->useGenData)
-                                            {
-                                                // 0 1
-                                                // use tmpToken and tmpInt for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpInt = handle->lptr->lptr->lptr->genData;
-
-                                                // todo generating
-                                            }
-                                            else
-                                            {
-                                                // 0 0
-                                                // use tmpToken and tmpToken2 for generating code
-                                                tmpToken = handle->lptr->expressionToken;
-                                                tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
-
-                                                // todo generating
-                                                
-                                            }
-                                        }
 
                                         fprintf(stderr, "E -> E > E\n");
                                         DLDeleteFirst(&stack);
@@ -789,11 +398,10 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDeleteFirst(&stack);
                                         DLInsertFirst(&stack, PR_E);
 
-                                        // set useGenData to TRUE
-                                        stack.First->useGenData = 1;
+                                        // set token type PREC_C
+                                        stack.First->expressionToken.type = PREC_E;
 
-                                        // todo generating set genData to generated variable in code
-                                        // stack.First->genData = YOUR_GENERATED_INT;
+                                        // todo generating: set token
 
                                         break;
                                     default:
