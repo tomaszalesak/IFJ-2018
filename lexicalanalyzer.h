@@ -1,4 +1,3 @@
-#pragma once
 /*
 **	IFJ
 **	Lexical analysis
@@ -6,12 +5,12 @@
 **	Vojtěch Novotný - xnovot1f
 */
 
+#ifndef LEX_H
+#define LEX_H
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "string.h"
-
-#ifndef LEX_H
-#define LEX_H
 
 /// Enum defining different types of tokens.
 typedef enum {          // token.data for the token.type (empty means no data)
@@ -55,14 +54,16 @@ typedef enum {          // token.data for the token.type (empty means no data)
     BIF_LENGTH,
     BIF_SUBSTR,
     BIF_ORD,
-    BIF_CHR
+    BIF_CHR,
+    // Expression-Parser-Only Token types:
+    PREC_E
 } TokenType;
 
 
 typedef enum {
     E_INVALID,
     E_MEMORY,
-    E_NUMBER_TOO_BIG,
+    E_NUMBER_TOO_BIG
 } ErrorType;
 
 /// Token structure that is used as the return value of the the getToken function.
