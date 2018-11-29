@@ -453,7 +453,7 @@ Token getToken() {
 
             case AS_IDFUNC:
                 if (IS_TOKENEND(c)) {
-                    token.type = T_IDENTIFIER;
+                    token.type = T_FUNCTION;
                     (token.data) = strGetStr(&sBuffer);
                     oldC = c;
                     state = AS_DONE;
@@ -535,6 +535,10 @@ Token getToken() {
             case AS_COMMENT_BLOCK:
                 if (c == EOL)
                     state = AS_COMMENT_BLOCK_EOL;
+                else if (c == EOF) {
+                    token.type = T_EOF;
+                    state = AS_DONE;
+                }
                 break;
 
             case AS_COMMENT_BLOCK_EOL:
@@ -546,9 +550,15 @@ Token getToken() {
                         state = AS_EMPTY;
                         wasEOL = 1;
                     }
+                    else if (c == EOF) {
+                        token.type = T_EOF;
+                        state = AS_DONE;
+                    }
                     else
                         state = AS_ERROR;
                 }
+                else if (c == EOL)
+                    state = AS_COMMENT_BLOCK_EOL;
                 else
                     state = AS_COMMENT_BLOCK;
                 break;
@@ -557,6 +567,10 @@ Token getToken() {
                 if (c == EOL) {
                     state = AS_EMPTY;
                     wasEOL = 1;
+                }
+                else if (c == EOF) {
+                    token.type = T_EOF;
+                    state = AS_DONE;
                 }
                 break;
 
@@ -580,6 +594,6 @@ Token getToken() {
         //token.type = T_ERROR;
     }
 
-    tester(token);
+    //tester(token);
     return token;
 }
