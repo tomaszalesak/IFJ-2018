@@ -89,6 +89,9 @@ int ltsInsert(LTSNodePtr *RootPtr, string *K) {//, int type, int* i) {
                 //kluc najdeny, fail
             else if (strcmp(K->str, ((*RootPtr)->key.str)) == 0) {
                 //found = 1;
+                if (tmp != NULL) {
+                    (*RootPtr) = tmp;
+                }
                 return -1;
             }
         }
@@ -146,8 +149,8 @@ int ltsInsert(LTSNodePtr *RootPtr, string *K) {//, int type, int* i) {
  * Frees the memory allocated for LTS and strings
  * @param RootPtr - LTS
  */
-void ltsDelete(LTSNodePtr* RootPtr) {   // TODO check for SIGSEGV
-    if(*RootPtr != NULL) {
+void ltsDelete(LTSNodePtr *RootPtr) {   // TODO check for SIGSEGV
+    if (*RootPtr != NULL) {
         // rekurzivne odstranenie oboch podstromov
         ltsDelete(&((*RootPtr)->LPtr));
         ltsDelete(&((*RootPtr)->RPtr));
@@ -174,7 +177,7 @@ void ltsDelete(LTSNodePtr* RootPtr) {   // TODO check for SIGSEGV
  * @return -1 if the variable has already been inserted before
  * @return ERR_INTERNAL if there was an memory allocation problem
  */
-int gtsInsert (GTSNodePtr *RootPtr, string* K){
+int gtsInsert(GTSNodePtr *RootPtr, string *K) {
 
     GTSNodePtr tmp = (*RootPtr);        //uloženie ukazateľa na BVS
 
@@ -248,7 +251,7 @@ int gtsInsert (GTSNodePtr *RootPtr, string* K){
         }
     }
     //navratenie ukazatela na BVS
-    if (tmp != NULL){
+    if (tmp != NULL) {
         (*RootPtr) = tmp;
     }
     return SUCCESS;
@@ -261,7 +264,7 @@ int gtsInsert (GTSNodePtr *RootPtr, string* K){
  * @return pointer on the node containing variable K
  * @return NULL if the GTS is empty or variable K wasn't found
  */
-GTSNodePtr gtsSearch (GTSNodePtr RootPtr, string* K){
+GTSNodePtr gtsSearch(GTSNodePtr RootPtr, string *K) {
     if (RootPtr == NULL) {
         return NULL;
     } else {
@@ -288,9 +291,9 @@ GTSNodePtr gtsSearch (GTSNodePtr RootPtr, string* K){
  * @param type - variable type
  * @return EXIT_FAILURE if the variable isn't in LTS and exits
  */
-void ltsSetIdType (LTSNodePtr RootPtr, string* K, int type) {
+void ltsSetIdType(LTSNodePtr RootPtr, string *K, int type) {
     LTSNodePtr tmp = NULL;
-    if ((tmp = ltsSearch(RootPtr, K)) == NULL){
+    if ((tmp = ltsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign type to a nonexisting variable!\n");
         exit(ERR_UNDEF_REDEF);
     }
@@ -304,9 +307,9 @@ void ltsSetIdType (LTSNodePtr RootPtr, string* K, int type) {
  * @return type of variable (int)
  * @return EXIT_FAILURE if the variable isn't in LTS and exits
  */
-int ltsGetIdType (LTSNodePtr RootPtr, string* K) {
+int ltsGetIdType(LTSNodePtr RootPtr, string *K) {
     LTSNodePtr tmp = NULL;
-    if ((tmp = ltsSearch(RootPtr, K)) == NULL){
+    if ((tmp = ltsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Variable %s wasn't declared!\n", K->str);
         exit(ERR_UNDEF_REDEF);
     }
@@ -320,7 +323,7 @@ int ltsGetIdType (LTSNodePtr RootPtr, string* K) {
  * @param paramCount - number of function params
  * @returns EXIT_FAILURE if the function isn't in GTS and exits
  */
-void gtsSetParamCount (GTSNodePtr RootPtr, string *K, int paramCount) {
+void gtsSetParamCount(GTSNodePtr RootPtr, string *K, int paramCount) {
     GTSNodePtr tmp = NULL;
     if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign parameters count to a nonexisting function!\n");
@@ -336,7 +339,7 @@ void gtsSetParamCount (GTSNodePtr RootPtr, string *K, int paramCount) {
  * @return function params count
  * @returns EXIT_FAILURE if the function isn't in GTS and exits
  */
-int gtsGetParamCount (GTSNodePtr RootPtr, string *K) {
+int gtsGetParamCount(GTSNodePtr RootPtr, string *K) {
     GTSNodePtr tmp = NULL;
     if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign parameters count to a nonexisting function!\n");
@@ -350,7 +353,7 @@ int gtsGetParamCount (GTSNodePtr RootPtr, string *K) {
  * @param RootPtr - GTS
  * @param K - function name
  */
-void gtsSetDefined (GTSNodePtr RootPtr, string *K) {
+void gtsSetDefined(GTSNodePtr RootPtr, string *K) {
     GTSNodePtr tmp = NULL;
     if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign defined value to a nonexisting function!\n");
@@ -365,13 +368,13 @@ void gtsSetDefined (GTSNodePtr RootPtr, string *K) {
  * @param K - function name
  * @return 1 if the function was defined, otherwise 0
  */
-int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K) {
+int gtsCheckIfDefined(GTSNodePtr RootPtr, string *K) {
     GTSNodePtr tmp = NULL;
     if ((tmp = gtsSearch(RootPtr, K)) == NULL) {
         fprintf(stderr, "ERROR_SYMTAMBLE! Cannot assign defined value to a nonexisting function!\n");
         exit(ERR_UNDEF_REDEF);
     }
-    fprintf(stderr,"Function %s is %s!\n", tmp->key.str, tmp->defined ? "already defined" : "undefined");
+    fprintf(stderr, "Function %s is %s!\n", tmp->key.str, tmp->defined ? "already defined" : "undefined");
     return tmp->defined;
 }
 
@@ -379,8 +382,8 @@ int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K) {
  * Frees the memory allocated for GTS and strings
  * @param RootPtr - GTS
  */
-void gtsDelete(GTSNodePtr* RootPtr) {   //TODO check for SIGSEGV on merlin
-    if(*RootPtr != NULL) {
+void gtsDelete(GTSNodePtr *RootPtr) {   //TODO check for SIGSEGV on merlin
+    if (*RootPtr != NULL) {
         // rekurzivne odstranenie oboch podstromov
         gtsDelete(&((*RootPtr)->LPtr));
         gtsDelete(&((*RootPtr)->RPtr));
@@ -405,7 +408,7 @@ void gtsDelete(GTSNodePtr* RootPtr) {   //TODO check for SIGSEGV on merlin
  * @param token - token to transform
  * @return struct string
  */
-string createString (Token token){
+string createString(Token token) {
     string K;
     strInit(&K);
     strAddString(&K, (char *) token.data);
@@ -416,7 +419,7 @@ string createString (Token token){
  * Inserts Built in Functions into gts.
  * @param RootPtr - GTS
  */
-void insertBIF (GTSNodePtr *RootPtr) {
+void insertBIF(GTSNodePtr *RootPtr) {
     string k;
     strInit(&k);
 
@@ -478,4 +481,61 @@ void insertBIF (GTSNodePtr *RootPtr) {
     gtsSetParamCount(*RootPtr, &k, 0);
     strClear(&k);
 
+}
+
+void ltsPrecVarCheck (Token token, int* strings, int* ints) {
+    if (token.type == T_IDENTIFIER) {
+        string k;
+        strInit(&k);
+        k = createString(token);
+        if (ltsGetIdType(ltsMain, &k) == T_INT || ltsGetIdType(ltsMain, &k) == T_FLOAT)
+            (*ints)++;
+        if (ltsGetIdType(ltsMain, &k) == T_STRING)
+            (*strings)++;
+    }
+    if (token.type == T_FLOAT || token.type == T_INT)
+        (*ints)++;
+    if (token.type == T_STRING)
+        (*strings)++;
+    if ((*ints) > 0 && (*strings) > 0) {
+        semanticError(ERR_INCOMPATIBLE_TYPE, K, SYM_NONE, SYM_NONE);
+    }
+}
+
+//todo
+void semanticError(int errorCode, string k, int paramsCounter, int info) {
+    switch (errorCode) {
+
+        case ERR_UNDEF_REDEF :
+            switch (info) {
+
+                case SYM_FUNC_UNDEF:
+                    fprintf(stderr, "\n*** SEMANTIC ERROR! ***\nFunction %s is undefined!\n", k.str);
+                    compiler_exit(ERR_UNDEF_REDEF);
+                    break;
+                case SYM_FUNC_REDEF:
+                    fprintf(stderr, "\n*** SEMANTIC ERROR! ***\nFunction %s is already defined!\n", k.str);
+                    compiler_exit(ERR_UNDEF_REDEF);
+                    break;
+                case SYM_VAR:
+                    fprintf(stderr, "\n*** SEMANTIC ERROR! ***\nVariable %s isn't defined!\n", k.str);
+                    compiler_exit(ERR_UNDEF_REDEF);
+                    break;
+                default:
+                    break;
+            }
+            break;
+
+        case ERR_NO_OF_ARGS:
+            fprintf(stderr, "\n*** SEMANTIC ERROR! ***\nFunction %s expected %d parameters but %d were inserted!\n", k.str, gtsGetParamCount(gts, &k), paramsCounter);
+            compiler_exit(ERR_NO_OF_ARGS);
+            break;
+        case ERR_INCOMPATIBLE_TYPE:
+            fprintf(stderr, "\n*** SEMANTIC ERROR! ***\nIncompatible variable types!\n");
+            compiler_exit(ERR_INCOMPATIBLE_TYPE);
+            break;
+
+        default:
+            break;
+    }
 }

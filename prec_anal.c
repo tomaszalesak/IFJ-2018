@@ -12,55 +12,55 @@
 #include "symtable.h"
 
 
-Token prec_anal(Token t, Token t2, int give_me_old_tokens)
-{
+Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
     // init stack
     tDLList stack;
     DLInitList(&stack);
+
+    ///semantic
+    int ints = 0;
+    int strings = 0;
+    int *p_ints = &ints;
+    int *p_strings = &strings;
 
     // push dollar
     DLInsertFirst(&stack, PR_DOLLAR);
 
     // a = top
     tDLElemPtr top_term = topElem(&stack);
-    if(top_term == NULL)
-    {
+    if (top_term == NULL) {
         // dispose stack
         DLDisposeList(&stack);
         compiler_exit(ERR_INTERNAL);
     }
     int a = top_term->data;
 
+
     // get token
     int token_no = 0;
     Token token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
 
     // if first token type is EOF or EOL or THEN, exit
-    if(firstTokenTypeEnd(token.type))
-    {
+    if (firstTokenTypeEnd(token.type)) {
         // dispose stack
         DLDisposeList(&stack);
         compiler_exit(ERR_SYNTAX);
     }
 
-    // todo tabulka
-
-    // end of todo
+    ///semantic
+    ltsPrecVarCheck (token, p_strings, p_ints);
 
     // b = token from scanner
     int b = tokenTypeToInt(token.type);
-    if(b == -1)
-    {
+    if (b == -1) {
         // dispose stack
         DLDisposeList(&stack);
         compiler_exit(ERR_SYNTAX);
     }
 
     // if '=' there cannot be comparing, exit
-    if(give_me_old_tokens)
-    {
-        if(isComparing(b))
-        {
+    if (give_me_old_tokens) {
+        if (isComparing(b)) {
             // dispose stack
             DLDisposeList(&stack);
             compiler_exit(ERR_INCOMPATIBLE_TYPE);
@@ -69,18 +69,19 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
     tDLElemPtr handle = NULL;
 
-    while((a != PR_DOLLAR) || (b != PR_DOLLAR))
-    {
-        switch (prec_table[a][b])
-        {
+    while ((a != PR_DOLLAR) || (b != PR_DOLLAR)) {
+
+        switch (prec_table[a][b]) {
             case '=':
                 // push b
                 DLInsertFirst(&stack, b);
 
                 // get token
                 token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
-                // todo tabulka
 
+                // todo tabulka
+                ///semantic
+                ltsPrecVarCheck (token, p_strings, p_ints);
                 // end of todo
 
                 break;
@@ -94,61 +95,49 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
                 // get token
                 token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
-                // todo tabulka
 
+                // todo tabulka
+                ///semantic
+                ltsPrecVarCheck (token, p_strings, p_ints);
                 // end of todo
 
                 break;
             case '>':
                 handle = findHandle(&stack);
-                if(handle != NULL)
-                {
-                    if(handle->lptr != NULL)
-                    {
-                        if(handle->lptr->data == PR_TERM)
-                        {
-                            if(handle->lptr == stack.First)
-                            {
+                if (handle != NULL) {
+                    if (handle->lptr != NULL) {
+                        if (handle->lptr->data == PR_TERM) {
+                            if (handle->lptr == stack.First) {
                                 fprintf(stderr, "E -> T\n");
                                 DLDeleteFirst(&stack);
                                 DLDeleteFirst(&stack);
                                 DLInsertFirst(&stack, PR_E);
-                            }
-                            else
-                            {
+                            } else {
                                 // dispose stack
                                 DLDisposeList(&stack);
                                 compiler_exit(ERR_SYNTAX);
                             }
-                        }
-                        else
-                        {
-                            if((handle->lptr->lptr != NULL) && (handle->lptr->lptr->lptr == stack.First))
-                            {
-                                switch (handle->lptr->data)
-                                {
+                        } else {
+                            if ((handle->lptr->lptr != NULL) && (handle->lptr->lptr->lptr == stack.First)) {
+                                switch (handle->lptr->data) {
                                     case PR_LEFTBRACKET:
-                                        if((handle->lptr->lptr->data == PR_E) && (handle->lptr->lptr->lptr->data == PR_RIGHTBRACKET))
-                                        {
+                                        if ((handle->lptr->lptr->data == PR_E) &&
+                                            (handle->lptr->lptr->lptr->data == PR_RIGHTBRACKET)) {
                                             fprintf(stderr, "E -> ( E )\n");
                                             DLDeleteFirst(&stack);
                                             DLDeleteFirst(&stack);
                                             DLDeleteFirst(&stack);
                                             DLDeleteFirst(&stack);
                                             DLInsertFirst(&stack, PR_E);
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             // dispose stack
                                             DLDisposeList(&stack);
                                             compiler_exit(ERR_SYNTAX);
                                         }
                                         break;
                                     case PR_E:
-                                        if(handle->lptr->lptr->lptr->data == PR_E)
-                                        {
-                                            switch (handle->lptr->lptr->data)
-                                            {
+                                        if (handle->lptr->lptr->lptr->data == PR_E) {
+                                            switch (handle->lptr->lptr->data) {
                                                 case PR_MULTIPLAY:
                                                     fprintf(stderr, "E -> E * E\n");
                                                     DLDeleteFirst(&stack);
@@ -234,9 +223,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                                     DLDisposeList(&stack);
                                                     compiler_exit(ERR_SYNTAX);
                                             }
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             // dispose stack
                                             DLDisposeList(&stack);
                                             compiler_exit(ERR_SYNTAX);
@@ -248,24 +235,18 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         DLDisposeList(&stack);
                                         compiler_exit(ERR_SYNTAX);
                                 }
-                            }
-                            else
-                            {
+                            } else {
                                 // dispose stack
                                 DLDisposeList(&stack);
                                 compiler_exit(ERR_SYNTAX);
                             }
                         }
-                    }
-                    else
-                    {
+                    } else {
                         // dispose stack
                         DLDisposeList(&stack);
                         compiler_exit(ERR_SYNTAX);
                     }
-                }
-                else
-                {
+                } else {
                     // dispose stack
                     DLDisposeList(&stack);
                     compiler_exit(ERR_SYNTAX);
@@ -279,8 +260,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
         // a = top
         top_term = topElem(&stack);
-        if(top_term == NULL)
-        {
+        if (top_term == NULL) {
             // dispose stack
             DLDisposeList(&stack);
             compiler_exit(ERR_INTERNAL);
@@ -289,18 +269,15 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
         // b = token from scanner
         b = tokenTypeToInt(token.type);
-        if(b == -1)
-        {
+        if (b == -1) {
             // dispose stack
             DLDisposeList(&stack);
             compiler_exit(ERR_SYNTAX);
         }
 
         // if '=' there cannot be comparing, exit
-        if(give_me_old_tokens)
-        {
-            if(isComparing(b))
-            {
+        if (give_me_old_tokens) {
+            if (isComparing(b)) {
                 // dispose stack
                 DLDisposeList(&stack);
                 compiler_exit(ERR_INCOMPATIBLE_TYPE);
@@ -314,16 +291,13 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
     return token;
 }
 
-tDLElemPtr topElem(tDLList *s)
-{
+tDLElemPtr topElem(tDLList *s) {
     DLFirst(s);
     int i = -1;
 
-    while (DLActive(s))
-    {
+    while (DLActive(s)) {
         DLCopy(s, &i);
-        if(isTerminal(i))
-        {
+        if (isTerminal(i)) {
             return s->Act;
         }
         DLSucc(s);
@@ -334,16 +308,13 @@ tDLElemPtr topElem(tDLList *s)
 
 }
 
-tDLElemPtr findHandle(tDLList *s)
-{
+tDLElemPtr findHandle(tDLList *s) {
     DLFirst(s);
     int i = -1;
 
-    while (DLActive(s))
-    {
+    while (DLActive(s)) {
         DLCopy(s, &i);
-        if(i == PR_HANDLE)
-        {
+        if (i == PR_HANDLE) {
             return s->Act;
         }
         DLSucc(s);
@@ -353,8 +324,8 @@ tDLElemPtr findHandle(tDLList *s)
     return NULL;
 }
 
-int isTerminal(int t){
-    switch(t){
+int isTerminal(int t) {
+    switch (t) {
         case PR_PLUS:
         case PR_MINUS:
         case PR_MULTIPLAY:
@@ -375,8 +346,8 @@ int isTerminal(int t){
     }
 }
 
-int isComparing(int t){
-    switch(t){
+int isComparing(int t) {
+    switch (t) {
         case PR_LESS:
         case PR_LESSEQUAL:
         case PR_GREATER:
@@ -389,10 +360,8 @@ int isComparing(int t){
     }
 }
 
-int tokenTypeToInt(TokenType t)
-{
-    switch(t)
-    {
+int tokenTypeToInt(TokenType t) {
+    switch (t) {
         case OP_ADD:
             return PR_PLUS;
         case OP_SUB:
@@ -400,7 +369,7 @@ int tokenTypeToInt(TokenType t)
         case OP_MUL:
             return PR_MULTIPLAY;
         case OP_DIV:
-            return  PR_DIVISION;
+            return PR_DIVISION;
         case OP_LT:
             return PR_LESS;
         case OP_LTE:
@@ -434,10 +403,8 @@ int tokenTypeToInt(TokenType t)
 
 }
 
-int firstTokenTypeEnd(TokenType t)
-{
-    switch(t)
-    {
+int firstTokenTypeEnd(TokenType t) {
+    switch (t) {
         case KW_THEN:
         case T_EOL:
         case T_EOF:
@@ -449,12 +416,9 @@ int firstTokenTypeEnd(TokenType t)
 
 }
 
-Token giveMeToken(int give_old_token, int *no_of_token, Token t, Token t2)
-{
-    if(give_old_token)
-    {
-        switch(*no_of_token)
-        {
+Token giveMeToken(int give_old_token, int *no_of_token, Token t, Token t2) {
+    if (give_old_token) {
+        switch (*no_of_token) {
             case 0:
                 *no_of_token = *no_of_token + 1;
                 return t;
@@ -465,9 +429,7 @@ Token giveMeToken(int give_old_token, int *no_of_token, Token t, Token t2)
                 return getToken();
         }
 
-    }
-    else
-    {
+    } else {
         return getToken();
     }
 }

@@ -11,7 +11,7 @@
 #include "errors.h"
 #include "generator.h"
 
-#define PH_MAIN_TOKEN -1        //MAIN already took TOKEN, dont take another one
+#define PH_MAIN_TOKEN (-1)        //MAIN already took TOKEN, dont take another one
 #define PH_ELSE 0               //ELSE is valid now
 #define PH_END 2                //END is valid now
 #define PH_MAIN 8               //Get back to main
@@ -39,11 +39,7 @@ void parse_arg_list_switcher(int print_checker);
 
 Token token;// TODO extend to my .h or not?
 int paramsCounter = 0;
-GTSNodePtr gts;
-string K;
-LTSNodePtr ltsMain;
-LTSNodePtr ltsFunc;
-int i=0;
+int i = 0;
 
 //Parse for <main> LL
 void parse_main(int x) {
@@ -65,7 +61,7 @@ void parse_main(int x) {
 
             //Unique options for <main> checked, now goes into <stat> to check rest
         default :
-            x=parse_st_list(PH_MAIN_TOKEN);
+            x = parse_st_list(PH_MAIN_TOKEN);
             break;
     }
     parse_main(x);//Calling myself, stopped by T_EOF or error EXIT
@@ -120,31 +116,50 @@ void parse_function() {//3// TODO Define function with no brackets?
 //actual_position_helper used for check if get new token and go back to main(4) and if its in if(0) or in else(2) part
 int parse_st_list(int actual_position_helper) {
 
-     if (actual_position_helper == PH_MAIN) {
-         return 0;
-     }
+    if (actual_position_helper == PH_MAIN) {
+        return 0;
+    }
     if (actual_position_helper != PH_MAIN_TOKEN) {
         token = getToken();
     } else {
         actual_position_helper = PH_MAIN;
     }
+
+
     Token token_old = token;
     Token token_top = token;
     switch (token.type) {
 
         case T_IDENTIFIER:// 16 17 27
 
-            //semantic
-            K = createString(token);
-            if (ltsInsert(&ltsMain, &K) == SUCCESS)
-                gen_defvar(token_top);
-            //gtsSearch(gts, &K);
+            /*//semantic
+            string id;
+            strInit(&id);
+            id = createString(token);
+            if (gtsSearch(gts, &id) != NULL) {
+                fprintf(stderr, "Semantic Error! Can't redefine function %s as variable!\n", id.str);
+                strFree(&id);
+                compiler_exit(ERR_UNDEF_REDEF);
+            }
+            strFree(&id);
+             */
 
             token = getToken();
 
             switch (token.type) {
 
                 case OP_ASS://16 27
+                    //semantic
+                    K = createString(token_old);
+                    ///
+                    if (gtsSearch(gts, &K) != NULL) {
+                        //todo check error code
+                        fprintf(stderr, "Semantic Error! Can't redefine function %s as variable!\n", K.str);
+                        compiler_exit(ERR_UNDEF_REDEF);
+                    }
+                    if (ltsInsert(&ltsMain, &K) == SUCCESS)
+                        gen_defvar(token_top);
+                    //gtsSearch(gts, &K);
                     token = getToken();
                     token_old = token;
                     switch (token.type) {
@@ -258,8 +273,27 @@ int parse_st_list(int actual_position_helper) {
 
                 case T_EOL:// 17
                     //token = getToken();
+                    ///call without = or (
+                    //semantic
+                {
+                    string k;
+                    k = createString(token_old);
+                    //check if it is function with zero params
+                    if (gtsSearch(gts, &k) != NULL) {
+                        if (gtsCheckIfDefined(gts, &k) == 1) {
+                            if (gtsGetParamCount(gts, &k) != 0) {
+                                semanticError(ERR_NO_OF_ARGS, k, paramsCounter, SYM_NONE);
+                            }
+                        } //todo add error and exit?
+                    }
+                    if (ltsGetIdType(ltsMain, &k) == -1) {
+                        fprintf(stderr, "Symtable ERROR! Undefined variable %s!\n", k.str);
+                        compiler_exit(ERR_UNDEF_REDEF);
+                    }
+
                     parse_st_list(actual_position_helper);
                     break;
+                }
 
                 case OP_ADD:
                 case OP_SUB:
@@ -270,12 +304,14 @@ int parse_st_list(int actual_position_helper) {
                     break;
 
                 default://11 12
+                    K = createString(token_old);
                     parse_arg_list_switcher(0);
                     gen_call(token_old);
                     gen_getretval(token_top);
                     parse_st_list(actual_position_helper);
                     break;
             }
+
             break;
 
         case T_EOL:// 6
@@ -296,9 +332,9 @@ int parse_st_list(int actual_position_helper) {
                 gen_if_endLabel(elseID);
                 //if (actual_position_helper != PH_MAIN) {
                 parse_st_list(actual_position_helper);//TODO FIX IT HERE
-               // }else {
+                // }else {
                 //    return 1;
-               // }
+                // }
             } else {
                 compiler_exit(ERR_SYNTAX);
             }
@@ -432,6 +468,12 @@ int parse_param() {//61
     } else if (token.type != T_IDENTIFIER) { //TODO add checks for string int float if(ifValid)
         compiler_exit(ERR_SYNTAX);
     }
+    //semantic check for function!=parameter
+    K = createString(token);
+    if (gtsSearch(gts, &K) != NULL) {
+        fprintf(stderr, "Semantic Error! Cannot redefine function %s as variable!\n", K.str);
+        compiler_exit(ERR_UNDEF_REDEF);
+    }
     gen_parameter(token, GEN_COUNTER_ADD);
     paramsCounter++;
     return 0;
@@ -480,6 +522,17 @@ void parse_arg_list_switcher(int print_checker) {
         gen_argument(token, 1);
         //Call function for <arg-list2>
         parse_arg_list2();//48,49
+
+        //added for semantic analysis
+        //check if the function call has correct number of parameters
+        if (print_checker != 1) {
+            if (gtsGetParamCount(gts, &K) != paramsCounter) {
+                fprintf(stderr,
+                        "ERROR! Bad number of arguments for function %s!\nExpected %d parameters but %d have been inserted.\n",
+                        K.str, gtsGetParamCount(gts, &K), paramsCounter);
+                exit(ERR_NO_OF_ARGS);
+            }
+        }
         //solves BIF without brackets (hopefully)
         paramsCounter = 0;
     } else if (print_checker == 1) {//35
@@ -509,6 +562,15 @@ int parse_arg(int token_type) {
     switch (token.type) {
         case T_IDENTIFIER://51
             paramsCounter++;
+            string id;
+            strInit(&id);
+            id = createString(token);
+            if (ltsGetIdType(ltsMain, &id) == -1) {
+                fprintf(stderr, "Semantic Error! Variable %s is undeclared!\n", id.str);
+                strFree(&id);
+                compiler_exit(ERR_UNDEF_REDEF);
+            }
+            strFree(&id);
 
             //semantic BIF params check TODO put it onto function maybe?!
             //BIF chr
@@ -773,7 +835,7 @@ void parse_arg_list2b() {
 int main() {
     gtsInit(&gts);
     ltsInit(&ltsMain);
-    ltsInit(&ltsFunc);
+    ltsInit(&ltsTmp);
     insertBIF(&gts);
     // init stack
     tDLList func_stack;

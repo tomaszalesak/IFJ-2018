@@ -23,20 +23,15 @@
 /*#include "scanner.h"*/
 
 /* chybove hlasenia */
-#define ERROR_INSERTED             1  // chyba pri vkladani do TS
 
 #define  SUCCESS                   0  //  překlad proběhl bez chyb 1
-// chyba v programu v rámci lexikální analýzy (chybná struktura aktuálního lexému)
-#define  ERROR_LEX                 1
-// chyba v programu v rámci syntaktické analýzy (chybná syntaxe programu)
-#define  SYN_ERR                   2
-#define  SEM_ERR                   3   // sémantická chyba v programu
-// sémantická chyba typové kompatibility v aritmetických, řetězcových a relačních výrazech
 #define  ERR_INCOMPATIBLE_TYPE     4
-#define  ERR_SEMANTIC              6   // ostatne sémantické chyby
-#define  INT_ERR                   99  // interna chyba prekladača
 
-#define SIZE            10
+#define SYM_NONE (-1)  //no need for additional info
+#define SYM_FUNC_UNDEF 0 //for semantic error messages of functions -> undefined
+#define SYM_FUNC_REDEF 1 //for semantic error messages of functions -> redefined
+#define SYM_VAR 2  //for semantic error messages of variables
+
 
 
 typedef struct ts_var{
@@ -59,6 +54,11 @@ typedef struct GTSNode{
     struct GTSNode * LPtr, *RPtr;   ///pointers to child nodes
 } *GTSNodePtr;
 
+
+LTSNodePtr ltsMain;
+LTSNodePtr ltsTmp;
+GTSNodePtr gts;
+string K;
 //typedef  LTSNode tLTS;
 
 typedef struct {
@@ -97,6 +97,10 @@ int gtsCheckIfDefined (GTSNodePtr RootPtr, string *K);
 void gtsDelete(GTSNodePtr* RootPtr);
 
 void insertBIF (GTSNodePtr *RootPtr);
+
+void ltsPrecVarCheck (Token token, int *strings, int *ints);
+
+void semanticError(int errorCode, string k, int paramsCounter, int info);
 
 string createString (Token token);
 
