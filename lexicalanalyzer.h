@@ -16,6 +16,7 @@
 typedef enum {          // token.data for the token.type (empty means no data)
     T_ERROR, // = 0,
 	T_IDENTIFIER,       // string containing the name
+	T_FUNCTION,         // string containing the name
 	T_INT,              // int containing int literal value
 	T_FLOAT,            // float containing float literal value
 	T_STRING,           // char* containing string literal value
@@ -25,7 +26,7 @@ typedef enum {          // token.data for the token.type (empty means no data)
 	T_EOL,
 	T_EOF,
 	// Keywords:
-    KW_DEF, // = 10,
+    KW_DEF, // = 11,
     KW_DO,
     KW_ELSE,
     KW_END,
@@ -35,7 +36,7 @@ typedef enum {          // token.data for the token.type (empty means no data)
     KW_THEN,
     KW_WHILE,
     // Operators:
-    OP_ADD, // = 19,
+    OP_ADD, // = 20,
     OP_SUB,
     OP_MUL,
     OP_DIV,
@@ -47,7 +48,7 @@ typedef enum {          // token.data for the token.type (empty means no data)
     OP_NEQ,
     OP_ASS,
     // Built-in Functions
-    BIF_INPUTS, // = 30,
+    BIF_INPUTS, // = 31,
     BIF_INPUTI,
     BIF_INPUTF,
     BIF_PRINT,
@@ -75,5 +76,7 @@ typedef struct {
 /// Reads a sequence of characters from STDIN that corresponds to one word of the IFJ2018 language.
 /// returns     Token structure that contains information about the word.
 Token getToken();
+
+void tester(Token token);
 
 #endif // !LEX_H
