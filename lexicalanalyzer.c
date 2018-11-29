@@ -453,7 +453,7 @@ Token getToken() {
 
             case AS_IDFUNC:
                 if (IS_TOKENEND(c)) {
-                    token.type = T_IDENTIFIER;
+                    token.type = T_FUNCTION;
                     (token.data) = strGetStr(&sBuffer);
                     oldC = c;
                     state = AS_DONE;
@@ -594,6 +594,6 @@ Token getToken() {
         //token.type = T_ERROR;
     }
 
-    tester(token);
+    //tester(token);
     return token;
 }
