@@ -35,7 +35,6 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
     }
     int a = top_term->data;
 
-
     // get token
     int token_no = 0;
     Token token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
@@ -139,7 +138,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                         if (handle->lptr->lptr->lptr->data == PR_E) {
                                             switch (handle->lptr->lptr->data) {
                                                 case PR_MULTIPLAY:
-                                                    fprintf(stderr, "E -> E * E\n");
+                                                    //fprintf(stderr, "E -> E * E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -147,7 +146,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_DIVISION:
-                                                    fprintf(stderr, "E -> E / E\n");
+                                                    //fprintf(stderr, "E -> E / E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -155,7 +154,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_PLUS:
-                                                    fprintf(stderr, "E -> E + E\n");
+                                                    //fprintf(stderr, "E -> E + E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -163,7 +162,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_MINUS:
-                                                    fprintf(stderr, "E -> E - E\n");
+                                                    //fprintf(stderr, "E -> E - E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -171,7 +170,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_EQUAL:
-                                                    fprintf(stderr, "E -> E == E\n");
+                                                    //fprintf(stderr, "E -> E == E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -179,7 +178,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_NOTEQUAL:
-                                                    fprintf(stderr, "E -> E != E\n");
+                                                    //fprintf(stderr, "E -> E != E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -187,7 +186,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_LESS:
-                                                    fprintf(stderr, "E -> E < E\n");
+                                                    //fprintf(stderr, "E -> E < E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -195,7 +194,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_LESSEQUAL:
-                                                    fprintf(stderr, "E -> E <= E\n");
+                                                    //fprintf(stderr, "E -> E <= E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -203,7 +202,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_GREATEREQUAL:
-                                                    fprintf(stderr, "E -> E >= E\n");
+                                                    //fprintf(stderr, "E -> E >= E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -211,7 +210,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
                                                     DLInsertFirst(&stack, PR_E);
                                                     break;
                                                 case PR_GREATER:
-                                                    fprintf(stderr, "E -> E > E\n");
+                                                    //fprintf(stderr, "E -> E > E\n");
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
                                                     DLDeleteFirst(&stack);
@@ -287,7 +286,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens) {
 
     // dispose stack
     DLDisposeList(&stack);
-    fprintf(stderr, "SUCCESS\n");
+    //fprintf(stderr, "SUCCESS\n");
     return token;
 }
 
@@ -303,7 +302,7 @@ tDLElemPtr topElem(tDLList *s) {
         DLSucc(s);
     }
 
-    fprintf(stderr, "NO TOP FOUND\n");
+    //fprintf(stderr, "NO TOP FOUND\n");
     return NULL;
 
 }
@@ -320,7 +319,7 @@ tDLElemPtr findHandle(tDLList *s) {
         DLSucc(s);
     }
 
-    fprintf(stderr, "NO HANDLE FOUND\n");
+    //fprintf(stderr, "NO HANDLE FOUND\n");
     return NULL;
 }
 
