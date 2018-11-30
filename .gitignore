@@ -1,5 +1,9 @@
-# our binary
-test
+# our project
+ifj2018
+ic18int
+*.prg
+*.code
+*.output
 
 # VSC
 *.vscode
@@ -39,7 +43,7 @@ test
 
 # Executables
 *.exe
-*.out
+#*.out
 *.app
 *.i*86
 *.x86_64

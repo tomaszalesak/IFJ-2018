@@ -1,0 +1,10 @@
+# vsechny klicova slova
+def
+do
+else
+end
+if
+not
+nil
+then
+while

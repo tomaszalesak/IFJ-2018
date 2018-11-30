@@ -11,8 +11,14 @@ ifj2018: $(OBJECTS)
 %.o: %.c
 	gcc $(CFLAGS) -c $^ -o $@
 
-test:
-	./tests/script.sh
+test: all
+	./tests/colorful_script_no_input.sh
+
+exampletest: all
+	./tests/test_just_example.sh
+
+schooltest: all
+	./tests/test_from_school.sh
 
 clean:
 	rm *.o $(PROGRAMS)
