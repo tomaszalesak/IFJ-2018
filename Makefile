@@ -1,15 +1,18 @@
 CFLAGS = -Wall -std=c99 -pedantic -lm
 SOURCES = $(wildcard *.c)
 OBJECTS = $(SOURCES:.c=.o)
-PROGRAMS = test
+PROGRAMS = ifj2018
 
-all: test
+all: ifj2018
 
-test: $(OBJECTS)
+ifj2018: $(OBJECTS)
 	gcc $(CFLAGS) $^ -o $@
 
 %.o: %.c
 	gcc $(CFLAGS) -c $^ -o $@
+
+test:
+	./tests/script.sh
 
 clean:
 	rm *.o $(PROGRAMS)
