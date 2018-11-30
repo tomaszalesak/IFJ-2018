@@ -168,7 +168,7 @@ void gen_if_cmpResult() {
     int resultID = gen_uniqueID_last();
     int thenID = gen_uniqueID_next();
     int elseID = gen_uniqueID_next();
-    printf("JUMPIFEQ IF%%then%%%x LF@IF%%%x bool@true\n", thenID, resultID);
+    printf("JUMPIFEQ IF%%then%%%x LF@IF%%result%%%x bool@true\n", thenID, resultID);
     printf("JUMP IF%%else%%%x\n", elseID);
     printf("LABEL IF%%then%%%x\n", thenID);
 }
@@ -205,7 +205,7 @@ void gen_while_doLabel() {
 void gen_while_cmpResult() {
     int resultID = gen_uniqueID_last();
     int endID = gen_uniqueID_next();
-    printf("JUMPIFEQ WHILE%%end%%%x LF@WHILE%%%x bool@false\n", endID, resultID);
+    printf("JUMPIFEQ WHILE%%end%%%x LF@WHILE%%result%%%x bool@false\n", endID, resultID);
 }
 
 /*
@@ -216,6 +216,165 @@ void gen_while_cmpResult() {
 void gen_while_endLabel(int endID, int doID) {
     printf("JUMP WHILE%%do%%%x\n", doID);
     printf("LABEL WHILE%%end%%%x\n", endID);
+}
+
+// Expression Code Generation
+// ==========================
+
+/*
+ * Generates code for one argument of an expression.
+ * @param token - Token containing information about the argument.
+ */
+void gen_exp_putArg(Token token) {
+    switch (token.type) {
+        case T_IDENTIFIER:
+            printf("LF@%s ", (char*)(token.data));
+            break;
+        case T_INT:
+            printf("int@%d ", *(int*)(token.data));
+            break;
+        case T_FLOAT:
+            printf("float@%f ", *(float*)(token.data));
+            break;
+        case T_STRING:
+            printf("string@%s ", (char*)(token.data));
+            break;
+        case PREC_E:
+            printf("LF@%%tmp%%%x ", (int)(token.data));
+            break;
+        default:
+            compiler_exit(ERR_INTERNAL);
+            break;
+    }
+}
+
+/*
+ * Generates a newline at the end of an expression.
+ */
+void gen_exp_finalize() {
+    printf("\n");
+}
+
+/*
+ * Generates beginning code for a "x = y * z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_MUL() {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%tmp%%%x\n", result);
+    printf("MUL LF@%%tmp%%%x ", result);
+
+    return result;
+}
+
+/*
+ * Generates beginning code for a "x = y / z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_DIV() {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%tmp%%%x\n", result);
+    printf("DIV LF@%%tmp%%%x ", result);
+
+    return result;
+}
+
+/*
+ * Generates beginning code for a "x = y + z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_ADD() {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%tmp%%%x\n", result);
+    printf("ADD LF@%%tmp%%%x ", result);
+
+    return result;
+}
+
+/*
+ * Generates beginning code for a "x = y - z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_SUB() {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%tmp%%%x\n", result);
+    printf("SUB LF@%%tmp%%%x ", result);
+
+    return result;
+}
+
+/*
+ * Generates the final result variable of one line of code.
+ */
+void gen_exp_result(int tmp) {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%result%%%x\n", result);
+    printf("MOVE LF@%%result%%%x LF@%%tmp%%%x\n", result, tmp);
+}
+
+/*
+ * Generates beginning code for a "x = y == z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_EQ() {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%tmp%%%x\n", result);
+    printf("EQ LF@%%tmp%%%x ", result);
+
+    return result;
+}
+
+/*
+ * Generates beginning code for a "x = !z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_NOT() {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%tmp%%%x\n", result);
+    printf("NOT LF@%%tmp%%%x ", result);
+
+    return result;
+}
+
+/*
+ * Generates beginning code for a "x = y < z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_LT() {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%tmp%%%x\n", result);
+    printf("LT LF@%%tmp%%%x ", result);
+
+    return result;
+}
+
+/*
+ * Generates beginning code for a "x = y > z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_GT() {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%tmp%%%x\n", result);
+    printf("GT LF@%%tmp%%%x ", result);
+
+    return result;
 }
 
 

@@ -11,6 +11,7 @@
 #include <string.h>
 #include "prec_dl.h"
 #include "lexicalanalyzer.h"
+#include "generator.h"
 
 #define PREC_TABLE_SIZE 14
 
@@ -37,7 +38,7 @@
 
 static const char prec_table [PREC_TABLE_SIZE][PREC_TABLE_SIZE] = {
 
-/*      		 +   -   *   /   <  <=   >  >=  ==  !=   (   )   T   $
+//      		 +   -   *   /   <  <=   >  >=  ==  !=   (   )   T   $
 /* 0 +  */	{ 	'>','>','<','<','>','>','>','>','>','>','<','>','<','>'	},
 /* 1 -  */	{	'>','>','<','<','>','>','>','>','>','>','<','>','<','>'	},
 /* 2 *  */	{	'>','>','>','>','>','>','>','>','>','>','<','>','<','>'	},
@@ -65,3 +66,4 @@ int firstTokenTypeEnd(TokenType);
 int isComparing(int);
 
 #endif //PREC_AN_PREC_ANAL_H
+
