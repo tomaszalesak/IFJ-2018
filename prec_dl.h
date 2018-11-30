@@ -10,10 +10,12 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include "lexicalanalyzer.h"
 
 
 typedef struct tDLElem {                 /* prvek dvousměrně vázaného seznamu */
-    int data;                                            /* užitečná data */
+    int precData;
+    Token expressionToken;                                          /* užitečná data */
     struct tDLElem *lptr;          /* ukazatel na předchozí prvek seznamu */
     struct tDLElem *rptr;        /* ukazatel na následující prvek seznamu */
 } *tDLElemPtr;

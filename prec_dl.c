@@ -39,7 +39,7 @@ void print_elements_of_list(tDLList TL)	{
     fprintf(stderr, "-----------------");
 
     while (TempList.First!=NULL)	{
-        fprintf(stderr, "\n \t%d",TempList.First->data);
+        fprintf(stderr, "\n \t%d",TempList.First->precData);
         if ((TempList.First==TL.Act) && (TL.Act!=NULL))
             fprintf(stderr, "\t <= toto je aktivní prvek ");
         TempList.First=TempList.First->rptr;
@@ -52,7 +52,7 @@ void DLError() {
 ** Vytiskne upozornění na to, že došlo k chybě.
 ** Tato funkce bude volána z některých dále implementovaných operací.
 **/
-    fprintf(stderr, "*ERROR* The program has performed an illegal operation.\n");
+    //fprintf(stderr, "*ERROR* The program has performed an illegal operation.\n");
     exit(ERR_INTERNAL);
 }
 
@@ -115,7 +115,7 @@ void DLInsertFirst (tDLList *L, int val) {
             return;
         }
 
-        p->data = val;
+        p->precData = val;
         p->rptr = L->First;
         p->lptr = NULL;
 
@@ -153,7 +153,7 @@ void DLInsertLast(tDLList *L, int val) {
             return;
         }
 
-        p->data = val;
+        p->precData = val;
         p->rptr = NULL;
         p->lptr = L->Last;
 
@@ -205,7 +205,7 @@ void DLCopyFirst (tDLList *L, int *val) {
 
         else
         {
-            *val = L->First->data;
+            *val = L->First->precData;
         }
     }
 }
@@ -224,7 +224,7 @@ void DLCopyLast (tDLList *L, int *val) {
 
         else
         {
-            *val = L->Last->data;
+            *val = L->Last->precData;
         }
     }
 }
@@ -440,7 +440,7 @@ void DLPostInsert (tDLList *L, int val) {
     }
 
     p->lptr = L->Act;
-    p->data = val;
+    p->precData = val;
 
     // bude posledni
     if (L->Act->rptr == NULL)
@@ -491,7 +491,7 @@ void DLPreInsert (tDLList *L, int val) {
     }
 
     p->rptr = L->Act;
-    p->data = val;
+    p->precData = val;
 
     // pokud je prvni
     if (L->Act->lptr == NULL)
@@ -529,7 +529,7 @@ void DLCopy (tDLList *L, int *val) {
     }
 
     // copy
-    *val = L->Act->data;
+    *val = L->Act->precData;
 
 }
 
@@ -551,7 +551,7 @@ void DLActualize (tDLList *L, int val) {
     }
 
     // aktualizujeme hodnotu
-    L->Act->data = val;
+    L->Act->precData = val;
 }
 
 void DLSucc (tDLList *L) {

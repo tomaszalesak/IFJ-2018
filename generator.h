@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <limits.h>
 #include "lexicalanalyzer.h"
+#include "errors.h"
 
 #define GEN_COUNTER_ADD -1
 #define GEN_COUNTER_RESET -2
@@ -127,6 +128,83 @@ void gen_while_cmpResult();
  * @param doID  - id of the do label made when generating while control code.
  */
 void gen_while_endLabel(int endID, int doID);
+
+
+// Expression Code Generation
+// ==========================
+
+/**
+ * Generates code for one argument of an expression.
+ * @param token - Token containing information about the argument.
+ */
+void gen_exp_putArg(Token token);
+
+/**
+ * Generates a newline at the end of an expression.
+ */
+void gen_exp_finalize();
+
+/**
+ * Generates beginning code for a "x = y * z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_MUL();
+
+/**
+ * Generates beginning code for a "x = y / z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_DIV();
+
+/**
+ * Generates beginning code for a "x = y + z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_ADD();
+
+/**
+ * Generates beginning code for a "x = y - z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_SUB();
+
+/**
+ * Generates the final result variable of one line of code.
+ */
+void gen_exp_result(int tmp);
+
+/**
+ * Generates beginning code for a "x = y == z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_EQ();
+
+/**
+ * Generates beginning code for a "x = !z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_NOT();
+
+/**
+ * Generates beginning code for a "x = y < z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_LT();
+
+/**
+ * Generates beginning code for a "x = y > z" type expression.
+ * Defines variable for storing the result and defines the operation.
+ * @return     UID of variable x, that will store the result of the expression.
+ */
+int gen_exp_GT();
+
 
 // Built-in Function Code Generation
 // =================================
