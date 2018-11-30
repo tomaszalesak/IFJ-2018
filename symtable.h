@@ -27,6 +27,7 @@
 #define  SUCCESS                   0  //  překlad proběhl bez chyb 1
 #define  ERR_INCOMPATIBLE_TYPE     4
 
+#define SYM_FUNC_PARAM (-2)  //set for function parameters into lts
 #define SYM_NONE (-1)  //no need for additional info
 #define SYM_FUNC_UNDEF 0 //for semantic error messages of functions -> undefined
 #define SYM_FUNC_REDEF 1 //for semantic error messages of functions -> redefined
@@ -56,7 +57,6 @@ typedef struct GTSNode{
 
 
 LTSNodePtr ltsMain;
-LTSNodePtr ltsTmp;
 GTSNodePtr gts;
 string K;
 //typedef  LTSNode tLTS;

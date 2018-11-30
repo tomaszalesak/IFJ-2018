@@ -13,6 +13,7 @@
 //#include <string.h>
 #include "symtable.h"
 #include "errors.h"
+#include "sym_dl.h"
 
 /**
  * Initialization of LTS.
@@ -483,15 +484,22 @@ void insertBIF(GTSNodePtr *RootPtr) {
 
 }
 
+/**
+ * Checks compatibility of types in expressions (precedence).
+ * @param token - token for check
+ * @param strings - counter for strings in current expression
+ * @param ints - counter for integers in current expression
+ */
 void ltsPrecVarCheck (Token token, int* strings, int* ints) {
     if (token.type == T_IDENTIFIER) {
         string k;
         strInit(&k);
         k = createString(token);
-        if (ltsGetIdType(ltsMain, &k) == T_INT || ltsGetIdType(ltsMain, &k) == T_FLOAT)
+        if (ltsGetIdType(ltsStack.Act->lts, &k) == T_INT || ltsGetIdType(ltsStack.Act->lts, &k) == T_FLOAT)
             (*ints)++;
-        if (ltsGetIdType(ltsMain, &k) == T_STRING)
+        if (ltsGetIdType(ltsStack.Act->lts, &k) == T_STRING)
             (*strings)++;
+        //if (ltsGetIdType(ltsStack.Act->lts, &k) == SYM_FUNC_PARAM)
     }
     if (token.type == T_FLOAT || token.type == T_INT)
         (*ints)++;

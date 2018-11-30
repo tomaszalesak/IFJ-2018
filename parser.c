@@ -10,6 +10,7 @@
 #include "prec_anal.h"
 #include "errors.h"
 #include "generator.h"
+#include "sym_dl.h"
 
 #define PH_MAIN_TOKEN (-1)        //MAIN already took TOKEN, dont take another one
 #define PH_ELSE 0               //ELSE is valid now
@@ -94,6 +95,12 @@ void parse_function() {//3// TODO Define function with no brackets?
         gen_pushframe();
         gen_retval();
 
+        ///semantic - inserting temporary LTS
+        LTSNodePtr tempTable;
+        ltsInit(&tempTable);
+        ltsDLPostInsert(&ltsStack, tempTable);
+        ltsDLSucc(&ltsStack);
+
         parse_param_list_1();
         gtsSetParamCount(gts, &K, paramsCounter);
         paramsCounter = 0;
@@ -102,6 +109,9 @@ void parse_function() {//3// TODO Define function with no brackets?
             //printf("LOL1\n");
             parse_st_list(PH_END);//TODO Check this
             //printf("LOL2\n");
+            ///semantic remove temporary LTS
+            //ltsDLPred(&ltsStack);
+            //ltsDLPostDelete(&ltsStack);
             gen_popframe();
             gen_return();
         } else {
@@ -157,7 +167,7 @@ int parse_st_list(int actual_position_helper) {
                         fprintf(stderr, "Semantic Error! Can't redefine function %s as variable!\n", K.str);
                         compiler_exit(ERR_UNDEF_REDEF);
                     }
-                    if (ltsInsert(&ltsMain, &K) == SUCCESS)
+                    if (ltsInsert(&ltsStack.Act->lts, &K) == SUCCESS)
                         gen_defvar(token_top);
                     //gtsSearch(gts, &K);
                     token = getToken();
@@ -167,6 +177,11 @@ int parse_st_list(int actual_position_helper) {
                         case T_IDENTIFIER: //27 -> 28 29 !TRAP! I do not know if its function or identifier
                             //semantic - get identifier name/value
                             K = createString(token);
+                            if (gtsSearch(gts, &K) != NULL) {
+                                fprintf(stderr, "\n*** SYNTAX ERROR ***\nCannot use function %s in expression!\n", K.str);
+                                compiler_exit(ERR_SYNTAX);
+                            }
+                            ltsDLSearchPre(&ltsStack, K);
                             token = getToken();
                             switch (token.type) {
 
@@ -216,7 +231,7 @@ int parse_st_list(int actual_position_helper) {
 
                         case BIF_LENGTH://37 //TODO Check STRING
                             //semantic set variable type
-                            ltsSetIdType(ltsMain, &K, T_INT);
+                            ltsSetIdType(ltsStack.Act->lts, &K, T_INT);
                             K.str = "length";
                             token = getToken();
                             parse_arg_list_switcher(0);
@@ -225,7 +240,7 @@ int parse_st_list(int actual_position_helper) {
 
                         case BIF_SUBSTR://38 //TODO Check STRING,INT,INT
                             //semantic set variable type
-                            ltsSetIdType(ltsMain, &K, T_STRING);
+                            ltsSetIdType(ltsStack.Act->lts, &K, T_STRING);
                             K.str = "substr";
                             token = getToken();
                             parse_arg_list_switcher(0);
@@ -234,7 +249,7 @@ int parse_st_list(int actual_position_helper) {
 
                         case BIF_ORD://39 //TODO Check STRING,INT
                             //semantic set variable type
-                            ltsSetIdType(ltsMain, &K, T_INT);
+                            ltsSetIdType(ltsStack.Act->lts, &K, T_INT);
                             K.str = "ord";
                             token = getToken();
                             parse_arg_list_switcher(0);
@@ -243,7 +258,7 @@ int parse_st_list(int actual_position_helper) {
 
                         case BIF_CHR://40  //TODO Check INT
                             //semantic set variable type
-                            ltsSetIdType(ltsMain, &K, T_STRING);
+                            ltsSetIdType(ltsStack.Act->lts, &K, T_STRING);
                             K.str = "chr";
                             token = getToken();
                             parse_arg_list_switcher(0);
@@ -251,7 +266,7 @@ int parse_st_list(int actual_position_helper) {
                             break;
 
                         default: //16
-                            ltsSetIdType(ltsMain, &K, token.type);
+                            ltsSetIdType(ltsStack.Act->lts, &K, token.type);
                             token_old = token;
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
@@ -286,7 +301,7 @@ int parse_st_list(int actual_position_helper) {
                             }
                         } //todo add error and exit?
                     }
-                    if (ltsGetIdType(ltsMain, &k) == -1) {
+                    if (ltsGetIdType(ltsStack.Act->lts, &k) == -1) {
                         fprintf(stderr, "Symtable ERROR! Undefined variable %s!\n", k.str);
                         compiler_exit(ERR_UNDEF_REDEF);
                     }
@@ -319,6 +334,11 @@ int parse_st_list(int actual_position_helper) {
             break;
 
         case KW_IF:// 19
+        {
+            LTSNodePtr tempTable;
+            ltsInit(&tempTable);
+            ltsDLPostInsert(&ltsStack, tempTable);
+            ltsDLSucc(&ltsStack);
             token = prec_anal(token, token, 0);
             i++;
             //int x = i;
@@ -326,6 +346,16 @@ int parse_st_list(int actual_position_helper) {
             int elseID = gen_uniqueID_last();
             if ((token.type == KW_THEN) && (getToken().type) == T_EOL) {
                 parse_st_list(PH_ELSE);
+
+                ///semantic - release temporary LTS
+                ltsDLPred(&ltsStack);
+                ltsDLPostDelete(&ltsStack);
+                ///semantic - inserting temporary LTS
+                //LTSNodePtr tempTable;
+                ltsInit(&tempTable);
+                ltsDLPostInsert(&ltsStack, tempTable);
+                ltsDLSucc(&ltsStack);
+
                 gen_if_elseLabel(elseID);
                 elseID = gen_uniqueID_last();
                 parse_st_list(PH_END);
@@ -339,6 +369,7 @@ int parse_st_list(int actual_position_helper) {
                 compiler_exit(ERR_SYNTAX);
             }
             break;
+        }
 
         case KW_WHILE:// 24
             gen_while_doLabel();
@@ -370,6 +401,9 @@ int parse_st_list(int actual_position_helper) {
             } else if (getToken().type != T_EOL) {
                 compiler_exit(ERR_SYNTAX);
             }
+            ///semantic - release temporary LTS
+            ltsDLPred(&ltsStack);
+            ltsDLPostDelete(&ltsStack);
             break;
 
             //BIF Handling
@@ -475,6 +509,9 @@ int parse_param() {//61
         compiler_exit(ERR_UNDEF_REDEF);
     }
     gen_parameter(token, GEN_COUNTER_ADD);
+    ///semantic
+    ltsInsert(&(ltsStack.Act->lts), &K);
+    ltsSetIdType((ltsStack.Act->lts), &K, SYM_FUNC_PARAM);
     paramsCounter++;
     return 0;
 }
@@ -492,7 +529,6 @@ void parse_arg_list_switcher(int print_checker) {
 
             //semantic control of param types
             //if (token.type == T_INT)
-
 
             //Call function for <arg-list2b>
             parse_arg_list2b();//44,45
@@ -565,7 +601,7 @@ int parse_arg(int token_type) {
             string id;
             strInit(&id);
             id = createString(token);
-            if (ltsGetIdType(ltsMain, &id) == -1) {
+            if (ltsGetIdType(ltsStack.Act->lts, &id) == -1) {
                 fprintf(stderr, "Semantic Error! Variable %s is undeclared!\n", id.str);
                 strFree(&id);
                 compiler_exit(ERR_UNDEF_REDEF);
@@ -581,7 +617,7 @@ int parse_arg(int token_type) {
                     fprintf(stderr, "ERROR! Function %s!\n", K.str);
                     compiler_exit(ERR_NO_OF_ARGS);
                 }
-                if ((ltsGetIdType(ltsMain, &a) != T_INT) && (ltsGetIdType(ltsMain, &a) != T_FLOAT)) {
+                if ((ltsGetIdType(ltsStack.Act->lts, &a) != T_INT) && (ltsGetIdType(ltsStack.Act->lts, &a) != T_FLOAT)) {
                     fprintf(stderr, "Semantic Error! Bad parameter type for function %s!\n", K.str);
                     compiler_exit(ERR_INCOMPATIBLE_TYPE);
                 }
@@ -592,13 +628,13 @@ int parse_arg(int token_type) {
                 string a = createString(token);
                 switch (paramsCounter) {
                     case 1:
-                        if (ltsGetIdType(ltsMain, &a) != T_STRING) {
+                        if (ltsGetIdType(ltsStack.Act->lts, &a) != T_STRING) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
                         break;
                     case 2:
-                        if ((ltsGetIdType(ltsMain, &a) != T_INT) && (ltsGetIdType(ltsMain, &a) != T_FLOAT)) {
+                        if ((ltsGetIdType(ltsStack.Act->lts, &a) != T_INT) && (ltsGetIdType(ltsStack.Act->lts, &a) != T_FLOAT)) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
@@ -619,7 +655,7 @@ int parse_arg(int token_type) {
                     fprintf(stderr, "ERROR! Function %s!\n", K.str);
                     compiler_exit(ERR_NO_OF_ARGS);
                 }
-                if (ltsGetIdType(ltsMain, &a) != T_STRING) {
+                if (ltsGetIdType(ltsStack.Act->lts, &a) != T_STRING) {
                     fprintf(stderr, "ERROR! Function %s!\n", K.str);
                     compiler_exit(ERR_INCOMPATIBLE_TYPE);
                 }
@@ -630,19 +666,19 @@ int parse_arg(int token_type) {
                 string a = createString(token);
                 switch (paramsCounter) {
                     case 1:
-                        if (ltsGetIdType(ltsMain, &a) != T_STRING) {
+                        if (ltsGetIdType(ltsStack.Act->lts, &a) != T_STRING) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
                         break;
                     case 2:
-                        if (ltsGetIdType(ltsMain, &a) != T_INT && ltsGetIdType(ltsMain, &a) != T_FLOAT) {
+                        if (ltsGetIdType(ltsStack.Act->lts, &a) != T_INT && ltsGetIdType(ltsStack.Act->lts, &a) != T_FLOAT) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
                         break;
                     case 3:
-                        if (ltsGetIdType(ltsMain, &a) != T_INT && ltsGetIdType(ltsMain, &a) != T_FLOAT) {
+                        if (ltsGetIdType(ltsStack.Act->lts, &a) != T_INT && ltsGetIdType(ltsStack.Act->lts, &a) != T_FLOAT) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
@@ -835,11 +871,14 @@ void parse_arg_list2b() {
 int main() {
     gtsInit(&gts);
     ltsInit(&ltsMain);
-    ltsInit(&ltsTmp);
     insertBIF(&gts);
     // init stack
     tDLList func_stack;
     DLInitList(&func_stack);
+    //init LTS stack
+    ltsDLInitList(&ltsStack);
+    ltsDLInsertFirst(&ltsStack, ltsMain);
+    ltsDLFirst(&ltsStack);
     parse_main(0);
     return 0;
 }

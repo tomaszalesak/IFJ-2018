@@ -88,7 +88,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
             // get token
             token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
-            
+
             ///semantic
             ltsPrecVarCheck (token, p_strings, p_ints);
 
@@ -108,7 +108,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
 
             // get token
             token = giveMeToken(give_me_old_tokens, &token_no, t, t2);
-            
+
             ///semantic
             ltsPrecVarCheck (token, p_strings, p_ints);
 
