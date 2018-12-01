@@ -42,7 +42,7 @@ void ltsDLError() {
     exit(ERR_INTERNAL);
 }
 
-void ltsDLInitList (tltsDLList *L) {
+void ltsDLInitList(tltsDLList *L) {
 /*
 ** Provede inicializaci seznamu L před jeho prvním použitím (tzn. žádná
 ** z následujících funkcí nebude volána nad neinicializovaným seznamem).
@@ -50,28 +50,25 @@ void ltsDLInitList (tltsDLList *L) {
 ** seznamem, a proto tuto možnost neošetřujte. Vždy předpokládejte,
 ** že neinicializované proměnné mají nedefinovanou hodnotu.
 **/
-    if (L != NULL)
-    {
+    if (L != NULL) {
         L->Act = NULL;
         L->First = NULL;
         L->Last = NULL;
     }
 }
 
-void ltsDLInsertFirst (tltsDLList *L, LTSNodePtr val) {
+void ltsDLInsertFirst(tltsDLList *L, LTSNodePtr val) {
 /*
 ** Vloží nový prvek na začátek seznamu L.
 ** V případě, že není dostatek paměti pro nový prvek při operaci malloc,
 ** volá funkci DLError().
 **/
-    if (L != NULL)
-    {
+    if (L != NULL) {
         // alokace pameti pro prvek
         tltsDLElemPtr p = (tltsDLElemPtr) malloc(sizeof(struct tltsDLElem));
 
         // nedostatek pameti
-        if (p == NULL)
-        {
+        if (p == NULL) {
             ltsDLError();
             return;
         }
@@ -81,13 +78,11 @@ void ltsDLInsertFirst (tltsDLList *L, LTSNodePtr val) {
         p->lptr = NULL;
 
         // prvni prvek
-        if (L->First == NULL)
-        {
+        if (L->First == NULL) {
             L->Last = p;
         }
             // neni prvni
-        else
-        {
+        else {
             L->First->lptr = p;
         }
 
@@ -96,7 +91,7 @@ void ltsDLInsertFirst (tltsDLList *L, LTSNodePtr val) {
     }
 }
 
-void ltsDLFirst (tltsDLList *L) {
+void ltsDLFirst(tltsDLList *L) {
 /*
 ** Nastaví aktivitu na první prvek seznamu L.
 ** Funkci implementujte jako jediný příkaz (nepočítáme-li return),
@@ -105,7 +100,7 @@ void ltsDLFirst (tltsDLList *L) {
     L->Act = L->First;
 }
 
-void ltsDLLast (tltsDLList *L) {
+void ltsDLLast(tltsDLList *L) {
 /*
 ** Nastaví aktivitu na poslední prvek seznamu L.
 ** Funkci implementujte jako jediný příkaz (nepočítáme-li return),
@@ -114,29 +109,25 @@ void ltsDLLast (tltsDLList *L) {
     L->Act = L->Last;
 }
 
-void ltsDLPostDelete (tltsDLList *L) {
+void ltsDLPostDelete(tltsDLList *L) {
 /*
 ** Zruší prvek seznamu L za aktivním prvkem.
 ** Pokud je seznam L neaktivní nebo pokud je aktivní prvek
 ** posledním prvkem seznamu, nic se neděje.
 **/
-    if (L == NULL)
-    {
+    if (L == NULL) {
         return;
     }
 
-    if (L->First == NULL)
-    {
+    if (L->First == NULL) {
         return;
     }
 
-    if (L->Act == NULL)
-    {
+    if (L->Act == NULL) {
         return;
     }
 
-    if (L->Last == L->Act)
-    {
+    if (L->Last == L->Act) {
         return;
     }
 
@@ -147,13 +138,11 @@ void ltsDLPostDelete (tltsDLList *L) {
     L->Act->rptr = p->rptr;
 
     // posledni prvek
-    if (p->rptr == NULL)
-    {
+    if (p->rptr == NULL) {
         L->Last = L->Act;
     }
         // neni posledni
-    else
-    {
+    else {
         // nasledujici ma odkaz na predchozi
         p->rptr->lptr = L->Act;
     }
@@ -161,7 +150,7 @@ void ltsDLPostDelete (tltsDLList *L) {
     free(p);
 }
 
-void ltsDLPostInsert (tltsDLList *L, LTSNodePtr val) {
+void ltsDLPostInsert(tltsDLList *L, LTSNodePtr val) {
 /*
 ** Vloží prvek za aktivní prvek seznamu L.
 ** Pokud nebyl seznam L aktivní, nic se neděje.
@@ -169,14 +158,12 @@ void ltsDLPostInsert (tltsDLList *L, LTSNodePtr val) {
 ** volá funkci ltsDLError().
 **/
     // spatny ukazatel
-    if (L == NULL)
-    {
+    if (L == NULL) {
         return;
     }
 
     // neni aktivni
-    if (L->Act == NULL)
-    {
+    if (L->Act == NULL) {
         return;
     }
 
@@ -186,8 +173,7 @@ void ltsDLPostInsert (tltsDLList *L, LTSNodePtr val) {
     p = (tltsDLElemPtr) malloc(sizeof(struct tltsDLElem));
 
     // nedostatek pameti
-    if (p == NULL)
-    {
+    if (p == NULL) {
         ltsDLError();
         return;
     }
@@ -196,14 +182,12 @@ void ltsDLPostInsert (tltsDLList *L, LTSNodePtr val) {
     p->lts = val;
 
     // bude posledni
-    if (L->Act->rptr == NULL)
-    {
+    if (L->Act->rptr == NULL) {
         p->rptr = NULL;
         L->Last = p;
     }
         // je za nim dalsi prvek
-    else
-    {
+    else {
         L->Act->rptr->lptr = p;
         p->rptr = L->Act->rptr;
     }
@@ -212,21 +196,19 @@ void ltsDLPostInsert (tltsDLList *L, LTSNodePtr val) {
     L->Act->rptr = p;
 }
 
-void ltsDLSucc (tltsDLList *L) {
+void ltsDLSucc(tltsDLList *L) {
 /*
 ** Posune aktivitu na následující prvek seznamu L.
 ** Není-li seznam aktivní, nedělá nic.
 ** Všimněte si, že při aktivitě na posledním prvku se seznam stane neaktivním.
 **/
     // spatny ukazatel
-    if (L == NULL)
-    {
+    if (L == NULL) {
         return;
     }
 
     // neni aktivni
-    if (L->Act == NULL)
-    {
+    if (L->Act == NULL) {
         return;
     }
 
@@ -234,21 +216,19 @@ void ltsDLSucc (tltsDLList *L) {
     L->Act = L->Act->rptr;
 }
 
-void ltsDLPred (tltsDLList *L) {
+void ltsDLPred(tltsDLList *L) {
 /*
 ** Posune aktivitu na předchozí prvek seznamu L.
 ** Není-li seznam aktivní, nedělá nic.
 ** Všimněte si, že při aktivitě na prvním prvku se seznam stane neaktivním.
 **/
     // spatny ukazatel
-    if (L == NULL)
-    {
+    if (L == NULL) {
         return;
     }
 
     // neni aktivni
-    if (L->Act == NULL)
-    {
+    if (L->Act == NULL) {
         return;
     }
 
@@ -262,11 +242,12 @@ void ltsDLPred (tltsDLList *L) {
  * @param L - LTS stack
  * @param K - variable to search for
  */
-int ltsDLSearchPre (tltsDLList *L, string K) {
+void ltsDLSearchPre(tltsDLList *L, string K) {
     int found = 0;
     do {
-        if (ltsSearch(L->Act->lts, &K) != NULL)
+        if (ltsSearch(L->Act->lts, &K) != NULL) {
             found = 1;
+        }
         //if (L->Act != L->First)
         ltsDLPred(L);
     } while (L->Act != L->First && found == 0);

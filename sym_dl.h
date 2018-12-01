@@ -46,7 +46,7 @@ void ltsDLSucc (tltsDLList *);
 void ltsDLPred (tltsDLList *);
 int ltsDLActive (tltsDLList *);
 
-int ltsDLSearchPre (tltsDLList *L, string K);
+void ltsDLSearchPre (tltsDLList *L, string K);
 
 void lts_print_elements_of_list(tltsDLList);
 
