@@ -14,7 +14,7 @@ else
 	exit 0
 fi
 
-for i in ./tests/our_tests/*24.src; do
+for i in ./tests/our_tests/*.src; do
 
 	# print file name
 	echo -e "\e[32m\c"
