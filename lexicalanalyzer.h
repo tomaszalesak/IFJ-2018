@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "string.h"
+#include "errors.h"
 
 /// Enum defining different types of tokens.
 typedef enum {          // token.data for the token.type (empty means no data)
@@ -67,14 +68,23 @@ typedef enum {
     E_NUMBER_TOO_BIG
 } ErrorType;
 
-/// Token structure that is used as the return value of the the getToken function.
+/**
+ * Token structure that is used as the return value of the the getToken function.
+ */
 typedef struct {
-	TokenType type;// typy tokenů
+    /// @var type - Variable defining the type of the token.
+	TokenType type;
+    /// @var data - Pointer variable referencing any additional data a token might need.
 	void * data;
 } Token;
 
-/// Reads a sequence of characters from STDIN that corresponds to one word of the IFJ2018 language.
-/// returns     Token structure that contains information about the word.
+/**
+ * Gets a sequence of characters from STDIN that corresponds to one word of the IFJ2018 programming language.
+ * Function is based on a finite state machine.
+ * @return - Token structure of information of about the word that is of the typedef struct Token type.
+ * @return    Token contains int type that defines the type of token and
+ * @return    void* data that contains any additional data about token.
+ */
 Token getToken();
 
 void tester(Token token);
