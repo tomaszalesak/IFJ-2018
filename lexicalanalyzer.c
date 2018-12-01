@@ -6,6 +6,7 @@
 */
 
 #include "lexicalanalyzer.h"
+#include "errors.h"
 
 /// Character comparison macros.
 #define IS_LCHAR(c) (c >= 'a' && c <= 'z')
@@ -590,7 +591,7 @@ Token getToken() {
 
     // If the analyzer finishes in error state, exits with lexical analysis error code 1.
     if (state == AS_ERROR) {
-        exit(1);
+        compiler_exit(ERR_LEXICAL);
         //token.type = T_ERROR;
     }
 

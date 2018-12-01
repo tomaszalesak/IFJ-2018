@@ -1,0 +1,8 @@
+# test identifikatoru
+a = 5
+a_56 = 5
+a__ = 5
+_ = 5
+__ = 6
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 = 8
+mlk? = mlk!

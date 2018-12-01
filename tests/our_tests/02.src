@@ -1,0 +1,9 @@
+a = 5 + 5
+b = a
+
+=begin
+
+#text který by se měl celý ignorovat
+print("ahoj chybo?")
+
+=end

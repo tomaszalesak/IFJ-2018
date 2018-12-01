@@ -4,18 +4,18 @@
 # Runs through all of them
 
 # Needs ifj18.rb file and your binary project:
-OURPROGRAM="../test" # enter name of your compiled project
+OURPROGRAM="./test" # enter name of your compiled project
 
 if [ -e ./ic18int ]
 then
-    echo "OUR TESTS"
-	echo "---------"
+    echo "SCHOOL TESTS"
+	echo "------------"
 else
     echo "ic18int IS REQUIRED IN PROJECT ROOT FOLDER!!!"
 	exit 0
 fi
 
-for i in ./*.src; do
+for i in 01.src; do
 
 	# print file name
 	echo -e "FILE NAME: $i"
@@ -28,28 +28,28 @@ for i in ./*.src; do
 	echo "------------------------------"
 
 	# input
-	IN=`echo $i | sed 's/\(.*\)\.src/\1.in/g'`
-	echo "Input:"
-	cat $IN
+	# IN=`echo $i | sed 's/\(.*\)\.src/\1.in/g'`
+	# echo "Input:"
+	# cat $IN
 
 	# correct output
 	echo "Correct output:"
-	cat $IN | ruby -r ./ifj18.rb $i
+	ruby -r ./ifj18.rb $i
 	RETURNVALUE=$?
 	# correct return value
 	echo "Correct return value: $RETURNVALUE"
+	echo "------------------------------"
 
 	# our output
 	CODE=`echo $i | sed 's/\(.*\)\.src/\1.code/g'`
 	OUTPUT=`echo $i | sed 's/\(.*\)\.src/\1.output/g'`
 	echo "Our ifjcode output:"
-	echo "------------------------------"
 	$OURPROGRAM < $i > $CODE
 	OURRETURNVALUE1=$?
 	cat $CODE
 	echo "------------------------------"
 	echo -e "Our output:"
-	./ic18int $CODE < $IN > $OUTPUT
+	./ic18int $CODE > $OUTPUT
 	OURRETURNVALUE2=$?
 	cat $OUTPUT
 	# our return value

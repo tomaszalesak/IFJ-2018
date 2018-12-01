@@ -1,0 +1,63 @@
+I<main> -> <func><main>
+if
+I<func> -> def id (<param-l> EOL
+			<st-list> END 
+Else if
+I<main> -> EOL<main>
+I<main> -> EOF
+Else if
+I<stat> -> <func-call>
+
+I<func-call> -> id <arg-list>
+I<func-call> -> id (<arg-listb> EOL 
+else
+I<main> -> <stat><main>
+
+I<stat> -> id = <expr> EOL
+I<stat> -> id EOL
+I<stat> -> <expr> EOL //Poslat precedenc table
+I<stat> -> if <expr> then EOL
+			<st-list>
+		  else EOL
+			<st-list>
+		  end EOL
+I<stat> -> while <expr> do EOL
+			<st-list>
+	   	  end EOL
+I<stat> -> id = <func-call>
+I-------- D<func-call> -> id <arg-list>
+I---------D<func-call> -> id (<arg-listb> EOL 
+
+----------------------------------------------
+<stat> -> inputs()
+<stat> -> inputi()
+<stat> -> inputf()
+<stat> -> print(<term-list>)//TODO Pouze na preklad + kdo bude detekovat? //Check READ/WRITE
+
+<stat> -> length(<arg>)
+<stat> -> substr()
+<stat> -> ord()
+<stat> -> chr()
+----------------------------------------------
+
+I<arg-list> -> <arg> <arg-list2>
+I<arg-list2> -> , <arg> <arg-list2>
+I<arg-list2> -> EOL
+
+I<arg-listb> -> <arg> <arg-list2b>
+I<arg-list2b> -> , <arg> <arg-list2b>
+I<arg-list2b> -> )
+
+I<arg> -> id
+I<arg> -> int
+I<arg> -> float
+I<arg> -> string
+
+<func> -> def id (<param-l> EOL
+			<st-list> END 
+I<param-l> -> <param> <param-l2>
+I<param-l2> -> , <param> <param-l2>
+I<param-l2> -> )
+I<param> -> id
+
+I<st-list> -> <stat><st-list>
