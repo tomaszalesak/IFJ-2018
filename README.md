@@ -11,6 +11,7 @@ make - překlad
 make clean - vyčistí
 
 make test - spustí testy /tests/our_tests/*.src
+ - testy vyžadují ic18int v hlavní složce projektu (tady)
  - vypíše spoustu informací:
     - jméno souboru
     - zdroják
