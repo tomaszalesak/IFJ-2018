@@ -618,11 +618,13 @@ int parse_arg(int token_type) {
             string id;
             strInit(&id);
             id = createString(token);
-            if (ltsGetIdType(ltsStack->Act->lts, &id) == -1) {
+            ltsDLSearchPre(ltsStack, id);
+            /*if (ltsGetIdType(ltsStack->Act->lts, &id) == -1) {
                 fprintf(stderr, "Semantic Error! Variable %s is undeclared!\n", id.str);
                 strFree(&id);
                 compiler_exit(ERR_UNDEF_REDEF);
             }
+             */
             strFree(&id);
 
             //semantic BIF params check TODO put it onto function maybe?!

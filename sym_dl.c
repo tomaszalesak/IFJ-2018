@@ -244,15 +244,20 @@ void ltsDLPred(tltsDLList *L) {
  */
 void ltsDLSearchPre(tltsDLList *L, string K) {
     int found = 0;
-    do {
-        if (ltsSearch(L->Act->lts, &K) != NULL) {
-            found = 1;
+    if (ltsSearch(ltsStack->Act->lts, &K) != NULL) {
+        found = 1;
+    }
+    if (!found) {
+        do {
+            ltsDLPred(L);
+            if (ltsSearch(L->Act->lts, &K) != NULL) {
+                found = 1;
+            }
+            //if (L->Act != L->First)
+        } while (L->Act != L->First && found == 0);
+        if (found == 0) {
+            semanticError(ERR_UNDEF_REDEF, K, SYM_NONE, SYM_VAR);
         }
-        //if (L->Act != L->First)
-        ltsDLPred(L);
-    } while (L->Act != L->First && found == 0);
-    if (found == 0) {
-        semanticError(ERR_UNDEF_REDEF, K, SYM_NONE, SYM_VAR);
     }
     ltsDLLast(L);
 }
