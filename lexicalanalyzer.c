@@ -6,7 +6,6 @@
 */
 
 #include "lexicalanalyzer.h"
-#include "errors.h"
 
 /// Character comparison macros.
 #define IS_LCHAR(c) (c >= 'a' && c <= 'z')
@@ -17,14 +16,18 @@
 #define IS_OPERATOR(c) (c == '+' || c == '-' || c == '*' || c == '/' || c == '<' || c == '>' || c == '!' || c == '=')
 #define IS_TOKENEND(c) (IS_WHITESPACE(c) || IS_OPERATOR(c) || c == ',' || c == '(' || c == ')' || c == 10 || c == 13 || c == EOF || c == '#')
 
-/// EOL
+/// @def EOL - A value defining the character code of a newline character.
 #define EOL 10
+
+/// @def OLDC_EMPTY - A value saying that oldC is empty.
 #define OLDC_EMPTY -255
 
-/// Number buffer size
+/// @def NBUFFER_MAX - A value defining the maximum number buffer size
 #define NBUFFER_MAX 64
 
-/// Enum that defines different states of Lexical Analyzer state machine.
+/**
+ * Enum that defines different states of Lexical Analyzer state machine.
+ */
 typedef enum {
     AS_EMPTY,
     AS_NUMBER,
@@ -52,11 +55,13 @@ typedef enum {
     AS_ERROR
 } AnalyzerState;
 
-/// Gets a sequence of characters from STDIN that corresponds to one token.
-/// Function is based on a finite state machine.
-/// returns     token of type typedef struct Token.
-///             Token contains int type that defines the type of token and
-///             void* data that contains any additional data about token.
+/*
+ * Gets a sequence of characters from STDIN that corresponds to one token.
+ * Function is based on a finite state machine.
+ * @return - Token of type typedef struct Token.
+ * @return    Token contains int type that defines the type of token and
+ * @return    void* data that contains any additional data about token.
+ */
 Token getToken() {
 
     // Stores the last character of the last call of getToken.
@@ -167,7 +172,7 @@ Token getToken() {
                         nBuffer_i++;
                     } else {
                         fprintf(stderr, "Number too big.");
-                        token.type = T_ERROR;
+                        state = AS_ERROR;
                         break;
                     }
 
@@ -177,7 +182,7 @@ Token getToken() {
                         nBuffer_i++;
                     } else {
                         fprintf(stderr, "Number too big.");
-                        token.type = T_ERROR;
+                        state = AS_ERROR;
                         break;
                     }
                     state = AS_FLOAT;
@@ -188,7 +193,7 @@ Token getToken() {
                         nBuffer_i++;
                     } else {
                         fprintf(stderr, "Number too big.");
-                        token.type = T_ERROR;
+                        state = AS_ERROR;
                         break;
                     }
                     state = AS_FLOAT_E;
@@ -224,7 +229,7 @@ Token getToken() {
                         nBuffer_i++;
                     } else {
                         fprintf(stderr, "Number too big.");
-                        token.type = T_ERROR;
+                        state = AS_ERROR;
                         break;
                     }
                 } else if (c == 'e' || c == 'E') {
@@ -233,7 +238,7 @@ Token getToken() {
                         nBuffer_i++;
                     } else {
                         fprintf(stderr, "Number too big.");
-                        token.type = T_ERROR;
+                        state = AS_ERROR;
                         break;
                     }
 
@@ -255,7 +260,7 @@ Token getToken() {
                         nBuffer_i++;
                     } else {
                         fprintf(stderr, "Number too big.");
-                        token.type = T_ERROR;
+                        state = AS_ERROR;
                         break;
                     }
                 } else if (c == '+' || c == '-') {
@@ -264,7 +269,7 @@ Token getToken() {
                         nBuffer_i++;
                     } else {
                         fprintf(stderr, "Number too big.");
-                        token.type = T_ERROR;
+                        state = AS_ERROR;
                         break;
                     }
 
@@ -277,7 +282,7 @@ Token getToken() {
                     oldC = c;
                     state = AS_DONE;
                 } else {
-                    token.type = T_ERROR;
+                    state = AS_ERROR;
                 }
                 break;
 
@@ -288,7 +293,7 @@ Token getToken() {
                         nBuffer_i++;
                     } else {
                         fprintf(stderr, "Number too big.");
-                        token.type = T_ERROR;
+                        state = AS_ERROR;
                         break;
                     }
                 } else if (IS_TOKENEND(c)) {
@@ -590,9 +595,8 @@ Token getToken() {
     }
 
     // If the analyzer finishes in error state, exits with lexical analysis error code 1.
-    if (state == AS_ERROR) {
+    if (state == AS_ERROR || token.type == T_ERROR) {
         compiler_exit(ERR_LEXICAL);
-        //token.type = T_ERROR;
     }
 
     //tester(token);
