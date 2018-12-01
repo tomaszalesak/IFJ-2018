@@ -1,0 +1,7 @@
+=begin
+Zkouška if konstrukce
+=end
+if 7 > 3 then
+	print("Bude chyba?")
+else
+end

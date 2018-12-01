@@ -3,63 +3,72 @@
 # Needs both source files in .src file and input in .in file
 # Runs through all of them
 
-# Needs ifj18.rb file and your binary project:
-OURPROGRAM="../test" # enter name of your compiled project
+OURPROGRAM="./ifj2018" # enter name of your compiled project
 
 if [ -e ./ic18int ]
 then
-    echo "OUR TESTS"
-	echo "---------"
+    echo "SCHOOL TESTS"
+	echo "------------"
 else
     echo "ic18int IS REQUIRED IN PROJECT ROOT FOLDER!!!"
 	exit 0
 fi
 
-for i in ./*.src; do
+for i in ./tests/our_tests/*.src; do
 
 	# print file name
-	echo -e "FILE NAME: $i"
+	echo -e "\e[32m\c"
+	echo -e "FILE NAME:\e[0m $i"
 
 	# print source
+	echo -e "\e[32m\c"
 	echo "Source:"
-	echo "------------------------------"
+	echo -e "\e[0m\c"
 	cat $i
 	echo
-	echo "------------------------------"
 
 	# input
 	IN=`echo $i | sed 's/\(.*\)\.src/\1.in/g'`
-	echo "Input:"
+	echo -e "\e[32m\c"
+	echo -e "Input:"
+	echo -e "\e[0m\c"
 	cat $IN
 
 	# correct output
-	echo "Correct output:"
+	echo -e "\e[34m\c"
+	echo -e "Correct output:"
+	echo -e "\e[0m\c"
 	cat $IN | ruby -r ./ifj18.rb $i
 	RETURNVALUE=$?
 	# correct return value
-	echo "Correct return value: $RETURNVALUE"
+	echo -e "\e[34m\c"
+	echo -e "Correct return value:\e[0m $RETURNVALUE"
 
 	# our output
 	CODE=`echo $i | sed 's/\(.*\)\.src/\1.code/g'`
 	OUTPUT=`echo $i | sed 's/\(.*\)\.src/\1.output/g'`
-	echo "Our ifjcode output:"
-	echo "------------------------------"
+	echo -e "\e[35m\c"
+	echo -e "Our ifjcode output:"
+	echo -e "\e[0m\c"
 	$OURPROGRAM < $i > $CODE
 	OURRETURNVALUE1=$?
 	cat $CODE
-	echo "------------------------------"
+	echo -e "\e[35m\c"
 	echo -e "Our output:"
+	echo -e "\e[0m\c"
 	./ic18int $CODE < $IN > $OUTPUT
 	OURRETURNVALUE2=$?
 	cat $OUTPUT
 	# our return value
-	echo "Our return value: $OURRETURNVALUE1"
+	echo -e "\e[35m\c"
+	echo -e "Our return value:\e[0m $OURRETURNVALUE1"
 	# our return ifjcode value
-	echo "Our return ifjcode value: $OURRETURNVALUE2"
+	echo -e "\e[35m\c"
+	echo -e "Our return ifjcode value:\e[0m $OURRETURNVALUE2"
 
 	# end of this file
 	echo "---------------------------------------"
-	echo "-------------END OF FILE---------------"
+	echo "------------------END------------------"
 	echo "---------------------------------------"
 	echo
 

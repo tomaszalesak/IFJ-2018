@@ -1,0 +1,2 @@
+# test specialnich znaků
+a = "\"a\nmezera\stady\tbudetab\\jen tak zavorka"
