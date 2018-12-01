@@ -495,9 +495,9 @@ void ltsPrecVarCheck (Token token, int* strings, int* ints) {
         string k;
         strInit(&k);
         k = createString(token);
-        if (ltsGetIdType(ltsStack.Act->lts, &k) == T_INT || ltsGetIdType(ltsStack.Act->lts, &k) == T_FLOAT)
+        if (ltsGetIdType(ltsStack->Act->lts, &k) == T_INT || ltsGetIdType(ltsStack->Act->lts, &k) == T_FLOAT)
             (*ints)++;
-        if (ltsGetIdType(ltsStack.Act->lts, &k) == T_STRING)
+        if (ltsGetIdType(ltsStack->Act->lts, &k) == T_STRING)
             (*strings)++;
         //if (ltsGetIdType(ltsStack.Act->lts, &k) == SYM_FUNC_PARAM)
     }

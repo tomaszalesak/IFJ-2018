@@ -23,7 +23,7 @@ typedef struct {                                  /* dvousměrně vázaný sezna
     tltsDLElemPtr Last;                    /* ukazatel na posledni prvek seznamu */
 } tltsDLList;
 
-tltsDLList ltsStack;
+tltsDLList *ltsStack;
 
 /* prototypy jednotlivých funkcí */
 void ltsDLInitList (tltsDLList *);
@@ -46,7 +46,7 @@ void ltsDLSucc (tltsDLList *);
 void ltsDLPred (tltsDLList *);
 int ltsDLActive (tltsDLList *);
 
-void ltsDLSearchPre (tltsDLList *L, string K);
+int ltsDLSearchPre (tltsDLList *L, string K);
 
 void lts_print_elements_of_list(tltsDLList);
 

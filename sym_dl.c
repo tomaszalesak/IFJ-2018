@@ -252,8 +252,9 @@ void ltsDLPred (tltsDLList *L) {
         return;
     }
 
-    // posuneme aktivitu doleva
-    L->Act = L->Act->lptr;
+    // posuneme aktivitu doleva ak nie je aktualny prvok zaroven aj prvym
+    if (L->Act->lptr != NULL)
+        L->Act = L->Act->lptr;
 }
 
 /**
@@ -261,11 +262,12 @@ void ltsDLPred (tltsDLList *L) {
  * @param L - LTS stack
  * @param K - variable to search for
  */
-void ltsDLSearchPre (tltsDLList *L, string K) {
+int ltsDLSearchPre (tltsDLList *L, string K) {
     int found = 0;
     do {
         if (ltsSearch(L->Act->lts, &K) != NULL)
             found = 1;
+        //if (L->Act != L->First)
         ltsDLPred(L);
     } while (L->Act != L->First && found == 0);
     if (found == 0) {
