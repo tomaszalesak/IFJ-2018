@@ -249,4 +249,6 @@ void gen_bif_ord();
  */
 void gen_bif_chr();
 
+void gen_code_header();
+
 #endif // !GEN_H

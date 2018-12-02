@@ -541,7 +541,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
     }
 
     // generate returning variable
-    gen_exp_result(stack.First->expressionToken);
+    gen_exp_result(stack.First->expressionToken.data);
 
     // dispose stack
     DLDisposeList(&stack);

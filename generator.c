@@ -378,6 +378,10 @@ int gen_exp_GT() {
 }
 
 
+void gen_code_header(){
+    printf(".IFJcode18\n");
+}
+
 
 // Built-in Function Code Generation
 // =================================
