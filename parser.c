@@ -311,11 +311,10 @@ int parse_st_list(int actual_position_helper) {
                                 semanticError(ERR_NO_OF_ARGS, k, paramsCounter, SYM_NONE);
                             }
                         } //todo add error and exit?
+                    } else {
+                        ltsDLSearchPre(ltsStack, k);
                     }
-                    else if (ltsGetIdType(ltsStack->Act->lts, &k) == -1) {
-                        fprintf(stderr, "Symtable ERROR! Undefined variable %s!\n", k.str);
-                        compiler_exit(ERR_UNDEF_REDEF);
-                    }
+
 
                     parse_st_list(actual_position_helper);
                     break;
