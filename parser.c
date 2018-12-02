@@ -210,7 +210,7 @@ int parse_st_list(int actual_position_helper) {
 
                                 default:
                                     token = prec_anal(token_old, token, 1);
-                                    gen_resultAss(token_top);
+                                    //gen_resultAss(token_top);
                                     returnValue = token_top;
                                     parse_st_list(actual_position_helper);
                                     break;
@@ -286,7 +286,7 @@ int parse_st_list(int actual_position_helper) {
                             token_old = token;
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
-                            gen_resultAss(token_top);
+                            //gen_resultAss(token_top);
                             returnValue = token_top;
                             parse_st_list(actual_position_helper);
                             break;
