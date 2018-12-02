@@ -38,10 +38,9 @@ void parse_arg_list2b();
 
 void parse_arg_list_switcher(int print_checker);
 
-Token token;// TODO extend to my .h or not?
+Token token;
 int paramsCounter = 0;
-//int defSwitch = 0;
-int i = 0;
+
 
 //Parse for <main> LL
 void parse_main(int x) {
@@ -58,7 +57,7 @@ void parse_main(int x) {
         case T_EOL:
             break;
 
-        case T_EOF: // 7 TODO End of INPUT, check SEM Analysis etc.
+        case T_EOF: // 7
             exit(SUCCESS);
 
             //Unique options for <main> checked, now goes into <stat> to check rest
@@ -70,11 +69,11 @@ void parse_main(int x) {
 }
 
 //Parse for <func> LL
-void parse_function() {//3// TODO Define function with no brackets?
+void parse_function() {//3
 
     token = getToken();
 
-    if ((token.type == T_IDENTIFIER) && (getToken().type) == T_LBRACKET) {
+    if ((token.type == T_IDENTIFIER || token.type == T_FUNCTION) && (getToken().type) == T_LBRACKET) {
         //Call function for <param-l>
 
         //semantic
@@ -116,7 +115,7 @@ void parse_function() {//3// TODO Define function with no brackets?
         if ((getToken().type) == T_EOL) {
             //Call function for <st-list>
             //printf("LOL1\n");
-            parse_st_list(PH_END);//TODO Check this
+            parse_st_list(PH_END);
             //printf("LOL2\n");
             ///semantic remove temporary LTS
             //ltsDLPred(ltsStack);
@@ -149,7 +148,7 @@ int parse_st_list(int actual_position_helper) {
     Token token_old = token;
     Token token_top = token;
     switch (token.type) {
-
+        case T_FUNCTION:
         case T_IDENTIFIER:// 16 17 27
 
             /*//semantic
@@ -169,6 +168,9 @@ int parse_st_list(int actual_position_helper) {
             switch (token.type) {
 
                 case OP_ASS://16 27
+                    if(token_old.type == T_FUNCTION){
+                    compiler_exit(ERR_SYNTAX);
+                    }
                     //semantic
                     K = createString(token_old);
                     ///
@@ -183,7 +185,7 @@ int parse_st_list(int actual_position_helper) {
                     token = getToken();
                     token_old = token;
                     switch (token.type) {
-
+                        case T_FUNCTION:
                         case T_IDENTIFIER: //27 -> 28 29 !TRAP! I do not know if its function or identifier
                             //semantic - get identifier name/value
                             K = createString(token);
@@ -220,7 +222,7 @@ int parse_st_list(int actual_position_helper) {
                                 if (((getToken().type) == T_RBRACKET) &&
                                     ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
                                     parse_st_list(actual_position_helper);
-                                    break;//TODO Check this
+                                    break;
                                 } else {
                                     compiler_exit(ERR_NO_OF_ARGS);
                                 }
@@ -295,7 +297,7 @@ int parse_st_list(int actual_position_helper) {
                     } else if (actual_position_helper == 2) {
                         parse_st_list(actual_position_helper,old_position_helper);
                     }
-                    break;*///TODO CHANGED THIS
+                    break;*/
 
                 case T_EOL:// 17
                     //token = getToken();
@@ -350,7 +352,6 @@ int parse_st_list(int actual_position_helper) {
             ltsDLPostInsert(ltsStack, tempTable);
             ltsDLSucc(ltsStack);
             token = prec_anal(token, token, 0);
-            i++;
             //int x = i;
             gen_if_cmpResult();
             int elseID = gen_uniqueID_last();
@@ -371,7 +372,7 @@ int parse_st_list(int actual_position_helper) {
                 parse_st_list(PH_END);
                 gen_if_endLabel(elseID);
                 //if (actual_position_helper != PH_MAIN) {
-                parse_st_list(actual_position_helper);//TODO FIX IT HERE
+                parse_st_list(actual_position_helper);
                 // }else {
                 //    return 1;
                 // }
@@ -430,7 +431,7 @@ int parse_st_list(int actual_position_helper) {
                 if (((getToken().type) == T_RBRACKET) &&
                     ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
                     parse_st_list(actual_position_helper);
-                    break;//TODO Check this
+                    break;
                 } else {
                     compiler_exit(ERR_NO_OF_ARGS);
                 }
@@ -564,7 +565,7 @@ void parse_arg_list_switcher(int print_checker) {
         paramsCounter = 0;
 
         if (getToken().type != T_EOL) {
-            compiler_exit(ERR_SYNTAX);//TODO Check this
+            compiler_exit(ERR_SYNTAX);
         }
 
     } else if (token.type != T_EOL) {
@@ -606,7 +607,7 @@ void parse_arg_list_switcher(int print_checker) {
 
 //Parse for <arg> LL
 int parse_arg(int token_type) {
-    //TODO Make this one better / Checks if token is taken or should take
+
     if (token_type == PH_TAKE) {
         token = getToken();
     }
@@ -805,7 +806,6 @@ int parse_arg(int token_type) {
             }
             break;
         case T_STRING://54
-            //free(token.data) //TODO can be done here??
             //increment counter for NO. of parameters
             paramsCounter++;
 
