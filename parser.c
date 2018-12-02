@@ -38,7 +38,8 @@ void parse_arg_list2b();
 
 void parse_arg_list_switcher(int print_checker);
 
-Token token;
+Token token;// TODO extend to my .h or not?
+Token returnValue;
 int paramsCounter = 0;
 
 
@@ -209,6 +210,8 @@ int parse_st_list(int actual_position_helper) {
 
                                 default:
                                     token = prec_anal(token_old, token, 1);
+                                    gen_resultAss(token_top);
+                                    returnValue = token_top;
                                     parse_st_list(actual_position_helper);
                                     break;
                             }
@@ -283,6 +286,8 @@ int parse_st_list(int actual_position_helper) {
                             token_old = token;
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
+                            gen_resultAss(token_top);
+                            returnValue = token_top;
                             parse_st_list(actual_position_helper);
                             break;
                     }
@@ -900,6 +905,11 @@ int main() {
     ltsStack = &mainStack;
     ltsDLInsertFirst(ltsStack, ltsMain);
     ltsDLFirst(ltsStack);
+
+    // generate IFJcode2018 file header
+    gen_code_header();
+
+    // start code analysis
     parse_main(0);
     return 0;
 }
