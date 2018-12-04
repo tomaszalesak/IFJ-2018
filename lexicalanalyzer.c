@@ -350,10 +350,19 @@ Token getToken() {
                     state = AS_ESCAPE;
                 } else if (c == ' ') {
                     strAddChar(&sBuffer, '\\');
-                    strAddChar(&sBuffer, 's');
+                    strAddChar(&sBuffer, '0');
+                    strAddChar(&sBuffer, '3');
+                    strAddChar(&sBuffer, '2');
                 } else if (c == '\t') {
                     strAddChar(&sBuffer, '\\');
-                    strAddChar(&sBuffer, 't');
+                    strAddChar(&sBuffer, '0');
+                    strAddChar(&sBuffer, '0');
+                    strAddChar(&sBuffer, '9');
+                } else if (c == '#') {
+                    strAddChar(&sBuffer, '\\');
+                    strAddChar(&sBuffer, '0');
+                    strAddChar(&sBuffer, '3');
+                    strAddChar(&sBuffer, '5');
                 } else if (c > 31) {
                     strAddChar(&sBuffer, (char)c);
                 } else {
@@ -381,19 +390,27 @@ Token getToken() {
                     state = AS_STRING;
                 } else if (c == '\\') {
                     strAddChar(&sBuffer, '\\');
-                    strAddChar(&sBuffer, '\\');
+                    strAddChar(&sBuffer, '0');
+                    strAddChar(&sBuffer, '9');
+                    strAddChar(&sBuffer, '2');
                     state = AS_STRING;
                 } else if (c == 't') {
                     strAddChar(&sBuffer, '\\');
-                    strAddChar(&sBuffer, 't');
+                    strAddChar(&sBuffer, '0');
+                    strAddChar(&sBuffer, '0');
+                    strAddChar(&sBuffer, '9');
                     state = AS_STRING;
                 } else if (c == 'n') {
                     strAddChar(&sBuffer, '\\');
-                    strAddChar(&sBuffer, 'n');
+                    strAddChar(&sBuffer, '0');
+                    strAddChar(&sBuffer, '1');
+                    strAddChar(&sBuffer, '0');
                     state = AS_STRING;
                 } else if (c == 's') {
                     strAddChar(&sBuffer, '\\');
-                    strAddChar(&sBuffer, 's');
+                    strAddChar(&sBuffer, '0');
+                    strAddChar(&sBuffer, '3');
+                    strAddChar(&sBuffer, '2');
                     state = AS_STRING;
                 } else if (c == 'x') {
                     state = AS_ESCAPEHEX1;
