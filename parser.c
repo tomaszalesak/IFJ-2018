@@ -94,7 +94,7 @@ void parse_function() {//3
 
         gen_label(token);
         gen_pushframe();
-        gen_retval();
+        gen_retval_def();
 
         ///semantic - creating new list for function definition semantic analysis
         //pointer to save main stack
@@ -204,13 +204,13 @@ int parse_st_list(int actual_position_helper) {
                                 case T_EOL:
                                     parse_arg_list_switcher(0);
                                     gen_call(token_old);
-                                    gen_getretval(token_top);
+                                    gen_retval_get(token_top);
                                     parse_st_list(actual_position_helper);
                                     break;
 
                                 default:
                                     token = prec_anal(token_old, token, 1);
-                                    gen_resultAss(token_top);
+                                    gen_result_ass(token_top);
                                     returnValue = token_top;
                                     parse_st_list(actual_position_helper);
                                     break;
@@ -286,7 +286,7 @@ int parse_st_list(int actual_position_helper) {
                             token_old = token;
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
-                            gen_resultAss(token_top);
+                            gen_result_ass(token_top);
                             returnValue = token_top;
                             parse_st_list(actual_position_helper);
                             break;
@@ -339,7 +339,7 @@ int parse_st_list(int actual_position_helper) {
                     K = createString(token_old);
                     parse_arg_list_switcher(0);
                     gen_call(token_old);
-                    gen_getretval(token_top);
+                    gen_retval_get(token_top);
                     parse_st_list(actual_position_helper);
                     break;
             }
@@ -908,6 +908,10 @@ int main() {
 
     // generate IFJcode2018 file header
     gen_code_header();
+
+    // push first frame
+    gen_TF();
+    gen_pushframe();
 
     // start code analysis
     parse_main(0);

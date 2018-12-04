@@ -120,8 +120,37 @@ void gen_call(Token token) {
 /*
  * Generates code for return value variable definition.
  */
-void gen_retval() {
+void gen_retval_def() {
     printf("DEFVAR LF@%%retval\nMOVE LF@%%retval nil@nil\n");
+}
+
+/*
+ * Generates code for assingning return value into the retval variable.
+ * @param token - Token that contains the return value.
+ */
+void gen_retval_ass(Token token) {
+    printf("MOVE LF@%%retval ");
+
+    switch (token.type) {
+        case T_IDENTIFIER:
+            printf("LF@%s\n", (char*)(token.data));
+            break;
+        case T_INT:
+            printf("int@%d\n", *(int*)(token.data));
+            break;
+        case T_FLOAT:
+            printf("float@%f\n", *(float*)(token.data));
+            break;
+        case T_STRING:
+            printf("string@%s\n", (char*)(token.data));
+            break;
+        case PREC_E:
+            printf("LF@%%tmp%%%x\n", (int)(token.data));
+            break;
+        default:
+            compiler_exit(ERR_INTERNAL);
+            break;
+    }
 }
 
 /*
@@ -132,10 +161,11 @@ void gen_return() {
 }
 
 /*
- * Generates code that moves return value to the left-side variable of assignment.
- * @param token - Token representing the left-side variable.
+ * Generates code that moves return value of a function to the target variable.
+ * Called after the end of function call.
+ * @param token - Token representing the target variable.
  */
-void gen_getretval(Token token) {
+void gen_retval_get(Token token) {
     printf("MOVE LF@%s TF@%%retval\n", (char*)(token.data));
 }
 
@@ -216,6 +246,13 @@ void gen_while_cmpResult() {
 void gen_while_endLabel(int endID, int doID) {
     printf("JUMP WHILE%%do%%%x\n", doID);
     printf("LABEL WHILE%%end%%%x\n", endID);
+}
+
+/*
+ * Generates IFJcode2018 file header.
+ */
+void gen_code_header() {
+    printf(".IFJcode2018\n");
 }
 
 // Expression Code Generation
@@ -314,12 +351,40 @@ int gen_exp_SUB() {
 /*
  * Generates the final result variable of one line of code.
  */
+void gen_exp_result(Token token) {
+    int result = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%result%%%x\n", result);
+    printf("MOVE LF@%%result%%%x ", result);
+
+    switch (token.type) {
+        case T_IDENTIFIER:
+            printf("LF@%s\n", (char*)(token.data));
+            break;
+        case T_INT:
+            printf("int@%d\n", *(int*)(token.data));
+            break;
+        case T_FLOAT:
+            printf("float@%f\n", *(float*)(token.data));
+            break;
+        case T_STRING:
+            printf("string@%s\n", (char*)(token.data));
+            break;
+        case PREC_E:
+            printf("LF@%%tmp%%%x\n", (int)(token.data));
+            break;
+        default:
+            compiler_exit(ERR_INTERNAL);
+            break;
+    }
+}/*
 void gen_exp_result(int tmp) {
     int result = gen_uniqueID_next();
 
     printf("DEFVAR LF@%%result%%%x\n", result);
     printf("MOVE LF@%%result%%%x LF@%%tmp%%%x\n", result, tmp);
-}
+}*/
+
 
 /*
  * Generates beginning code for a "x = y == z" type expression.
@@ -377,6 +442,17 @@ int gen_exp_GT() {
     return result;
 }
 
+/*
+ * Generates code that assigns result of an expression to the target variable.
+ * Called after end of expression analysis.
+ * @param token - Token representing the target variable.
+ */
+void gen_result_ass(Token token) {
+    // @var resultID - ID of the result.
+    int resultID = gen_uniqueID_last();
+
+    printf("MOVE LF@%s LF@%%result%%%x\n", (char*)(token.data), resultID);
+}
 
 
 // Built-in Function Code Generation
@@ -414,7 +490,9 @@ void gen_bif_print(){
  * Generates code for built-in function LENGTH().
  */
 void gen_bif_length(){
-    printf("");
+    printf("DEFVAR LF@str\nMOVE LF@str LF@%%1\n");
+    gen_retval_def();
+    printf("STRLEN LF@%%retval LF@str");
 }
 
 /*
