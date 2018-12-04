@@ -222,7 +222,7 @@ void gen_if_cmpResult() {
     int resultID = gen_uniqueID_last();
     int thenID = gen_uniqueID_next();
     int elseID = gen_uniqueID_next();
-    printf("JUMPIFEQ IF%%then%%%x %cF@IF%%result%%%x bool@true\n", thenID, (char)frame, resultID);
+    printf("JUMPIFEQ IF%%then%%%x %cF@%%result%%%x bool@true\n", thenID, (char)frame, resultID);
     printf("JUMP IF%%else%%%x\n", elseID);
     printf("LABEL IF%%then%%%x\n", thenID);
 }
@@ -277,6 +277,17 @@ void gen_while_endLabel(int endID, int doID) {
  */
 void gen_code_header() {
     printf(".IFJcode18\n");
+}
+
+
+int gen_jumparound_jump() {
+    int label = gen_uniqueID_next();
+    printf("JUMP jumparound%%%x\n", label);
+    return label;
+}
+
+void gen_jumparound_label(int label) {
+    printf("LABEL jumparound%%%x\n", label);
 }
 
 // Expression Code Generation

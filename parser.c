@@ -73,6 +73,7 @@ void parse_main(int x) {
 void parse_function() {//3
 
     token = getToken();
+    int jumparound_label = 0;
 
     if ((token.type == T_IDENTIFIER || token.type == T_FUNCTION) && (getToken().type) == T_LBRACKET) {
         //Call function for <param-l>
@@ -92,8 +93,8 @@ void parse_function() {//3
         }
         gtsSetDefined(gts, &K);
 
+        jumparound_label = gen_jumparound_jump();
         gen_label(token);
-        gen_TF();
         gen_pushframe();
         gen_set_frame(GEN_LOCAL);
         gen_retval_def();
@@ -124,9 +125,10 @@ void parse_function() {//3
             //ltsDLPred(ltsStack);
             //ltsDLPostDelete(ltsStack);
             gen_retval_ass(returnValue);
-            gen_set_frame(GEN_GLOBAL);
             gen_popframe();
             gen_return();
+            gen_set_frame(GEN_GLOBAL);
+            gen_jumparound_label(jumparound_label);
             ltsStack = tmpStack;
         } else {
             compiler_exit(ERR_SYNTAX);

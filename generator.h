@@ -160,6 +160,11 @@ void gen_while_endLabel(int endID, int doID);
 void gen_code_header();
 
 
+int gen_jumparound_jump();
+
+void gen_jumparound_label(int label);
+
+
 // Expression Code Generation
 // ==========================
 
