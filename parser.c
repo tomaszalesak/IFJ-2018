@@ -499,6 +499,8 @@ int parse_st_list(int actual_position_helper) {
         default:
             token = getToken();
             token = prec_anal(token_old, token, 1);
+            returnValue.type = PREC_E;
+            returnValue.data = (void*)gen_uniqueID_last();
             parse_st_list(actual_position_helper);
             break;
     }

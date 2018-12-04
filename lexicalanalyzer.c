@@ -348,6 +348,12 @@ Token getToken() {
                     state = AS_STRINGEND;
                 } else if (c == '\\') {
                     state = AS_ESCAPE;
+                } else if (c == ' ') {
+                    strAddChar(&sBuffer, '\\');
+                    strAddChar(&sBuffer, 's');
+                } else if (c == '\t') {
+                    strAddChar(&sBuffer, '\\');
+                    strAddChar(&sBuffer, 't');
                 } else if (c > 31) {
                     strAddChar(&sBuffer, (char)c);
                 } else {

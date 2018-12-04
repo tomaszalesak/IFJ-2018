@@ -169,7 +169,7 @@ void gen_retval_ass(Token token) {
             printf("string@%s\n", (char*)(token.data));
             break;
         case PREC_E:
-            printf("%cF@%%tmp%%%x\n", (char)frame, (int)(token.data));
+            printf("%cF@%%result%%%x\n", (char)frame, (int)(token.data));
             break;
         default:
             compiler_exit(ERR_INTERNAL);
