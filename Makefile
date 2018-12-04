@@ -14,6 +14,9 @@ ifj2018: $(OBJECTS)
 test: all
 	./tests/colorful_script_no_input.sh
 
+nocolortest: all
+	./tests/script_no_input.sh
+
 exampletest: all
 	./tests/test_just_example.sh
 
