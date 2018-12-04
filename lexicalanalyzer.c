@@ -423,29 +423,63 @@ Token getToken() {
                 if (IS_NUMBER(c)) {
                     hexBuffer *= 16;
                     hexBuffer += c - '0';
-                    strAddChar(&sBuffer, (char) hexBuffer);
+                    if (hexBuffer > 32 && hexBuffer != '#' && hexBuffer != '\\')
+                        strAddChar(&sBuffer, (char) hexBuffer);
+                    else {
+                        strAddChar(&sBuffer, '\\');
+                        char dekBuffer[3];
+                        sprintf(dekBuffer, "%03d", hexBuffer);
+                        strAddString(&sBuffer, dekBuffer);
+                    }
                     state = AS_STRING;
                 } else if (c >= 'a' && c <= 'f') {
                     hexBuffer *= 16;
                     hexBuffer += c - 'a' + 10;
-                    strAddChar(&sBuffer, (char) hexBuffer);
+                    if (hexBuffer > 32 && hexBuffer != '#' && hexBuffer != '\\')
+                        strAddChar(&sBuffer, (char) hexBuffer);
+                    else {
+                        strAddChar(&sBuffer, '\\');
+                        char dekBuffer[3];
+                        sprintf(dekBuffer, "%03d", hexBuffer);
+                        strAddString(&sBuffer, dekBuffer);
+                    }
                     state = AS_STRING;
                 } else if (c >= 'A' && c <= 'F') {
                     hexBuffer *= 16;
                     hexBuffer += c - 'A' + 10;
-                    strAddChar(&sBuffer, (char) hexBuffer);
+                    if (hexBuffer > 32 && hexBuffer != '#' && hexBuffer != '\\')
+                        strAddChar(&sBuffer, (char) hexBuffer);
+                    else {
+                        strAddChar(&sBuffer, '\\');
+                        char dekBuffer[3];
+                        sprintf(dekBuffer, "%03d", hexBuffer);
+                        strAddString(&sBuffer, dekBuffer);
+                    }
                     state = AS_STRING;
                 } else if (c == '\"') {
+                    strAddChar(&sBuffer, '\\');
+                    char dekBuffer[3];
+                    sprintf(dekBuffer, "%03d", hexBuffer);
+                    strAddString(&sBuffer, dekBuffer);
                     state = AS_STRINGEND;
                 } else if (c == '\\') {
+                    strAddChar(&sBuffer, '\\');
+                    char dekBuffer[3];
+                    sprintf(dekBuffer, "%03d", hexBuffer);
+                    strAddString(&sBuffer, dekBuffer);
                     state = AS_ESCAPE;
                 } else if (c > 31) {
+                    strAddChar(&sBuffer, '\\');
+                    char dekBuffer[3];
+                    sprintf(dekBuffer, "%03d", hexBuffer);
+                    strAddString(&sBuffer, dekBuffer);
                     strAddChar(&sBuffer, (char)c);
                     state = AS_STRING;
                 } else {
                     strFree(&sBuffer);
                     state = AS_ERROR;
                 }
+
                 break;
 
             // Case for identifier token.
