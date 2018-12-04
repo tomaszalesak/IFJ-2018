@@ -8,7 +8,6 @@ else
 	b = 11111111
 end
 
-xxx = funkce(2,2)
 
 def funkce(m, n)
 	a = m + n
@@ -19,3 +18,7 @@ def funkce(m, n)
 	end
 	a
 end
+
+
+
+xxx = funkce(2,2)
