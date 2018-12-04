@@ -1,0 +1,1456 @@
+./tests/script_no_input.sh
+SCHOOL TESTS
+------------
+FILE NAME: ./tests/our_tests/01.src
+Source:
+------------------------------
+# toto je komentar
+
+=begin sdjksdbbdlvvbdv
+vfvfaefvaefdfv
+efgvfegvegved
+
+fv
+efgvfegvegvede
+efgvfegvegved
+
+=end fvdfdf
+
+1+1
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@%tmp%80000001
+ADD GF@%tmp%80000001 int@1 int@1 
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@%tmp%80000001
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/02.src
+Source:
+------------------------------
+a = 5 + 5
+b = a
+
+=begin
+
+#text který by se měl celý ignorovat
+print("ahoj chybo?")
+
+=end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%tmp%80000001
+ADD GF@%tmp%80000001 int@5 int@5 
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@%tmp%80000001
+MOVE GF@a GF@%result%80000002
+DEFVAR GF@b
+MOVE GF@b GF@a
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/03.src
+Source:
+------------------------------
+=begin
+Zkouška if konstrukce
+=end
+if 7 > 3 then
+	print("Bude chyba?")
+else
+end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@%tmp%80000001
+GT GF@%tmp%80000001 int@7 int@3 
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@%tmp%80000001
+JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
+JUMP IF%else%80000004
+LABEL IF%then%80000003
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@Bude\032chyba?
+JUMP IF%end%80000005
+LABEL IF%else%80000004
+LABEL IF%end%80000005
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/04.src
+Source:
+------------------------------
+# alokace textu
+a = "texttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttext"
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 string@texttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttext
+MOVE GF@a GF@%result%80000001
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/05.src
+Source:
+------------------------------
+# definice funkce BEZ parametru
+def test?()
+	a = 5
+end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+JUMP jumparound%80000001
+LABEL $test?
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@a
+DEFVAR LF@%result%80000002
+MOVE LF@%result%80000002 int@5
+MOVE LF@a LF@%result%80000002
+MOVE LF@%retval LF@a
+POPFRAME
+RETURN
+LABEL jumparound%80000001
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/06.src
+Source:
+------------------------------
+# definice funkce s parametrem
+def test?(k)
+	a = 5
+end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+JUMP jumparound%80000001
+LABEL $test?
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@k
+MOVE LF@k LF@%1
+DEFVAR LF@a
+DEFVAR LF@%result%80000002
+MOVE LF@%result%80000002 int@5
+MOVE LF@a LF@%result%80000002
+MOVE LF@%retval LF@a
+POPFRAME
+RETURN
+LABEL jumparound%80000001
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/07.src
+Source:
+------------------------------
+# definice funkce s VICE parametry
+def test?(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+	a = 5
+end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+JUMP jumparound%80000001
+LABEL $test?
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@_a
+MOVE LF@_a LF@%1
+DEFVAR LF@_b
+MOVE LF@_b LF@%2
+DEFVAR LF@_c
+MOVE LF@_c LF@%3
+DEFVAR LF@_d
+MOVE LF@_d LF@%4
+DEFVAR LF@_e
+MOVE LF@_e LF@%5
+DEFVAR LF@_f
+MOVE LF@_f LF@%6
+DEFVAR LF@_g
+MOVE LF@_g LF@%7
+DEFVAR LF@_h
+MOVE LF@_h LF@%8
+DEFVAR LF@_i
+MOVE LF@_i LF@%9
+DEFVAR LF@_j
+MOVE LF@_j LF@%10
+DEFVAR LF@_k
+MOVE LF@_k LF@%11
+DEFVAR LF@_l
+MOVE LF@_l LF@%12
+DEFVAR LF@_m
+MOVE LF@_m LF@%13
+DEFVAR LF@_n
+MOVE LF@_n LF@%14
+DEFVAR LF@_o
+MOVE LF@_o LF@%15
+DEFVAR LF@_p
+MOVE LF@_p LF@%16
+DEFVAR LF@_q
+MOVE LF@_q LF@%17
+DEFVAR LF@_r
+MOVE LF@_r LF@%18
+DEFVAR LF@_s
+MOVE LF@_s LF@%19
+DEFVAR LF@_t
+MOVE LF@_t LF@%20
+DEFVAR LF@_u
+MOVE LF@_u LF@%21
+DEFVAR LF@_v
+MOVE LF@_v LF@%22
+DEFVAR LF@_w
+MOVE LF@_w LF@%23
+DEFVAR LF@_x
+MOVE LF@_x LF@%24
+DEFVAR LF@_y
+MOVE LF@_y LF@%25
+DEFVAR LF@_z
+MOVE LF@_z LF@%26
+DEFVAR LF@_A
+MOVE LF@_A LF@%27
+DEFVAR LF@_B
+MOVE LF@_B LF@%28
+DEFVAR LF@_C
+MOVE LF@_C LF@%29
+DEFVAR LF@_D
+MOVE LF@_D LF@%30
+DEFVAR LF@_E
+MOVE LF@_E LF@%31
+DEFVAR LF@_F
+MOVE LF@_F LF@%32
+DEFVAR LF@_G
+MOVE LF@_G LF@%33
+DEFVAR LF@_H
+MOVE LF@_H LF@%34
+DEFVAR LF@_I
+MOVE LF@_I LF@%35
+DEFVAR LF@_J
+MOVE LF@_J LF@%36
+DEFVAR LF@_K
+MOVE LF@_K LF@%37
+DEFVAR LF@_L
+MOVE LF@_L LF@%38
+DEFVAR LF@_M
+MOVE LF@_M LF@%39
+DEFVAR LF@_N
+MOVE LF@_N LF@%40
+DEFVAR LF@_O
+MOVE LF@_O LF@%41
+DEFVAR LF@_P
+MOVE LF@_P LF@%42
+DEFVAR LF@_Q
+MOVE LF@_Q LF@%43
+DEFVAR LF@_R
+MOVE LF@_R LF@%44
+DEFVAR LF@_S
+MOVE LF@_S LF@%45
+DEFVAR LF@_T
+MOVE LF@_T LF@%46
+DEFVAR LF@_U
+MOVE LF@_U LF@%47
+DEFVAR LF@_V
+MOVE LF@_V LF@%48
+DEFVAR LF@_W
+MOVE LF@_W LF@%49
+DEFVAR LF@_X
+MOVE LF@_X LF@%50
+DEFVAR LF@_Y
+MOVE LF@_Y LF@%51
+DEFVAR LF@_Z
+MOVE LF@_Z LF@%52
+DEFVAR LF@a
+DEFVAR LF@%result%80000002
+MOVE LF@%result%80000002 int@5
+MOVE LF@a LF@%result%80000002
+MOVE LF@%retval LF@a
+POPFRAME
+RETURN
+LABEL jumparound%80000001
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/08.src
+Source:
+------------------------------
+# test identifikatoru
+a = 5
+a_56 = 5
+a__ = 5
+_ = 5
+__ = 6
+abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 = 8
+mlk? = mlk!
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@5
+MOVE GF@a GF@%result%80000001
+DEFVAR GF@a_56
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 int@5
+MOVE GF@a_56 GF@%result%80000002
+DEFVAR GF@a__
+DEFVAR GF@%result%80000003
+MOVE GF@%result%80000003 int@5
+MOVE GF@a__ GF@%result%80000003
+DEFVAR GF@_
+DEFVAR GF@%result%80000004
+MOVE GF@%result%80000004 int@5
+MOVE GF@_ GF@%result%80000004
+DEFVAR GF@__
+DEFVAR GF@%result%80000005
+MOVE GF@%result%80000005 int@6
+MOVE GF@__ GF@%result%80000005
+DEFVAR GF@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+DEFVAR GF@%result%80000006
+MOVE GF@%result%80000006 int@8
+MOVE GF@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 GF@%result%80000006
+------------------------------
+Our output:
+Our return value: 2
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/09.src
+Source:
+------------------------------
+# neco pridej
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/10.src
+Source:
+------------------------------
+# zkusime ne/zavorky u volani funkce s hodne parametry
+print "ahoj"
+abc _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
+inputs _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
+inputi _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
+inputf _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
+length _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
+substr _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
+ord _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
+chr _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
+
+print("ahoj")
+abc(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+inputs(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+inputi(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+inputf(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+length(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+substr(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+ord(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+chr(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@ahoj
+CREATEFRAME
+------------------------------
+Our output:
+Our return value: 3
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/11.src
+Source:
+------------------------------
+# zouska stringu zda neodchyti nejaky spatny znak
+# pridame k tomu jeste komentar 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r\x0b\x0c
+print("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&\"()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\x0b\x0c")
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\035$%&"()*+,-./:;<=>?@[\092]^_`{|}~\032\009\010\011\012
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/12.src
+Source:
+------------------------------
+# dlouhy int, float
+a = 9195181115680978250797059216106836279524266923797309156481477926300863726271789701520334425305722183
+b = 9195181115680978250797059216106836279524266923797309156481477926300863726271789701520334425305722183.9195181115680978250797059216106836279524266923797309156481477926300863726271789701520334425305722183
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+------------------------------
+Our output:
+Our return value: 1
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/13.src
+Source:
+------------------------------
+# vsechny klicova slova
+def
+do
+else
+end
+if
+not
+nil
+then
+while
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+------------------------------
+Our output:
+Our return value: 2
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/14.src
+Source:
+------------------------------
+=begin
+pouze komentar, pac a pusu
+=end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/15.src
+Source:
+------------------------------
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/16.src
+Source:
+------------------------------
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/17.src
+Source:
+------------------------------
+# pouze komentar opet
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/18.src
+Source:
+------------------------------
+#komentar se vsema znakama 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r\x0b\x0c
+=begin
+rovnou i na vice radkach 0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r\x0b\x0c
+0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~ \t\n\r\x0b\x0c
+=end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/19.src
+Source:
+------------------------------
+defi = if?
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@defi
+------------------------------
+Our output:
+Our return value: 3
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/20.src
+Source:
+------------------------------
+a = 5
+_ = 55555
+b = 111
+
+if a < _ then
+	b = 666
+else
+	b = 11111111
+end
+
+xxx = funkce(2,2)
+
+def funkce(m, n)
+	a = m + n
+	if a == 0 then
+		a = 1
+	else
+		a = 2
+	end
+	a
+end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@5
+MOVE GF@a GF@%result%80000001
+DEFVAR GF@_
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 int@55555
+MOVE GF@_ GF@%result%80000002
+DEFVAR GF@b
+DEFVAR GF@%result%80000003
+MOVE GF@%result%80000003 int@111
+MOVE GF@b GF@%result%80000003
+DEFVAR GF@%tmp%80000004
+LT GF@%tmp%80000004 GF@a GF@_ 
+DEFVAR GF@%result%80000005
+MOVE GF@%result%80000005 GF@%tmp%80000004
+JUMPIFEQ IF%then%80000006 GF@%result%80000005 bool@true
+JUMP IF%else%80000007
+LABEL IF%then%80000006
+DEFVAR GF@b
+DEFVAR GF@%result%80000008
+MOVE GF@%result%80000008 int@666
+MOVE GF@b GF@%result%80000008
+JUMP IF%end%80000009
+LABEL IF%else%80000007
+DEFVAR GF@b
+DEFVAR GF@%result%8000000a
+MOVE GF@%result%8000000a int@11111111
+MOVE GF@b GF@%result%8000000a
+LABEL IF%end%80000009
+DEFVAR GF@xxx
+------------------------------
+Our output:
+Our return value: 3
+Our return ifjcode value: 52
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/21.src
+Source:
+------------------------------
+# testik hexa hodnot pro velka pismena
+a = "\x0"
+a = "\x1"
+a = "\x2"
+a = "\xa"
+a = "\xb"
+a = "\xc"
+a = "\xd"
+a = "\xe"
+a = "\xf"
+a = "\x00"
+a = "\x01"
+a = "\x02"
+a = "\x03"
+a = "\x04"
+a = "\x05"
+a = "\x06"
+a = "\x07"
+a = "\x08"
+a = "\x09"
+a = "\xFF"
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 string@\000
+MOVE GF@a GF@%result%80000001
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 string@\001
+MOVE GF@a GF@%result%80000002
+DEFVAR GF@%result%80000003
+MOVE GF@%result%80000003 string@\002
+MOVE GF@a GF@%result%80000003
+DEFVAR GF@%result%80000004
+MOVE GF@%result%80000004 string@\010
+MOVE GF@a GF@%result%80000004
+DEFVAR GF@%result%80000005
+MOVE GF@%result%80000005 string@\011
+MOVE GF@a GF@%result%80000005
+DEFVAR GF@%result%80000006
+MOVE GF@%result%80000006 string@\012
+MOVE GF@a GF@%result%80000006
+DEFVAR GF@%result%80000007
+MOVE GF@%result%80000007 string@\013
+MOVE GF@a GF@%result%80000007
+DEFVAR GF@%result%80000008
+MOVE GF@%result%80000008 string@\014
+MOVE GF@a GF@%result%80000008
+DEFVAR GF@%result%80000009
+MOVE GF@%result%80000009 string@\015
+MOVE GF@a GF@%result%80000009
+DEFVAR GF@%result%8000000a
+MOVE GF@%result%8000000a string@\000
+MOVE GF@a GF@%result%8000000a
+DEFVAR GF@%result%8000000b
+MOVE GF@%result%8000000b string@\001
+MOVE GF@a GF@%result%8000000b
+DEFVAR GF@%result%8000000c
+MOVE GF@%result%8000000c string@\002
+MOVE GF@a GF@%result%8000000c
+DEFVAR GF@%result%8000000d
+MOVE GF@%result%8000000d string@\003
+MOVE GF@a GF@%result%8000000d
+DEFVAR GF@%result%8000000e
+MOVE GF@%result%8000000e string@\004
+MOVE GF@a GF@%result%8000000e
+DEFVAR GF@%result%8000000f
+MOVE GF@%result%8000000f string@\005
+MOVE GF@a GF@%result%8000000f
+DEFVAR GF@%result%80000010
+MOVE GF@%result%80000010 string@\006
+MOVE GF@a GF@%result%80000010
+DEFVAR GF@%result%80000011
+MOVE GF@%result%80000011 string@\007
+MOVE GF@a GF@%result%80000011
+DEFVAR GF@%result%80000012
+MOVE GF@%result%80000012 string@\008
+MOVE GF@a GF@%result%80000012
+DEFVAR GF@%result%80000013
+MOVE GF@%result%80000013 string@\009
+MOVE GF@a GF@%result%80000013
+DEFVAR GF@%result%80000014
+MOVE GF@%result%80000014 string@�
+MOVE GF@a GF@%result%80000014
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/22.src
+Source:
+------------------------------
+def neco()
+5
+end
+neco
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+JUMP jumparound%80000001
+LABEL $neco
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@%result%80000002
+MOVE LF@%result%80000002 int@5
+MOVE LF@%retval LF@%result%80000002
+POPFRAME
+RETURN
+LABEL jumparound%80000001
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/23.src
+Source:
+------------------------------
+# nejspise chyba kvuli staticu
+a = "\x57"
+a = "\x75"
+a = "\x3F"
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 string@W
+MOVE GF@a GF@%result%80000001
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 string@u
+MOVE GF@a GF@%result%80000002
+DEFVAR GF@%result%80000003
+MOVE GF@%result%80000003 string@?
+MOVE GF@a GF@%result%80000003
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/24.src
+Source:
+------------------------------
+a = 5
+b = a
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@5
+MOVE GF@a GF@%result%80000001
+DEFVAR GF@b
+MOVE GF@b GF@a
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/25.src
+Source:
+------------------------------
+# test specialnich znaků
+a = "\"a\nmezera\stady\tbudetab\\jen tak zavorka"
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 string@"a\010mezera\032tady\009budetab\092jen\032tak\032zavorka
+MOVE GF@a GF@%result%80000001
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/26.src
+Source:
+------------------------------
+a = substr("ahoj", 0, 2)
+print a
+
+if 0 < 10 then
+	print("dobry den;;;")
+else
+	print("jedem ti domu")
+end
+
+def funkce(m, n)
+	m = 2 * n
+	if m != n then
+		chr(m)
+	else
+	end
+end
+
+
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@ahoj
+DEFVAR TF@%2
+MOVE TF@%2 int@0
+DEFVAR TF@%3
+MOVE TF@%3 int@2
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 neaka hodnota z TS
+DEFVAR GF@%tmp%80000001
+LT GF@%tmp%80000001 int@0 int@10 
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@%tmp%80000001
+JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
+JUMP IF%else%80000004
+LABEL IF%then%80000003
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@dobry\032den;;;
+JUMP IF%end%80000005
+LABEL IF%else%80000004
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@jedem\032ti\032domu
+LABEL IF%end%80000005
+JUMP jumparound%80000006
+LABEL $funkce
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@m
+MOVE LF@m LF@%1
+DEFVAR LF@n
+MOVE LF@n LF@%2
+Question 3, 1
+DEFVAR LF@%tmp%80000007
+MUL LF@%tmp%80000007 int@2 LF@n 
+DEFVAR LF@%result%80000008
+MOVE LF@%result%80000008 LF@%tmp%80000007
+MOVE LF@m LF@%result%80000008
+DEFVAR LF@%tmp%80000009
+EQ LF@%tmp%80000009 LF@m LF@n 
+DEFVAR LF@%tmp%8000000a
+NOT LF@%tmp%8000000a LF@%tmp%80000009 
+DEFVAR LF@%result%8000000b
+MOVE LF@%result%8000000b LF@%tmp%8000000a
+JUMPIFEQ IF%then%8000000c LF@%result%8000000b bool@true
+JUMP IF%else%8000000d
+LABEL IF%then%8000000c
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 neaka hodnota z TS
+JUMP IF%end%8000000e
+LABEL IF%else%8000000d
+LABEL IF%end%8000000e
+MOVE LF@%retval LF@m
+POPFRAME
+RETURN
+LABEL jumparound%80000006
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 51
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/27.src
+Source:
+------------------------------
+a = 5
+_ = 55555
+b = 111
+
+if a < _ then
+	b = 666
+else
+	b = 11111111
+end
+
+
+def funkce(m, n)
+	a = m + n
+	if a == 0 then
+		a = 1
+	else
+		a = 2
+	end
+	a
+end
+
+
+
+xxx = funkce(2,2)
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@5
+MOVE GF@a GF@%result%80000001
+DEFVAR GF@_
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 int@55555
+MOVE GF@_ GF@%result%80000002
+DEFVAR GF@b
+DEFVAR GF@%result%80000003
+MOVE GF@%result%80000003 int@111
+MOVE GF@b GF@%result%80000003
+DEFVAR GF@%tmp%80000004
+LT GF@%tmp%80000004 GF@a GF@_ 
+DEFVAR GF@%result%80000005
+MOVE GF@%result%80000005 GF@%tmp%80000004
+JUMPIFEQ IF%then%80000006 GF@%result%80000005 bool@true
+JUMP IF%else%80000007
+LABEL IF%then%80000006
+DEFVAR GF@b
+DEFVAR GF@%result%80000008
+MOVE GF@%result%80000008 int@666
+MOVE GF@b GF@%result%80000008
+JUMP IF%end%80000009
+LABEL IF%else%80000007
+DEFVAR GF@b
+DEFVAR GF@%result%8000000a
+MOVE GF@%result%8000000a int@11111111
+MOVE GF@b GF@%result%8000000a
+LABEL IF%end%80000009
+JUMP jumparound%8000000b
+LABEL $funkce
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@m
+MOVE LF@m LF@%1
+DEFVAR LF@n
+MOVE LF@n LF@%2
+DEFVAR LF@a
+DEFVAR LF@%tmp%8000000c
+ADD LF@%tmp%8000000c LF@m LF@n 
+DEFVAR LF@%result%8000000d
+MOVE LF@%result%8000000d LF@%tmp%8000000c
+MOVE LF@a LF@%result%8000000d
+DEFVAR LF@%tmp%8000000e
+EQ LF@%tmp%8000000e LF@a int@0 
+DEFVAR LF@%result%8000000f
+MOVE LF@%result%8000000f LF@%tmp%8000000e
+JUMPIFEQ IF%then%80000010 LF@%result%8000000f bool@true
+JUMP IF%else%80000011
+LABEL IF%then%80000010
+DEFVAR LF@a
+DEFVAR LF@%result%80000012
+MOVE LF@%result%80000012 int@1
+MOVE LF@a LF@%result%80000012
+JUMP IF%end%80000013
+LABEL IF%else%80000011
+DEFVAR LF@a
+DEFVAR LF@%result%80000014
+MOVE LF@%result%80000014 int@2
+MOVE LF@a LF@%result%80000014
+LABEL IF%end%80000013
+MOVE LF@%retval LF@a
+POPFRAME
+RETURN
+LABEL jumparound%8000000b
+DEFVAR GF@xxx
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 int@2
+DEFVAR TF@%2
+MOVE TF@%2 int@2
+CALL $funkce
+MOVE GF@xxx TF@%retval
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 52
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/example1.src
+Source:
+------------------------------
+# Program 1: Vypocet faktorialu (iterativne)
+print "Zadejte cislo pro vypocet faktorialu: "
+a = inputi
+if a < 0 then
+  print("\nFaktorial nelze spocitat\n")
+else
+  vysl = 1
+  while a > 0 do
+    vysl = vysl * a
+    a = a - 1
+  end
+  print "\nVysledek je:", vysl, "\n"
+end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@Zadejte\032cislo\032pro\032vypocet\032faktorialu:\032
+DEFVAR GF@a
+DEFVAR GF@%tmp%80000001
+LT GF@%tmp%80000001 GF@a int@0 
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@%tmp%80000001
+JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
+JUMP IF%else%80000004
+LABEL IF%then%80000003
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@\010Faktorial\032nelze\032spocitat\010
+JUMP IF%end%80000005
+LABEL IF%else%80000004
+DEFVAR GF@vysl
+DEFVAR GF@%result%80000006
+MOVE GF@%result%80000006 int@1
+MOVE GF@vysl GF@%result%80000006
+LABEL WHILE%do%80000007
+DEFVAR GF@%tmp%80000008
+GT GF@%tmp%80000008 GF@a int@0 
+DEFVAR GF@%result%80000009
+MOVE GF@%result%80000009 GF@%tmp%80000008
+JUMPIFEQ WHILE%end%8000000a GF@WHILE%result%80000009 bool@false
+DEFVAR GF@vysl
+Question 1, 1
+DEFVAR GF@%tmp%8000000b
+MUL GF@%tmp%8000000b GF@vysl GF@a 
+DEFVAR GF@%result%8000000c
+MOVE GF@%result%8000000c GF@%tmp%8000000b
+MOVE GF@vysl GF@%result%8000000c
+DEFVAR GF@a
+DEFVAR GF@%tmp%8000000d
+SUB GF@%tmp%8000000d GF@a int@1 
+DEFVAR GF@%result%8000000e
+MOVE GF@%result%8000000e GF@%tmp%8000000d
+MOVE GF@a GF@%result%8000000e
+JUMP WHILE%do%80000007
+LABEL WHILE%end%8000000a
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@\010Vysledek\032je:
+DEFVAR TF@%2
+MOVE TF@%2 neaka hodnota z TS
+DEFVAR TF@%3
+MOVE TF@%3 string@\010
+LABEL IF%end%80000005
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 51
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/example2.src
+Source:
+------------------------------
+# Program 2: Vypocet faktorialu (rekurzivne)
+def factorial (n)
+  if n < 2 then
+    result = 1
+  else
+    decremented_n = n - 1
+    temp_result = factorial decremented_n
+    result = n * temp_result
+  end # if
+  result
+end # function factorial
+
+# Hlavni telo programu
+print "Zadejte cislo pro vypocet faktorialu: "
+a = inputi
+if a < 0 then
+  print "\nFaktorial nelze spocitat\n"
+else
+  vysl = factorial a
+  print("\nVysledek je:", vysl, "\n")
+end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+JUMP jumparound%80000001
+LABEL $factorial
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@n
+MOVE LF@n LF@%1
+DEFVAR LF@%tmp%80000002
+LT LF@%tmp%80000002 LF@n int@2 
+DEFVAR LF@%result%80000003
+MOVE LF@%result%80000003 LF@%tmp%80000002
+JUMPIFEQ IF%then%80000004 LF@%result%80000003 bool@true
+JUMP IF%else%80000005
+LABEL IF%then%80000004
+DEFVAR LF@result
+DEFVAR LF@%result%80000006
+MOVE LF@%result%80000006 int@1
+MOVE LF@result LF@%result%80000006
+JUMP IF%end%80000007
+LABEL IF%else%80000005
+DEFVAR LF@decremented_n
+DEFVAR LF@%tmp%80000008
+SUB LF@%tmp%80000008 LF@n int@1 
+DEFVAR LF@%result%80000009
+MOVE LF@%result%80000009 LF@%tmp%80000008
+MOVE LF@decremented_n LF@%result%80000009
+DEFVAR LF@temp_result
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 neaka hodnota z TS
+CALL $factorial
+MOVE LF@temp_result TF@%retval
+DEFVAR LF@result
+Question 1, 1
+DEFVAR LF@%tmp%8000000a
+MUL LF@%tmp%8000000a LF@n LF@temp_result 
+DEFVAR LF@%result%8000000b
+MOVE LF@%result%8000000b LF@%tmp%8000000a
+MOVE LF@result LF@%result%8000000b
+LABEL IF%end%80000007
+------------------------------
+Our output:
+Our return value: 3
+Our return ifjcode value: 51
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/example3.src
+Source:
+------------------------------
+# Program 3: Prace s retezci a vestavenymi funkcemi
+s1 = "Toto je nejaky text"
+s2 = s1 + ", ktery jeste trochu obohatime"
+print s1, "\n", s2, "\n"
+s1len = length(s1)
+s1len = s1len - 4 + 1
+s1 = substr(s2, s1len, 4)
+print "4 znaky od ", s1len, ". znaku v \"", s2, "\":", s1, "\n"
+print "Zadejte serazenou posloupnost vsech malych pismen a-h, "
+print "pricemz se pismena nesmeji v posloupnosti opakovat: "
+s1 = inputs
+while s1 != "abcdefgh\n" do
+    print "Spatne zadana posloupnost, zkuste znovu: "
+    s1 = inputs
+end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@s1
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 string@Toto\032je\032nejaky\032text
+MOVE GF@s1 GF@%result%80000001
+DEFVAR GF@s2
+DEFVAR GF@%tmp%80000002
+ADD GF@%tmp%80000002 GF@s1 string@,\032ktery\032jeste\032trochu\032obohatime 
+DEFVAR GF@%result%80000003
+MOVE GF@%result%80000003 GF@%tmp%80000002
+MOVE GF@s2 GF@%result%80000003
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 neaka hodnota z TS
+DEFVAR TF@%2
+MOVE TF@%2 string@\010
+DEFVAR TF@%3
+MOVE TF@%3 neaka hodnota z TS
+DEFVAR TF@%4
+MOVE TF@%4 string@\010
+DEFVAR GF@s1len
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 neaka hodnota z TS
+DEFVAR GF@%tmp%80000004
+SUB GF@%tmp%80000004 GF@s1len int@4 
+DEFVAR GF@%tmp%80000005
+ADD GF@%tmp%80000005 GF@%tmp%80000004 int@1 
+DEFVAR GF@%result%80000006
+MOVE GF@%result%80000006 GF@%tmp%80000005
+MOVE GF@s1len GF@%result%80000006
+CREATEFRAME
+------------------------------
+Our output:
+Our return value: 4
+Our return ifjcode value: 51
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/example.src
+Source:
+------------------------------
+a = 5 + 5
+b = a
+
+=begin
+
+#text který by se měl celý ignorovat
+print("ahoj chybo?")
+
+=end
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%tmp%80000001
+ADD GF@%tmp%80000001 int@5 int@5 
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@%tmp%80000001
+MOVE GF@a GF@%result%80000002
+DEFVAR GF@b
+MOVE GF@b GF@a
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/undef-var.src
+Source:
+------------------------------
+#!/bin/ruby -r ./ifj18.rb
+# Ukazka definice promenne bez provedeni jeji inicializace v IFJ18/Ruby
+
+# Nasleduje mrtvy kod, ktery ma behem staticke analyzy vliv na tabulku symbolu a vytvori promennou x s hodnotou nil
+# Takto zvlastne lze definovat promennou, aniz bychom ji inicializovali
+if (1 == 2) then
+  x = 42
+else
+end
+
+# Kdybychom vypustil predchozi if-else-end, tak by pokud o pristup k x zpusobil chybu; zde ale bude nil
+if x == nil then
+  print "x je nil\n"
+else
+  print "x neni nil\n"
+end
+
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@%tmp%80000001
+EQ GF@%tmp%80000001 int@1 int@2 
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@%tmp%80000001
+JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
+JUMP IF%else%80000004
+LABEL IF%then%80000003
+DEFVAR GF@x
+DEFVAR GF@%result%80000005
+MOVE GF@%result%80000005 int@42
+MOVE GF@x GF@%result%80000005
+JUMP IF%end%80000006
+LABEL IF%else%80000004
+LABEL IF%end%80000006
+------------------------------
+Our output:
+Our return value: 3
+Our return ifjcode value: 0
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
