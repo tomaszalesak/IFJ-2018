@@ -376,8 +376,12 @@ Token getToken() {
 
             // Cases for escape sequences in string literals.
             case AS_ESCAPE:
-                if (c == '\"' || c == '\\') {
+                if (c == '\"') {
                     strAddChar(&sBuffer, (char)c);
+                    state = AS_STRING;
+                } else if (c == '\\') {
+                    strAddChar(&sBuffer, '\\');
+                    strAddChar(&sBuffer, '\\');
                     state = AS_STRING;
                 } else if (c == 't') {
                     strAddChar(&sBuffer, '\\');
