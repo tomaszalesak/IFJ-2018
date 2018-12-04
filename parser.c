@@ -636,7 +636,8 @@ int parse_arg(int token_type) {
                     fprintf(stderr, "ERROR! Function %s!\n", K.str);
                     compiler_exit(ERR_NO_OF_ARGS);
                 }
-                if ((ltsGetIdType(ltsStack->Act->lts, &a) != T_INT) && (ltsGetIdType(ltsStack->Act->lts, &a) != T_FLOAT)) {
+                //todo fix this for ltsPredSearch
+                if ((ltsDLSearchValType(ltsStack, a) != T_INT) && (ltsDLSearchValType(ltsStack, a) != T_FLOAT)) {
                     fprintf(stderr, "Semantic Error! Bad parameter type for function %s!\n", K.str);
                     compiler_exit(ERR_INCOMPATIBLE_TYPE);
                 }
@@ -647,13 +648,13 @@ int parse_arg(int token_type) {
                 string a = createString(token);
                 switch (paramsCounter) {
                     case 1:
-                        if (ltsGetIdType(ltsStack->Act->lts, &a) != T_STRING) {
+                        if (ltsDLSearchValType(ltsStack, a) != T_STRING) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
                         break;
                     case 2:
-                        if ((ltsGetIdType(ltsStack->Act->lts, &a) != T_INT) && (ltsGetIdType(ltsStack->Act->lts, &a) != T_FLOAT)) {
+                        if ((ltsDLSearchValType(ltsStack, a) != T_INT) && (ltsDLSearchValType(ltsStack, a) != T_FLOAT)) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
@@ -674,7 +675,7 @@ int parse_arg(int token_type) {
                     fprintf(stderr, "ERROR! Function %s!\n", K.str);
                     compiler_exit(ERR_NO_OF_ARGS);
                 }
-                if (ltsGetIdType(ltsStack->Act->lts, &a) != T_STRING) {
+                if (ltsDLSearchValType(ltsStack, a) != T_STRING) {
                     fprintf(stderr, "ERROR! Function %s!\n", K.str);
                     compiler_exit(ERR_INCOMPATIBLE_TYPE);
                 }
@@ -685,19 +686,19 @@ int parse_arg(int token_type) {
                 string a = createString(token);
                 switch (paramsCounter) {
                     case 1:
-                        if (ltsGetIdType(ltsStack->Act->lts, &a) != T_STRING) {
+                        if (ltsDLSearchValType(ltsStack, a) != T_STRING) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
                         break;
                     case 2:
-                        if (ltsGetIdType(ltsStack->Act->lts, &a) != T_INT && ltsGetIdType(ltsStack->Act->lts, &a) != T_FLOAT) {
+                        if (ltsDLSearchValType(ltsStack, a) != T_INT && ltsDLSearchValType(ltsStack, a) != T_FLOAT) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
                         break;
                     case 3:
-                        if (ltsGetIdType(ltsStack->Act->lts, &a) != T_INT && ltsGetIdType(ltsStack->Act->lts, &a) != T_FLOAT) {
+                        if (ltsDLSearchValType(ltsStack, a) != T_INT && ltsDLSearchValType(ltsStack, a) != T_FLOAT) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
