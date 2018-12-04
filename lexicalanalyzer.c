@@ -100,7 +100,7 @@ Token getToken() {
             c = getc(stdin);
 
         // Debug output
-        fprintf(stderr, "\tchar - %d:%c\n", c, c);
+        //fprintf(stderr, "\tchar - %d:%c\n", c, c);
 
         // STATE MACHINE LOGIC
         // AS is Analyzer State
