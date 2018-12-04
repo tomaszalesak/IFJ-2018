@@ -162,7 +162,7 @@ Token getToken() {
                 } else if (c == '#') {
                     state = AS_COMMENT_LINE;
                 } else if (IS_WHITESPACE(c)) {
-                    // do nothing
+                    wasEOL = 0;
                 } else {
                     state = AS_ERROR;
                 }
