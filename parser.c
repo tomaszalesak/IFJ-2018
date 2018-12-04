@@ -93,6 +93,7 @@ void parse_function() {//3
         gtsSetDefined(gts, &K);
 
         gen_label(token);
+        gen_TF();
         gen_pushframe();
         gen_set_frame(GEN_LOCAL);
         gen_retval_def();
@@ -122,6 +123,7 @@ void parse_function() {//3
             ///semantic remove temporary LTS
             //ltsDLPred(ltsStack);
             //ltsDLPostDelete(ltsStack);
+            gen_retval_ass(returnValue);
             gen_set_frame(GEN_GLOBAL);
             gen_popframe();
             gen_return();
@@ -205,8 +207,12 @@ int parse_st_list(int actual_position_helper) {
                                 case T_IDENTIFIER:
                                 case T_EOL:
                                     parse_arg_list_switcher(0);
-                                    gen_call(token_old);
-                                    gen_retval_get(token_top);
+                                    if (gtsSearch(gts, &K) != NULL) {
+                                        gen_call(token_old);
+                                        gen_retval_get(token_top);
+                                    } else {
+                                        gen_exp_MOV(token_old, token_top);
+                                    }
                                     parse_st_list(actual_position_helper);
                                     break;
 
@@ -322,6 +328,7 @@ int parse_st_list(int actual_position_helper) {
                         } //todo add error and exit?
                     } else {
                         ltsDLSearchPre(ltsStack, k);
+                        returnValue = token_top;
                     }
 
 
@@ -340,8 +347,12 @@ int parse_st_list(int actual_position_helper) {
                 default://11 12
                     K = createString(token_old);
                     parse_arg_list_switcher(0);
-                    gen_call(token_old);
-                    gen_retval_get(token_top);
+                    if (gtsSearch(gts, &K) != NULL) {
+                        gen_call(token_old);
+                        gen_retval_get(token_top);
+                    } else {
+                        returnValue = token_top;
+                    }
                     parse_st_list(actual_position_helper);
                     break;
             }

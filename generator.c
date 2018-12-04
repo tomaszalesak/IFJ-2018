@@ -283,6 +283,15 @@ void gen_code_header() {
 // ==========================
 
 /*
+ * Generates code to move a value from one variable to another variable.
+ * @param from - Token representing source variable.
+ * @param to   - Token representing target variable.
+ */
+void gen_exp_MOV(Token from, Token to) {
+    printf("MOVE %cF@%s %cF@%s\n", (char)frame, (char*)to.data, (char)frame, (char*)from.data);
+}
+
+/*
  * Generates code for one argument of an expression.
  * @param token - Token containing information about the argument.
  */
