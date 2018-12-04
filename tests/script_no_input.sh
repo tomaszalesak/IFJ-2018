@@ -4,7 +4,7 @@
 # Runs through all of them
 
 # Needs ifj18.rb file and your binary project:
-OURPROGRAM="./test" # enter name of your compiled project
+OURPROGRAM="./ifj2018" # enter name of your compiled project
 
 if [ -e ./ic18int ]
 then
@@ -15,7 +15,7 @@ else
 	exit 0
 fi
 
-for i in 01.src; do
+for i in ./tests/our_tests/*.src; do
 
 	# print file name
 	echo -e "FILE NAME: $i"
@@ -65,6 +65,6 @@ for i in 01.src; do
 
 done;
 
-rm *.code *.output
+rm ./tests/our_tests/*.code ./tests/our_tests/*.output
 
 exit 0

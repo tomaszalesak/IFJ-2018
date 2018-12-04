@@ -38,7 +38,8 @@ void parse_arg_list2b();
 
 void parse_arg_list_switcher(int print_checker);
 
-Token token;
+Token token;// TODO extend to my .h or not?
+Token returnValue;
 int paramsCounter = 0;
 
 
@@ -72,6 +73,7 @@ void parse_main(int x) {
 void parse_function() {//3
 
     token = getToken();
+    int jumparound_label = 0;
 
     if ((token.type == T_IDENTIFIER || token.type == T_FUNCTION) && (getToken().type) == T_LBRACKET) {
         //Call function for <param-l>
@@ -91,9 +93,11 @@ void parse_function() {//3
         }
         gtsSetDefined(gts, &K);
 
+        jumparound_label = gen_jumparound_jump();
         gen_label(token);
         gen_pushframe();
-        gen_retval();
+        gen_set_frame(GEN_LOCAL);
+        gen_retval_def();
 
         ///semantic - creating new list for function definition semantic analysis
         //pointer to save main stack
@@ -120,8 +124,11 @@ void parse_function() {//3
             ///semantic remove temporary LTS
             //ltsDLPred(ltsStack);
             //ltsDLPostDelete(ltsStack);
+            gen_retval_ass(returnValue);
             gen_popframe();
             gen_return();
+            gen_set_frame(GEN_GLOBAL);
+            gen_jumparound_label(jumparound_label);
             ltsStack = tmpStack;
         } else {
             compiler_exit(ERR_SYNTAX);
@@ -202,13 +209,19 @@ int parse_st_list(int actual_position_helper) {
                                 case T_IDENTIFIER:
                                 case T_EOL:
                                     parse_arg_list_switcher(0);
-                                    gen_call(token_old);
-                                    gen_getretval(token_top);
+                                    if (gtsSearch(gts, &K) != NULL) {
+                                        gen_call(token_old);
+                                        gen_retval_get(token_top);
+                                    } else {
+                                        gen_exp_MOV(token_old, token_top);
+                                    }
                                     parse_st_list(actual_position_helper);
                                     break;
 
                                 default:
                                     token = prec_anal(token_old, token, 1);
+                                    gen_result_ass(token_top);
+                                    returnValue = token_top;
                                     parse_st_list(actual_position_helper);
                                     break;
                             }
@@ -283,6 +296,8 @@ int parse_st_list(int actual_position_helper) {
                             token_old = token;
                             token = getToken();
                             token = prec_anal(token_old, token, 1);
+                            gen_result_ass(token_top);
+                            returnValue = token_top;
                             parse_st_list(actual_position_helper);
                             break;
                     }
@@ -315,6 +330,7 @@ int parse_st_list(int actual_position_helper) {
                         } //todo add error and exit?
                     } else {
                         ltsDLSearchPre(ltsStack, k);
+                        returnValue = token_top;
                     }
 
 
@@ -333,8 +349,12 @@ int parse_st_list(int actual_position_helper) {
                 default://11 12
                     K = createString(token_old);
                     parse_arg_list_switcher(0);
-                    gen_call(token_old);
-                    gen_getretval(token_top);
+                    if (gtsSearch(gts, &K) != NULL) {
+                        gen_call(token_old);
+                        gen_retval_get(token_top);
+                    } else {
+                        returnValue = token_top;
+                    }
                     parse_st_list(actual_position_helper);
                     break;
             }
@@ -481,6 +501,8 @@ int parse_st_list(int actual_position_helper) {
         default:
             token = getToken();
             token = prec_anal(token_old, token, 1);
+            returnValue.type = PREC_E;
+            returnValue.data = (void*)gen_uniqueID_last();
             parse_st_list(actual_position_helper);
             break;
     }
@@ -901,6 +923,11 @@ int main() {
     ltsStack = &mainStack;
     ltsDLInsertFirst(ltsStack, ltsMain);
     ltsDLFirst(ltsStack);
+
+    // generate IFJcode2018 file header
+    gen_code_header();
+
+    // start code analysis
     parse_main(0);
     return 0;
 }
