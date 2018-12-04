@@ -94,6 +94,7 @@ void parse_function() {//3
 
         gen_label(token);
         gen_pushframe();
+        gen_set_frame(GEN_LOCAL);
         gen_retval_def();
 
         ///semantic - creating new list for function definition semantic analysis
@@ -121,6 +122,7 @@ void parse_function() {//3
             ///semantic remove temporary LTS
             //ltsDLPred(ltsStack);
             //ltsDLPostDelete(ltsStack);
+            gen_set_frame(GEN_GLOBAL);
             gen_popframe();
             gen_return();
             ltsStack = tmpStack;
@@ -908,10 +910,6 @@ int main() {
 
     // generate IFJcode2018 file header
     gen_code_header();
-
-    // push first frame
-    gen_TF();
-    gen_pushframe();
 
     // start code analysis
     parse_main(0);

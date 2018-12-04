@@ -7,7 +7,16 @@
 
 #include "generator.h"
 
+/// @var frame - Variable containing a character representing the current frame used to access variables.
+/// Can be set to either G or L using the gen_set_frame(int frame_type) function.
+char frame = 'G';
+
+/// @var UID - Variable containing the number that was last used for a UID.
+/// It is incremented every time a new UID is generated.
 int UID = INT_MIN;
+
+// Generation Control Functions
+// ============================
 
 /*
  * Generates a unique INT number. The numbers are not random, but they come in a sequence starting at INT_MIN.
@@ -25,6 +34,21 @@ int gen_uniqueID_next() {
 int gen_uniqueID_last() {
     return UID;
 }
+
+/*
+ * Sets the frame to either local or global. The frame is then used in variable operations.
+ * @param frame - Int representing the frame. Can be either GEN_GLOBAL or GEN_LOCAL.
+ */
+void gen_set_frame(int frame_type) {
+    if (frame_type == GEN_GLOBAL)
+        frame = 'G';
+    else
+        frame = 'L';
+}
+
+
+// Function And Control Structure Code Generation
+// ==============================================
 
 /*
  * Generates code for 1 function argument.
@@ -106,7 +130,7 @@ void gen_parameter(Token token, int parameterNumber) {
     else
         parameterCounter = parameterNumber;
 
-    printf("DEFVAR LF@%s\nMOVE LF@%s LF@%%%d\n", (char*)(token.data), (char*)(token.data), parameterCounter);
+    printf("DEFVAR %cF@%s\nMOVE %cF@%s %cF@%%%d\n", (char)frame, (char*)(token.data), (char)frame, (char*)(token.data), (char)frame, parameterCounter);
 }
 
 /*
@@ -121,7 +145,7 @@ void gen_call(Token token) {
  * Generates code for return value variable definition.
  */
 void gen_retval_def() {
-    printf("DEFVAR LF@%%retval\nMOVE LF@%%retval nil@nil\n");
+    printf("DEFVAR %cF@%%retval\nMOVE %cF@%%retval nil@nil\n", (char)frame, (char)frame);
 }
 
 /*
@@ -129,11 +153,11 @@ void gen_retval_def() {
  * @param token - Token that contains the return value.
  */
 void gen_retval_ass(Token token) {
-    printf("MOVE LF@%%retval ");
+    printf("MOVE %cF@%%retval ", (char)frame);
 
     switch (token.type) {
         case T_IDENTIFIER:
-            printf("LF@%s\n", (char*)(token.data));
+            printf("%cF@%s\n", (char)frame, (char*)(token.data));
             break;
         case T_INT:
             printf("int@%d\n", *(int*)(token.data));
@@ -145,7 +169,7 @@ void gen_retval_ass(Token token) {
             printf("string@%s\n", (char*)(token.data));
             break;
         case PREC_E:
-            printf("LF@%%tmp%%%x\n", (int)(token.data));
+            printf("%cF@%%tmp%%%x\n", (char)frame, (int)(token.data));
             break;
         default:
             compiler_exit(ERR_INTERNAL);
@@ -166,7 +190,7 @@ void gen_return() {
  * @param token - Token representing the target variable.
  */
 void gen_retval_get(Token token) {
-    printf("MOVE LF@%s TF@%%retval\n", (char*)(token.data));
+    printf("MOVE %cF@%s TF@%%retval\n", (char)frame, (char*)(token.data));
 }
 
 /*
@@ -188,7 +212,7 @@ void gen_popframe() {
  * @param token - Token representing the variable that is to be defined.
  */
 void gen_defvar(Token token) {
-    printf("DEFVAR LF@%s\n", (char*)(token.data));
+    printf("DEFVAR %cF@%s\n", (char)frame, (char*)(token.data));
 }
 
 /*
@@ -198,7 +222,7 @@ void gen_if_cmpResult() {
     int resultID = gen_uniqueID_last();
     int thenID = gen_uniqueID_next();
     int elseID = gen_uniqueID_next();
-    printf("JUMPIFEQ IF%%then%%%x LF@IF%%result%%%x bool@true\n", thenID, resultID);
+    printf("JUMPIFEQ IF%%then%%%x %cF@IF%%result%%%x bool@true\n", thenID, (char)frame, resultID);
     printf("JUMP IF%%else%%%x\n", elseID);
     printf("LABEL IF%%then%%%x\n", thenID);
 }
@@ -235,7 +259,7 @@ void gen_while_doLabel() {
 void gen_while_cmpResult() {
     int resultID = gen_uniqueID_last();
     int endID = gen_uniqueID_next();
-    printf("JUMPIFEQ WHILE%%end%%%x LF@WHILE%%result%%%x bool@false\n", endID, resultID);
+    printf("JUMPIFEQ WHILE%%end%%%x %cF@WHILE%%result%%%x bool@false\n", endID, (char)frame, resultID);
 }
 
 /*
@@ -252,7 +276,7 @@ void gen_while_endLabel(int endID, int doID) {
  * Generates IFJcode2018 file header.
  */
 void gen_code_header() {
-    printf(".IFJcode2018\n");
+    printf(".IFJcode18\n");
 }
 
 // Expression Code Generation
@@ -265,7 +289,7 @@ void gen_code_header() {
 void gen_exp_putArg(Token token) {
     switch (token.type) {
         case T_IDENTIFIER:
-            printf("LF@%s ", (char*)(token.data));
+            printf("%cF@%s ", (char)frame, (char*)(token.data));
             break;
         case T_INT:
             printf("int@%d ", *(int*)(token.data));
@@ -277,7 +301,7 @@ void gen_exp_putArg(Token token) {
             printf("string@%s ", (char*)(token.data));
             break;
         case PREC_E:
-            printf("LF@%%tmp%%%x ", (int)(token.data));
+            printf("%cF@%%tmp%%%x ", (char)frame, (int)(token.data));
             break;
         default:
             compiler_exit(ERR_INTERNAL);
@@ -300,8 +324,8 @@ void gen_exp_finalize() {
 int gen_exp_MUL() {
     int result = gen_uniqueID_next();
 
-    printf("DEFVAR LF@%%tmp%%%x\n", result);
-    printf("MUL LF@%%tmp%%%x ", result);
+    printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("MUL %cF@%%tmp%%%x ", (char)frame, result);
 
     return result;
 }
@@ -314,8 +338,8 @@ int gen_exp_MUL() {
 int gen_exp_DIV() {
     int result = gen_uniqueID_next();
 
-    printf("DEFVAR LF@%%tmp%%%x\n", result);
-    printf("DIV LF@%%tmp%%%x ", result);
+    printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("DIV %cF@%%tmp%%%x ", (char)frame, result);
 
     return result;
 }
@@ -328,8 +352,8 @@ int gen_exp_DIV() {
 int gen_exp_ADD() {
     int result = gen_uniqueID_next();
 
-    printf("DEFVAR LF@%%tmp%%%x\n", result);
-    printf("ADD LF@%%tmp%%%x ", result);
+    printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("ADD %cF@%%tmp%%%x ", (char)frame, result);
 
     return result;
 }
@@ -342,8 +366,8 @@ int gen_exp_ADD() {
 int gen_exp_SUB() {
     int result = gen_uniqueID_next();
 
-    printf("DEFVAR LF@%%tmp%%%x\n", result);
-    printf("SUB LF@%%tmp%%%x ", result);
+    printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("SUB %cF@%%tmp%%%x ", (char)frame, result);
 
     return result;
 }
@@ -354,12 +378,12 @@ int gen_exp_SUB() {
 void gen_exp_result(Token token) {
     int result = gen_uniqueID_next();
 
-    printf("DEFVAR LF@%%result%%%x\n", result);
-    printf("MOVE LF@%%result%%%x ", result);
+    printf("DEFVAR %cF@%%result%%%x\n", (char)frame, result);
+    printf("MOVE %cF@%%result%%%x ", (char)frame, result);
 
     switch (token.type) {
         case T_IDENTIFIER:
-            printf("LF@%s\n", (char*)(token.data));
+            printf("%cF@%s\n", (char)frame, (char*)(token.data));
             break;
         case T_INT:
             printf("int@%d\n", *(int*)(token.data));
@@ -371,7 +395,7 @@ void gen_exp_result(Token token) {
             printf("string@%s\n", (char*)(token.data));
             break;
         case PREC_E:
-            printf("LF@%%tmp%%%x\n", (int)(token.data));
+            printf("%cF@%%tmp%%%x\n", (char)frame, (int)(token.data));
             break;
         default:
             compiler_exit(ERR_INTERNAL);
@@ -394,8 +418,8 @@ void gen_exp_result(int tmp) {
 int gen_exp_EQ() {
     int result = gen_uniqueID_next();
 
-    printf("DEFVAR LF@%%tmp%%%x\n", result);
-    printf("EQ LF@%%tmp%%%x ", result);
+    printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("EQ %cF@%%tmp%%%x ", (char)frame, result);
 
     return result;
 }
@@ -408,8 +432,8 @@ int gen_exp_EQ() {
 int gen_exp_NOT() {
     int result = gen_uniqueID_next();
 
-    printf("DEFVAR LF@%%tmp%%%x\n", result);
-    printf("NOT LF@%%tmp%%%x ", result);
+    printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("NOT %cF@%%tmp%%%x ", (char)frame, result);
 
     return result;
 }
@@ -422,8 +446,8 @@ int gen_exp_NOT() {
 int gen_exp_LT() {
     int result = gen_uniqueID_next();
 
-    printf("DEFVAR LF@%%tmp%%%x\n", result);
-    printf("LT LF@%%tmp%%%x ", result);
+    printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("LT %cF@%%tmp%%%x ", (char)frame, result);
 
     return result;
 }
@@ -436,8 +460,8 @@ int gen_exp_LT() {
 int gen_exp_GT() {
     int result = gen_uniqueID_next();
 
-    printf("DEFVAR LF@%%tmp%%%x\n", result);
-    printf("GT LF@%%tmp%%%x ", result);
+    printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("GT %cF@%%tmp%%%x ", (char)frame, result);
 
     return result;
 }
@@ -451,7 +475,7 @@ void gen_result_ass(Token token) {
     // @var resultID - ID of the result.
     int resultID = gen_uniqueID_last();
 
-    printf("MOVE LF@%s LF@%%result%%%x\n", (char*)(token.data), resultID);
+    printf("MOVE %cF@%s %cF@%%result%%%x\n", (char)frame, (char*)(token.data), (char)frame, resultID);
 }
 
 
@@ -462,21 +486,21 @@ void gen_result_ass(Token token) {
  * Generates code for built-in function INPUTS().
  */
 void gen_bif_inputs(Token token) {
-    printf("READ LF@%s string\n", (char*)(token.data));
+    printf("READ %cF@%s string\n", (char)frame, (char*)(token.data));
 }
 
 /*
  * Generates code for built-in function INPUTI().
  */
 void gen_bif_inputi(Token token){
-    printf("READ LF@%s int\n", (char*)(token.data));
+    printf("READ %cF@%s int\n", (char)frame, (char*)(token.data));
 }
 
 /*
  * Generates code for built-in function INPUTF().
  */
 void gen_bif_inputf(Token token){
-    printf("READ LF@%s float\n", (char*)(token.data));
+    printf("READ %cF@%s float\n", (char)frame, (char*)(token.data));
 }
 
 /*
@@ -490,9 +514,9 @@ void gen_bif_print(){
  * Generates code for built-in function LENGTH().
  */
 void gen_bif_length(){
-    printf("DEFVAR LF@str\nMOVE LF@str LF@%%1\n");
+    printf("DEFVAR %cF@str\nMOVE %cF@str %cF@%%1\n",  (char)frame, (char)frame, (char)frame);
     gen_retval_def();
-    printf("STRLEN LF@%%retval LF@str");
+    printf("STRLEN %cF@%%retval %cF@str", (char)frame, (char)frame);
 }
 
 /*

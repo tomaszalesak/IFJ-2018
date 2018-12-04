@@ -16,6 +16,14 @@
 #define GEN_COUNTER_ADD -1
 #define GEN_COUNTER_RESET -2
 
+/// @def GEN_GLOBAL - Parameter value for function gen_set_frame(int frame). Represents global frame GF.
+#define GEN_GLOBAL 0
+/// @def GEN_LOCAL - Parameter value for function gen_set_frame(int frame). Represents local frame LF.
+#define GEN_LOCAL 1
+
+// Generation Control Functions
+// ============================
+
 /**
  * Generates a unique INT number. The numbers are not random, but they come in a sequence starting at INT_MIN.
  * @return A unique INT number.
@@ -27,6 +35,16 @@ int gen_uniqueID_next();
  * @return The INT number.
  */
 int gen_uniqueID_last();
+
+/**
+ * Sets the frame to either local or global. The frame is then used in variable operations.
+ * @param frame_type - Int representing the frame. Can be either GEN_GLOBAL or GEN_LOCAL.
+ */
+void gen_set_frame(int frame_type);
+
+
+// Function And Control Structure Code Generation
+// ==============================================
 
 /**
  * Generates code for 1 function argument.
