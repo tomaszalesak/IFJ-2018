@@ -32,9 +32,11 @@ typedef enum {
     AS_EMPTY,
     AS_NUMBER,
     AS_ZERO,
+    AS_FLOAT_DOT,
     AS_FLOAT,
     AS_FLOAT_E,
     AS_FLOAT_SIGN,
+    AS_FLOAT_EXPONENT,
     AS_ID,
     AS_IDFUNC,
     AS_STRING,
@@ -97,11 +99,14 @@ Token getToken() {
         } else
             c = getc(stdin);
 
+        // Debug output
+        fprintf(stderr, "\tchar - %d:%c\n", c, c);
+
         // STATE MACHINE LOGIC
         // AS is Analyzer State
         switch (state) {
             case AS_EMPTY:
-                if (c == '_' || IS_CHAR(c)) {
+                if (c == '_' || IS_LCHAR(c)) {
                     strInit(&sBuffer);
                     strAddChar(&sBuffer, (char)c);
                     state = AS_ID;;
@@ -185,7 +190,7 @@ Token getToken() {
                         state = AS_ERROR;
                         break;
                     }
-                    state = AS_FLOAT;
+                    state = AS_FLOAT_DOT;
 
                 } else if (c == 'e' || c == 'E') {
                     if (nBuffer_i < NBUFFER_MAX) {
@@ -222,6 +227,22 @@ Token getToken() {
                 break;
 
             // Cases for float literal.
+            case AS_FLOAT_DOT:
+                if (IS_NUMBER(c)) {
+                    if (nBuffer_i < NBUFFER_MAX) {
+                        nBuffer[nBuffer_i] = (char) c;
+                        nBuffer_i++;
+                        state = AS_FLOAT;
+                    } else {
+                        fprintf(stderr, "Number too big.");
+                        state = AS_ERROR;
+                        break;
+                    }
+                } else {
+                    state = AS_ERROR;
+                }
+                break;
+
             case AS_FLOAT:
                 if (IS_NUMBER(c)) {
                     if (nBuffer_i < NBUFFER_MAX) {
@@ -250,6 +271,8 @@ Token getToken() {
                     *(float *) (token.data) = value;
                     oldC = c;
                     state = AS_DONE;
+                } else {
+                    state = AS_ERROR;
                 }
                 break;
 
@@ -263,6 +286,8 @@ Token getToken() {
                         state = AS_ERROR;
                         break;
                     }
+                    state = AS_FLOAT_EXPONENT;
+
                 } else if (c == '+' || c == '-') {
                     if (nBuffer_i < NBUFFER_MAX) {
                         nBuffer[nBuffer_i] = (char) c;
@@ -272,21 +297,30 @@ Token getToken() {
                         state = AS_ERROR;
                         break;
                     }
-
                     state = AS_FLOAT_SIGN;
-                } else if (IS_TOKENEND(c)) {
-                    token.type = T_FLOAT;
-                    float value = (float) strtod(nBuffer, NULL);
-                    token.data = malloc(sizeof(float));
-                    *(float *) (token.data) = value;
-                    oldC = c;
-                    state = AS_DONE;
+
                 } else {
                     state = AS_ERROR;
                 }
                 break;
 
             case AS_FLOAT_SIGN:
+                if (IS_NUMBER(c)) {
+                    if (nBuffer_i < NBUFFER_MAX) {
+                        nBuffer[nBuffer_i] = (char) c;
+                        nBuffer_i++;
+                    } else {
+                        fprintf(stderr, "Number too big.");
+                        state = AS_ERROR;
+                        break;
+                    }
+                    state = AS_FLOAT_EXPONENT;
+                } else {
+                    state = AS_ERROR;
+                }
+                break;
+
+            case AS_FLOAT_EXPONENT:
                 if (IS_NUMBER(c)) {
                     if (nBuffer_i < NBUFFER_MAX) {
                         nBuffer[nBuffer_i] = (char) c;
@@ -340,10 +374,16 @@ Token getToken() {
                     strAddChar(&sBuffer, (char)c);
                     state = AS_STRING;
                 } else if (c == 't') {
-                    strAddChar(&sBuffer, '\t');
+                    strAddChar(&sBuffer, '\\');
+                    strAddChar(&sBuffer, 't');
                     state = AS_STRING;
                 } else if (c == 'n') {
-                    strAddChar(&sBuffer, '\n');
+                    strAddChar(&sBuffer, '\\');
+                    strAddChar(&sBuffer, 'n');
+                    state = AS_STRING;
+                } else if (c == 's') {
+                    strAddChar(&sBuffer, '\\');
+                    strAddChar(&sBuffer, 's');
                     state = AS_STRING;
                 } else if (c == 'x') {
                     state = AS_ESCAPEHEX1;
