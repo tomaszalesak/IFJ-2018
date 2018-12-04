@@ -99,7 +99,7 @@ void gen_argument(Token token, int argumentNumber) {
  * Generates code to create a new temporary frame.
  */
 void gen_TF() {
-    printf("CREATE FRAME\n");
+    printf("CREATEFRAME\n");
 }
 
 /*
