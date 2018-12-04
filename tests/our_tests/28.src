@@ -1,0 +1,15 @@
+
+def funkce(m, n)
+	a = m + n
+	if a == 0 then
+		a = 1
+	else
+		a = 2
+	end
+	a
+end
+
+
+
+xxx = funkce(2,2)
+
