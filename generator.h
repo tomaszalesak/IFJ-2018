@@ -66,7 +66,13 @@ void gen_call(Token token);
 /**
  * Generates code for return value variable definition.
  */
-void gen_retval();
+void gen_retval_def();
+
+/**
+ * Generates code for assingning return value into the return value.
+ * @param token - Token that contains the return value.
+ */
+void gen_retval_ass(Token token);
 
 /**
  * Generates code for return statement.
@@ -74,10 +80,11 @@ void gen_retval();
 void gen_return();
 
 /**
- * Generates code that moves return value to the left-side variable of assignment.
- * @param token - Token representing the left-side variable.
+ * Generates code that moves return value of a function to the target variable.
+ * Called after the end of function call.
+ * @param token - Token representing the target variable.
  */
-void gen_getretval(Token token);
+void gen_retval_get(Token token);
 
 /**
  * Generates code for pushing temporary frame onto the frame stack.
@@ -129,6 +136,11 @@ void gen_while_cmpResult();
  */
 void gen_while_endLabel(int endID, int doID);
 
+/**
+ * Generates IFJcode2018 file header.
+ */
+void gen_code_header();
+
 
 // Expression Code Generation
 // ==========================
@@ -175,7 +187,7 @@ int gen_exp_SUB();
 /**
  * Generates the final result variable of one line of code.
  */
-void gen_exp_result(int tmp);
+void gen_exp_result(Token token);
 
 /**
  * Generates beginning code for a "x = y == z" type expression.
@@ -204,6 +216,14 @@ int gen_exp_LT();
  * @return     UID of variable x, that will store the result of the expression.
  */
 int gen_exp_GT();
+
+/**
+ * Generates code that assigns result of an expression to the target variable.
+ * Called after end of expression analysis.
+ * @param token    - Token representing the target variable.
+ * @var   resultID - ID of the result.
+ */
+void gen_result_ass(Token token);
 
 
 // Built-in Function Code Generation
