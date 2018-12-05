@@ -43,7 +43,7 @@ typedef struct GTSNode{
     struct GTSNode * LPtr, *RPtr;   ///pointers to child nodes
 } *GTSNodePtr;
 
-LTSNodePtr ltsMain;
+LTSNodePtr* ltsAct;
 GTSNodePtr gts;
 string K;
 

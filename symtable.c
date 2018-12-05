@@ -484,6 +484,7 @@ void insertBIF(GTSNodePtr *RootPtr) {
 
 }
 
+//todo repair
 /**
  * Checks compatibility of types in expressions (precedence).
  * @param token - token for check
@@ -495,37 +496,21 @@ void ltsPrecVarCheck (Token token, int* strings, int* ints) {
         string key;
         strInit(&key);
         key = createString(token);
-        int found = 0;
-        if (ltsSearch(ltsStack->Act->lts, &key) != NULL) {
-            found = 1;
-        }
-        if (!found) {
-            do {
-                //if (ltsStack->Act != ltsStack->Last) {
-                //    ltsDLPred(ltsStack);
-                //}
-                ltsDLPred(ltsStack);
-                if (ltsSearch(ltsStack->Act->lts, &key) != NULL) {
-                    found = 1;
-                }
-                //if (L->Act != L->First)
-                //ltsDLPred(ltsStack);
-            } while ((ltsStack->Act != ltsStack->First) && found == 0);
-        }
 
-        if (ltsGetIdType(ltsStack->Act->lts, &key) == T_INT || ltsGetIdType(ltsStack->Act->lts, &key) == T_FLOAT) {
-            found = 1;
+        if (ltsGetIdType(*ltsAct, &key) == T_INT || ltsGetIdType(*ltsAct, &key) == T_FLOAT) {
+            //found = 1;
             (*ints)++;
         }
-        if (ltsGetIdType(ltsStack->Act->lts, &key) == T_STRING) {
-            found = 1;
+        if (ltsGetIdType(*ltsAct, &key) == T_STRING) {
+            //found = 1;
             (*strings)++;
         }
         //if (ltsGetIdType(ltsStack.Act->lts, &k) == SYM_FUNC_PARAM)
-        if (found == 0) {
+        /*if (found == 0) {
             semanticError(ERR_UNDEF_REDEF, key, SYM_NONE, SYM_VAR);
         }
         ltsDLLast(ltsStack);
+         */
     }
     if (token.type == T_FLOAT || token.type == T_INT)
         (*ints)++;
