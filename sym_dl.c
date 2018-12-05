@@ -262,3 +262,54 @@ void ltsDLSearchPre(tltsDLList *L, string K) {
     ltsDLLast(L);
 }
 
+/**
+ * Searches for variable in all previous LTS's and returns type.
+ * @param L - LTS Stack
+ * @param K - variable name
+ * @return - variable type
+ */
+int ltsDLSearchValType (tltsDLList *L, string K) {
+    int found = 0;
+    if (ltsSearch(ltsStack->Act->lts, &K) != NULL) {
+        found = 1;
+    }
+    if (!found) {
+        do {
+            ltsDLPred(L);
+            if (ltsSearch(L->Act->lts, &K) != NULL) {
+                found = 1;
+            }
+            //if (L->Act != L->First)
+        } while (L->Act != L->First && found == 0);
+        if (found == 0) {
+            semanticError(ERR_UNDEF_REDEF, K, SYM_NONE, SYM_VAR);
+        }
+    }
+    found = ltsGetIdType(L->Act->lts, &K);
+    ltsDLLast(L);
+    return found;
+}
+
+/**
+ * LTS variable search for generator.
+ * @param L - LTS stack
+ * @param K - variable name
+ * @return - 1 if K was found, 0 if not
+ */
+int ltsGenSearch (tltsDLList *L, string K) {
+    int found = 0;
+    if (ltsSearch(ltsStack->Act->lts, &K) != NULL) {
+        found = 1;
+    }
+    if (!found) {
+        do {
+            ltsDLPred(L);
+            if (ltsSearch(L->Act->lts, &K) != NULL) {
+                found = 1;
+            }
+            //if (L->Act != L->First)
+        } while (L->Act != L->First && found == 0);
+    }
+    ltsDLLast(L);
+    return found;
+}

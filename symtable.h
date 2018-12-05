@@ -9,22 +9,18 @@
  *
  */
 
-
 #ifndef IFJ_SYMTABLE_H
 #define IFJ_SYMTABLE_H
 
-/* namiesto scanner.h */
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
 #include "lexicalanalyzer.h"
 
-/*#include "scanner.h"*/
-
 /* chybove hlasenia */
 
-#define  SUCCESS                   0  //  překlad proběhl bez chyb 1
+#define  SUCCESS                   0
 #define  ERR_INCOMPATIBLE_TYPE     4
 
 #define SYM_FUNC_PARAM (-2)  //set for function parameters into lts
@@ -32,14 +28,6 @@
 #define SYM_FUNC_UNDEF 0 //for semantic error messages of functions -> undefined
 #define SYM_FUNC_REDEF 1 //for semantic error messages of functions -> redefined
 #define SYM_VAR 2  //for semantic error messages of variables
-
-
-
-typedef struct ts_var{
-   int varType;        // dat. typ promenne
-   int varOffset;      // offset v prog. zasobniku
-   //tValue varValue;    // unie bude obsahovat data
-} TSVar;
 
 
 typedef struct LTSNode{
@@ -55,24 +43,9 @@ typedef struct GTSNode{
     struct GTSNode * LPtr, *RPtr;   ///pointers to child nodes
 } *GTSNodePtr;
 
-
 LTSNodePtr ltsMain;
 GTSNodePtr gts;
 string K;
-//typedef  LTSNode tLTS;
-
-typedef struct {
-   int argCount;        // pocet parametru fce
-   int retType;         // dat. typ navratove hodnoty fce
-   int varCount;        // pocet lokalnich promennych fce
-   LTSNodePtr* lts;       // ukazatel na lokani TS fce
-   //struct listItem* fInstr;   // ukazatel na prvni instrukci fce
-   int def;             // po deklaraci fce = 0, po definici fce = 1
-   int varReserved;     // po vlozeni rezervace jmena lokalni promenne = 1
-   string types;        // string s typy parametru - pro kontrolu pri volani funkce
-} TSFunction;
-
-//typedef  GTSNode tGTS;
 
 /**
  * Functions for LTS.

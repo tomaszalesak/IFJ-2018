@@ -276,8 +276,9 @@ void gen_bif_inputf(Token token);
 
 /**
  * Generates code for built-in function PRINT().
+ * @param args_count - Int with number of arguments of the print function.
  */
-void gen_bif_print();
+void gen_bif_print(int args_count);
 
 /**
  * Generates code for built-in function LENGTH().

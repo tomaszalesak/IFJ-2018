@@ -41,6 +41,7 @@ void parse_arg_list_switcher(int print_checker);
 Token token;// TODO extend to my .h or not?
 Token returnValue;
 int paramsCounter = 0;
+int print_paramsCounter = 0;
 
 
 //Parse for <main> LL
@@ -186,8 +187,12 @@ int parse_st_list(int actual_position_helper) {
                         fprintf(stderr, "Semantic Error! Can't redefine function %s as variable!\n", K.str);
                         compiler_exit(ERR_UNDEF_REDEF);
                     }
-                    if (ltsInsert(&ltsStack->Act->lts, &K) == SUCCESS)
+
+                    // Detecting variable definition to generate DEFVAR
+                    if (ltsGenSearch(ltsStack, K) == 0)
                         gen_defvar(token_top);
+
+                    ltsInsert(&ltsStack->Act->lts, &K);// == SUCCESS
                     //gtsSearch(gts, &K);
                     token = getToken();
                     token_old = token;
@@ -252,6 +257,7 @@ int parse_st_list(int actual_position_helper) {
                             K.str = "print";
                             token = getToken();
                             parse_arg_list_switcher(1);
+                            gen_bif_print(print_paramsCounter);
                             parse_st_list(actual_position_helper);
                             break;
 
@@ -467,6 +473,7 @@ int parse_st_list(int actual_position_helper) {
             K.str = "print";
             token = getToken();
             parse_arg_list_switcher(1);
+            gen_bif_print(print_paramsCounter);
             parse_st_list(actual_position_helper);
             break;
 
@@ -573,6 +580,9 @@ void parse_arg_list_switcher(int print_checker) {
             parse_arg_list2b();//44,45
         }
 
+        // Used to generate print code (need to know the number of parameters)
+        print_paramsCounter = paramsCounter;
+
         //added for semantic analysis
         //check if the function call has correct number of parameters
         if (print_checker != 1) {
@@ -597,6 +607,9 @@ void parse_arg_list_switcher(int print_checker) {
         gen_argument(token, 1);
         //Call function for <arg-list2>
         parse_arg_list2();//48,49
+
+        // Used to generate print code (need to know the number of parameters)
+        print_paramsCounter = paramsCounter;
 
         //added for semantic analysis
         //check if the function call has correct number of parameters
@@ -658,7 +671,8 @@ int parse_arg(int token_type) {
                     fprintf(stderr, "ERROR! Function %s!\n", K.str);
                     compiler_exit(ERR_NO_OF_ARGS);
                 }
-                if ((ltsGetIdType(ltsStack->Act->lts, &a) != T_INT) && (ltsGetIdType(ltsStack->Act->lts, &a) != T_FLOAT)) {
+                //todo fix this for ltsPredSearch
+                if ((ltsDLSearchValType(ltsStack, a) != T_INT) && (ltsDLSearchValType(ltsStack, a) != T_FLOAT)) {
                     fprintf(stderr, "Semantic Error! Bad parameter type for function %s!\n", K.str);
                     compiler_exit(ERR_INCOMPATIBLE_TYPE);
                 }
@@ -669,13 +683,13 @@ int parse_arg(int token_type) {
                 string a = createString(token);
                 switch (paramsCounter) {
                     case 1:
-                        if (ltsGetIdType(ltsStack->Act->lts, &a) != T_STRING) {
+                        if (ltsDLSearchValType(ltsStack, a) != T_STRING) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
                         break;
                     case 2:
-                        if ((ltsGetIdType(ltsStack->Act->lts, &a) != T_INT) && (ltsGetIdType(ltsStack->Act->lts, &a) != T_FLOAT)) {
+                        if ((ltsDLSearchValType(ltsStack, a) != T_INT) && (ltsDLSearchValType(ltsStack, a) != T_FLOAT)) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
@@ -696,7 +710,7 @@ int parse_arg(int token_type) {
                     fprintf(stderr, "ERROR! Function %s!\n", K.str);
                     compiler_exit(ERR_NO_OF_ARGS);
                 }
-                if (ltsGetIdType(ltsStack->Act->lts, &a) != T_STRING) {
+                if (ltsDLSearchValType(ltsStack, a) != T_STRING) {
                     fprintf(stderr, "ERROR! Function %s!\n", K.str);
                     compiler_exit(ERR_INCOMPATIBLE_TYPE);
                 }
@@ -707,19 +721,19 @@ int parse_arg(int token_type) {
                 string a = createString(token);
                 switch (paramsCounter) {
                     case 1:
-                        if (ltsGetIdType(ltsStack->Act->lts, &a) != T_STRING) {
+                        if (ltsDLSearchValType(ltsStack, a) != T_STRING) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
                         break;
                     case 2:
-                        if (ltsGetIdType(ltsStack->Act->lts, &a) != T_INT && ltsGetIdType(ltsStack->Act->lts, &a) != T_FLOAT) {
+                        if (ltsDLSearchValType(ltsStack, a) != T_INT && ltsDLSearchValType(ltsStack, a) != T_FLOAT) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
                         break;
                     case 3:
-                        if (ltsGetIdType(ltsStack->Act->lts, &a) != T_INT && ltsGetIdType(ltsStack->Act->lts, &a) != T_FLOAT) {
+                        if (ltsDLSearchValType(ltsStack, a) != T_INT && ltsDLSearchValType(ltsStack, a) != T_FLOAT) {
                             fprintf(stderr, "ERROR! Function %s!\n", K.str);
                             compiler_exit(ERR_INCOMPATIBLE_TYPE);
                         }
