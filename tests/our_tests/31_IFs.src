@@ -1,0 +1,12 @@
+x = 5
+if x then
+x
+else
+x
+end
+x
+def a()
+x +5
+end
+
+#invalid, return 3

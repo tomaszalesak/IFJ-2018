@@ -1,0 +1,8 @@
+x = 5
+if x then
+b = 5
+else
+end
+b
+
+#valid
