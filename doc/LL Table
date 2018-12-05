@@ -1,56 +1,54 @@
-SD<prog> -> <main>
-SD<main> -> <stat><main>
-SD<main> -> <func><main>
-SD<main> -> EOL<main>
-STD<main> -> EOF
-///////////////
-<expr> bud riadok zacina cislom alebo zatvorkou, id po ktorom hned nenasleduje znak =
-///////////////
-SD<stat> -> id = <expr> EOL
-SD<stat> -> id EOL
-SD<stat> -> <expr> EOL
-SD<stat> -> if <expr> then EOL
+<prog> -> <main>
+<main> -> <stat><main>
+<main> -> <func><main>
+<main> -> EOL<main>
+<main> -> EOF
+
+<stat> -> id = <expr> EOL
+<stat> -> id EOL
+<stat> -> <expr> EOL
+<stat> -> if <expr> then EOL
 			<st-list>
 		  else EOL
 			<st-list>
 		  end EOL
-SD<stat> -> while <expr> do EOL
+<stat> -> while <expr> do EOL
 			<st-list>
 	   	  end EOL
-SD<stat> -> id = <func-call>
-SD<stat> -> <func-call>
+<stat> -> id = <func-call>
+<stat> -> <func-call>
 
-//TODO check vstavane f-cie
-S<stat> -> inputs()
-S<stat> -> inputi()
-S<stat> -> inputf()
-S<stat> -> print(<term-list>)
-S<stat> -> length(<arg>)
-S<stat> -> substr()
-S<stat> -> ord()
-S<stat> -> chr()
+<stat> -> inputs()
+<stat> -> inputi()
+<stat> -> inputf()
+<stat> -> print(<term-list>)
+<stat> -> length(<arg>)
+<stat> -> substr()
+<stat> -> ord()
+<stat> -> chr()
 
-D<st-list> -> <stat><st-list>
+<st-list> -> <stat><st-list>
 
-SD<func-call> -> id <arg-list>
-SD<func-call> -> id (<arg-listb> EOL 
-
-D<func> -> def id (<param-l> EOL
+<func> -> def id (<param-l> EOL
 			<st-list> END 
-D<param-l> -> <param> <param-l2>
-D<param-l2> -> , <param> <param-l2>
-D<param-l2> -> )
-D<param> -> id
+<param-l> -> <param> <param-l2>
+<param-l2> -> , <param> <param-l2>
+<param-l2> -> )
 
-SD<arg-list> -> <arg> <arg-list2>
-SD<arg-list2> -> , <arg> <arg-list2>
-SD<arg-list2> -> EOL
+<param> -> id
 
-SD<arg-listb> -> <arg> <arg-list2b>
-SD<arg-list2b> -> , <arg> <arg-list2b>
-SD<arg-list2b> -> )
+<func-call> -> id <arg-list>
+<func-call> -> id (<arg-listb> EOL 
 
-SD<arg> -> id
-SD<arg> -> int
-SD<arg> -> float
-SD<arg> -> string
+<arg-list> -> <arg> <arg-list2>
+<arg-list2> -> , <arg> <arg-list2>
+<arg-list2> -> EOL
+
+<arg-listb> -> <arg> <arg-list2b>
+<arg-list2b> -> , <arg> <arg-list2b>
+<arg-list2b> -> )
+
+<arg> -> id
+<arg> -> int
+<arg> -> float
+<arg> -> string
