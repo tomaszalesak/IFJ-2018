@@ -125,6 +125,7 @@ void parse_function() {//3
             //ltsDLPred(ltsStack);
             //ltsDLPostDelete(ltsStack);
             gen_retval_ass(returnValue);
+            returnValue.type = T_ERROR;
             gen_popframe();
             gen_return();
             gen_set_frame(GEN_GLOBAL);
@@ -1053,6 +1054,8 @@ int main() {
 
     // generate IFJcode2018 file header
     gen_code_header();
+
+    returnValue.type = T_ERROR;
 
     // start code analysis
     parse_main(0);

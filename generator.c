@@ -82,7 +82,7 @@ void gen_argument(Token token, int argumentNumber) {
             free(token.data);
             break;
         case T_FLOAT:
-            printf("float@%f\n", *(float*)(token.data));
+            printf("float@%a\n", *(float*)(token.data));
             free(token.data);
             break;
         case T_STRING:
@@ -152,6 +152,7 @@ void gen_retval_def() {
  * @param token - Token that contains the return value.
  */
 void gen_retval_ass(Token token) {
+
     printf("MOVE %cF@%%retval ", (char)frame);
 
     switch (token.type) {
@@ -162,13 +163,16 @@ void gen_retval_ass(Token token) {
             printf("int@%d\n", *(int*)(token.data));
             break;
         case T_FLOAT:
-            printf("float@%f\n", *(float*)(token.data));
+            printf("float@%a\n", *(float*)(token.data));
             break;
         case T_STRING:
             printf("string@%s\n", (char*)(token.data));
             break;
         case PREC_E:
             printf("%cF@%%result%%%x\n", (char)frame, (int)(token.data));
+            break;
+        case T_ERROR:
+            printf("nil@nil\n");
             break;
         default:
             compiler_exit(ERR_INTERNAL);
@@ -314,7 +318,7 @@ void gen_exp_putArg(Token token) {
             printf("int@%d ", *(int*)(token.data));
             break;
         case T_FLOAT:
-            printf("float@%f ", *(float*)(token.data));
+            printf("float@%a ", *(float*)(token.data));
             break;
         case T_STRING:
             printf("string@%s ", (char*)(token.data));
@@ -417,7 +421,7 @@ void gen_exp_result(Token token) {
             printf("int@%d\n", *(int*)(token.data));
             break;
         case T_FLOAT:
-            printf("float@%f\n", *(float*)(token.data));
+            printf("float@%a\n", *(float*)(token.data));
             break;
         case T_STRING:
             printf("string@%s\n", (char*)(token.data));
