@@ -407,6 +407,7 @@ int parse_st_list(int actual_position_helper) {
                                 semanticError(ERR_NO_OF_ARGS, k, paramsCounter, SYM_NONE);
                             }
                         } //todo add error and exit?
+                        gen_TF();
                         gen_call(token_old);
                     } else {
                         if (ltsSearch(*ltsAct, &k) == NULL) {
@@ -742,6 +743,7 @@ void parse_arg_list_switcher(int print_checker) {
         if (gtsSearch(gts, &K) == NULL) {
 //if (ltsSearch()) TODO add LTS support
         } else {
+            gen_TF();
             if (gtsGetParamCount(gts, &K) != paramsCounter) {
                 fprintf(stderr,
                         "ERROR! Bad number of arguments for function %s!\nExpected %d parameters but %d have been inserted.\n",

@@ -258,7 +258,7 @@ void gen_while_doLabel() {
 void gen_while_cmpResult() {
     int resultID = gen_uniqueID_last();
     int endID = gen_uniqueID_next();
-    printf("JUMPIFEQ WHILE%%end%%%x %cF@WHILE%%result%%%x bool@false\n", endID, (char)frame, resultID);
+    printf("JUMPIFEQ WHILE%%end%%%x %cF@%%result%%%x bool@false\n", endID, (char)frame, resultID);
 }
 
 /*
@@ -368,9 +368,18 @@ int gen_exp_DIV() {
  * Defines variable for storing the result and defines the operation.
  * @return     UID of variable x, that will store the result of the expression.
  */
-int gen_exp_ADD() {
-    int result = gen_uniqueID_next();
+int gen_exp_ADD() {//Token t1, Token t2) {
 
+    /*int typeID = gen_uniqueID_next();
+    printf("DEFVAR %cF@%%type%%%x\n", (char)frame, typeID);
+    printf("TYPE %cF@%%type%%%x", (char)frame, typeID);
+    gen_exp_putArg(t1);
+    gen_exp_finalize();
+
+    int labelEQ = gen_uniqueID_next();
+    printf("JUMPIFEQ $type%%%x");*/
+
+    int result = gen_uniqueID_next();
     printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
     printf("ADD %cF@%%tmp%%%x ", (char)frame, result);
 
