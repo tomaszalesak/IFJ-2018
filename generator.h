@@ -205,7 +205,7 @@ int gen_exp_DIV();
  * Defines variable for storing the result and defines the operation.
  * @return     UID of variable x, that will store the result of the expression.
  */
-int gen_exp_ADD();
+int gen_exp_ADD(Token t1, Token t2);
 
 /**
  * Generates beginning code for a "x = y - z" type expression.

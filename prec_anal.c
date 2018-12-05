@@ -210,10 +210,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
                                         // generating
-                                        genResult = gen_exp_DIV();
-                                        gen_exp_putArg(tmpToken);
-                                        gen_exp_putArg(tmpToken2);
-                                        gen_exp_finalize();
+                                        genResult = gen_exp_DIV(tmpToken, tmpToken2);
 
                                         //fprintf(stderr, "E -> E / E\n");
                                         DLDeleteFirst(&stack);
@@ -237,10 +234,7 @@ Token prec_anal(Token t, Token t2, int give_me_old_tokens)
                                         tmpToken2 = handle->lptr->lptr->lptr->expressionToken;
 
                                         // generating
-                                        genResult = gen_exp_ADD();
-                                        gen_exp_putArg(tmpToken);
-                                        gen_exp_putArg(tmpToken2);
-                                        gen_exp_finalize();
+                                        genResult = gen_exp_ADD(tmpToken, tmpToken2);
 
                                         //fprintf(stderr, "E -> E + E\n");
                                         DLDeleteFirst(&stack);

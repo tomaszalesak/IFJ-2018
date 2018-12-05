@@ -358,11 +358,37 @@ int gen_exp_MUL() {
  * Defines variable for storing the result and defines the operation.
  * @return     UID of variable x, that will store the result of the expression.
  */
-int gen_exp_DIV() {
+int gen_exp_DIV(Token t1, Token t2) {
+    int typeID = gen_uniqueID_next();
+    int labelEQ = gen_uniqueID_next();
+    int labelNEQ = gen_uniqueID_next();
     int result = gen_uniqueID_next();
 
     printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("DEFVAR %cF@%%type%%%x\n", (char)frame, typeID);
+
+    printf("TYPE %cF@%%type%%%x ", (char)frame, typeID);
+    gen_exp_putArg(t1);
+    gen_exp_finalize();
+    printf("JUMPIFEQ $type%%%x %cF@%%type%%%x string@float\n", labelEQ, (char)frame, typeID);
+
+    printf("TYPE %cF@%%type%%%x ", (char)frame, typeID);
+    gen_exp_putArg(t2);
+    gen_exp_finalize();
+    printf("JUMPIFEQ $type%%%x %cF@%%type%%%x string@float\n", labelEQ, (char)frame, typeID);
+
+    printf("IDIV %cF@%%tmp%%%x ", (char)frame, result);
+    gen_exp_putArg(t1);
+    gen_exp_putArg(t2);
+    gen_exp_finalize();
+    printf("JUMP $type%%%x\n", labelNEQ);
+
+    printf("LABEL $type%%%x\n", labelEQ);
     printf("DIV %cF@%%tmp%%%x ", (char)frame, result);
+    gen_exp_putArg(t1);
+    gen_exp_putArg(t2);
+    gen_exp_finalize();
+    printf("LABEL $type%%%x\n", labelNEQ);
 
     return result;
 }
@@ -372,20 +398,33 @@ int gen_exp_DIV() {
  * Defines variable for storing the result and defines the operation.
  * @return     UID of variable x, that will store the result of the expression.
  */
-int gen_exp_ADD() {//Token t1, Token t2) {
+int gen_exp_ADD(Token t1, Token t2) {
 
-    /*int typeID = gen_uniqueID_next();
+    int typeID = gen_uniqueID_next();
+    int labelEQ = gen_uniqueID_next();
+    int labelNEQ = gen_uniqueID_next();
+    int result = gen_uniqueID_next();
+
     printf("DEFVAR %cF@%%type%%%x\n", (char)frame, typeID);
-    printf("TYPE %cF@%%type%%%x", (char)frame, typeID);
+    printf("TYPE %cF@%%type%%%x ", (char)frame, typeID);
     gen_exp_putArg(t1);
     gen_exp_finalize();
 
-    int labelEQ = gen_uniqueID_next();
-    printf("JUMPIFEQ $type%%%x");*/
-
-    int result = gen_uniqueID_next();
     printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
+    printf("JUMPIFEQ $type%%%x %cF@%%type%%%x string@string\n", labelEQ, (char)frame, typeID);
+
     printf("ADD %cF@%%tmp%%%x ", (char)frame, result);
+    gen_exp_putArg(t1);
+    gen_exp_putArg(t2);
+    gen_exp_finalize();
+    printf("JUMP $type%%%x\n", labelNEQ);
+
+    printf("LABEL $type%%%x\n", labelEQ);
+    printf("CONCAT %cF@%%tmp%%%x ", (char)frame, result);
+    gen_exp_putArg(t1);
+    gen_exp_putArg(t2);
+    gen_exp_finalize();
+    printf("LABEL $type%%%x\n", labelNEQ);
 
     return result;
 }
