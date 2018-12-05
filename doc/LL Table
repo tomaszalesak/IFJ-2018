@@ -1,7 +1,8 @@
 <prog> -> <main>
 <main> -> <stat><main>
 <main> -> <func><main>
-<main> -> EOL<main>
+<main> -> EOL
+	 <main>
 <main> -> EOF
 
 <stat> -> id = <expr> EOL
