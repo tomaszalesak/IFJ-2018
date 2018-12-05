@@ -361,21 +361,27 @@ int gen_exp_MUL() {
 int gen_exp_DIV(Token t1, Token t2) {
     int typeID = gen_uniqueID_next();
     int labelEQ = gen_uniqueID_next();
+    int labelEQ2 = gen_uniqueID_next();
     int labelNEQ = gen_uniqueID_next();
+    int labelZero = gen_uniqueID_next();
     int result = gen_uniqueID_next();
 
     printf("DEFVAR %cF@%%tmp%%%x\n", (char)frame, result);
     printf("DEFVAR %cF@%%type%%%x\n", (char)frame, typeID);
 
     printf("TYPE %cF@%%type%%%x ", (char)frame, typeID);
-    gen_exp_putArg(t1);
-    gen_exp_finalize();
-    printf("JUMPIFEQ $type%%%x %cF@%%type%%%x string@float\n", labelEQ, (char)frame, typeID);
-
-    printf("TYPE %cF@%%type%%%x ", (char)frame, typeID);
     gen_exp_putArg(t2);
     gen_exp_finalize();
     printf("JUMPIFEQ $type%%%x %cF@%%type%%%x string@float\n", labelEQ, (char)frame, typeID);
+
+    printf("JUMPIFEQ $type%%%x int@0 ", labelZero);
+    gen_exp_putArg(t2);
+    gen_exp_finalize();
+
+    printf("TYPE %cF@%%type%%%x ", (char)frame, typeID);
+    gen_exp_putArg(t1);
+    gen_exp_finalize();
+    printf("JUMPIFEQ $type%%%x %cF@%%type%%%x string@float\n", labelEQ2, (char)frame, typeID);
 
     printf("IDIV %cF@%%tmp%%%x ", (char)frame, result);
     gen_exp_putArg(t1);
@@ -383,7 +389,14 @@ int gen_exp_DIV(Token t1, Token t2) {
     gen_exp_finalize();
     printf("JUMP $type%%%x\n", labelNEQ);
 
+    printf("LABEL $type%%%x\n", labelZero);
+    printf("EXIT int@57\n");
+
     printf("LABEL $type%%%x\n", labelEQ);
+    printf("JUMPIFEQ $type%%%x float@%a ", labelZero, 0.0);
+    gen_exp_putArg(t2);
+    gen_exp_finalize();
+    printf("LABEL $type%%%x\n", labelEQ2);
     printf("DIV %cF@%%tmp%%%x ", (char)frame, result);
     gen_exp_putArg(t1);
     gen_exp_putArg(t2);
@@ -650,6 +663,7 @@ void gen_bif_ord(){
     printf("LT LF@%%type%%%x LF@%%2 LF@%%type%%%x\n", typeID, typeID);
     printf("JUMPIFNEQ $label%%%x LF@%%type%%%x bool@false\n", nilID, typeID);
 
+    printf("PRINT string@LOL1\n");
     printf("STRI2INT LF@%%retval LF@%%1 LF@%%2\n");
     printf("JUMP $label%%%x\n", endID);
 
@@ -657,6 +671,7 @@ void gen_bif_ord(){
     printf("EXIT int@53\n");
 
     printf("LABEL $label%%%x\n", nilID);
+    printf("PRINT string@LOL2\n");
     printf("MOVE LF@%%retval nil@nil\n");
 
     printf("LABEL $label%%%x\n", endID);
@@ -669,6 +684,29 @@ void gen_bif_ord(){
 void gen_bif_chr(){
     gen_pushframe();
     gen_retval_def();
+
+    int typeID = gen_uniqueID_next();
+    int opID = gen_uniqueID_next();
+    int intID = gen_uniqueID_next();
+    int endID = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%type%%%x\n", typeID);
+
+    printf("TYPE LF@%%type%%%x LF@%%1\n", typeID);
+    printf("JUMPIFNEQ $label%%%x LF@%%type%%%x string@int\n", opID, typeID);
+
+    printf("GT LF@%%type%%%x LF@%%type%%%x int@255\n", typeID, typeID);
+    printf("JUMPIFEQ $label%%%x LF@%%type%%%x bool@true\n", intID, typeID);
+
     printf("INT2CHAR LF@%%retval LF@%%1\n");
+    printf("JUMP $label%%%x\n", endID);
+
+    printf("LABEL $label%%%x\n", opID);
+    printf("EXIT int@53\n");
+
+    printf("LABEL $label%%%x\n", intID);
+    printf("EXIT int@58\n");
+
+    printf("LABEL $label%%%x\n", endID);
     gen_popframe();
 }
