@@ -115,7 +115,8 @@ Token getToken() {
                     nBuffer_i++;
                     state = AS_NUMBER;
                 } else if (c == '0') {
-                    token.type = T_INT;
+                    nBuffer[nBuffer_i] = (char) c;
+                    nBuffer_i++;
                     state = AS_ZERO;
                 } else if (c == '\"') {
                     strInit(&sBuffer);
@@ -216,7 +217,18 @@ Token getToken() {
 
             // If a token starts with 0, it can only be 0.
             case AS_ZERO:
-                if (IS_TOKENEND(c)) {
+                if (c == '.') {
+                    nBuffer[nBuffer_i] = (char) c;
+                    nBuffer_i++;
+                    state = AS_FLOAT_DOT;
+
+                } else if (c == 'e' || c == 'E') {
+                    nBuffer[nBuffer_i] = (char) c;
+                    nBuffer_i++;
+                    state = AS_FLOAT_E;
+
+                } else if (IS_TOKENEND(c)) {
+                    token.type = T_INT;
                     token.data = malloc(sizeof(int));
                     *(int *) (token.data) = 0;
                     oldC = c;
