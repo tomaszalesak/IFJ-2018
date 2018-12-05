@@ -1,8 +1,14 @@
-/*
-**	IFJ
-**	Syntax analysis
-**	---------------------------
-**	Robin Skaličan - xskali19
+/**
+ * Předmět: IFJ
+ * Projekt: Implementace překladače jazyka IFJ18
+ * Soubor:  parser.c
+ *
+ * Popis:   Syntaktická a sématická analýza
+ *
+ * Autoři:  Vojtěch Novotný     xnovot1f@stud.fit.vutbr.cz
+ *          Tomáš Zálešák       xzales13@stud.fit.vutbr.cz
+ *          Robin Skaličan      xskali19@stud.fit.vutbr.cz
+ *          Tomáš Smädo         xsmado00@stud.fit.vutbr.cz
 */
 
 #include "lexicalanalyzer.h"
@@ -10,7 +16,6 @@
 #include "prec_anal.h"
 #include "errors.h"
 #include "generator.h"
-#include "sym_dl.h"
 
 #define PH_MAIN_TOKEN (-1)        //MAIN already took TOKEN, dont take another one
 #define PH_ELSE 0               //ELSE is valid now

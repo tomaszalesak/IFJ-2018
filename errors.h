@@ -1,6 +1,14 @@
-//
-// Created by zales on 22.11.2018.
-//
+/**
+ * Předmět: IFJ
+ * Projekt: Implementace překladače jazyka IFJ18
+ * Soubor:  errors.h
+ *
+ * Popis:   Generátor chybového výstupu - header
+ * Autoři:  Vojtěch Novotný     xnovot1f@stud.fit.vutbr.cz
+ *          Tomáš Zálešák       xzales13@stud.fit.vutbr.cz
+ *          Robin Skaličan      xskali19@stud.fit.vutbr.cz
+ *          Tomáš Smädo         xsmado00@stud.fit.vutbr.cz
+*/
 
 #ifndef ERRORS_H
 #define ERRORS_H

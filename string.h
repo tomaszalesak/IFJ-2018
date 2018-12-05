@@ -1,8 +1,20 @@
+/**
+ * Předmět: IFJ
+ * Projekt: Implementace překladače jazyka IFJ18
+ * Soubor:  string.h
+ *
+ * Popis:   Soubor pro práci se stringy - hlavičkový soubor
+ *
+ * Autoři:  Vojtěch Novotný     xnovot1f@stud.fit.vutbr.cz
+ *          Tomáš Zálešák       xzales13@stud.fit.vutbr.cz
+ *          Robin Skaličan      xskali19@stud.fit.vutbr.cz
+ *          Tomáš Smädo         xsmado00@stud.fit.vutbr.cz
+ *
+ *Inspired by https://www.fit.vutbr.cz/study/courses/IFJ/private/projekt/jednoduchy_interpret.zip
+*/
+
+
 /*
-**	IFJ
-**	Implementation of dealing with infinite strings
-**	---------------------------
-**	Tomáš Zálešák - xzales13
 **  Inspired by https://www.fit.vutbr.cz/study/courses/IFJ/private/projekt/jednoduchy_interpret.zip
 */
 

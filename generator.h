@@ -1,9 +1,17 @@
-/*
-**	IFJ
-**	Code generation
-**	---------------------------
-**	Vojtěch Novotný - xnovot1f
+/**
+ * Předmět: IFJ
+ * Projekt: Implementace překladače jazyka IFJ18
+ * Soubor:  generator.h
+ *
+ * Popis:   Hlavičkový soubor pro generování
+ *
+ * Autoři:  Vojtěch Novotný     xnovot1f@stud.fit.vutbr.cz
+ *          Tomáš Zálešák       xzales13@stud.fit.vutbr.cz
+ *          Robin Skaličan      xskali19@stud.fit.vutbr.cz
+ *          Tomáš Smädo         xsmado00@stud.fit.vutbr.cz
 */
+
+
 #ifndef GEN_H
 #define GEN_H
 

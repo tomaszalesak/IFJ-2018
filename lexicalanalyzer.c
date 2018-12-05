@@ -1,8 +1,14 @@
-/*
-**	IFJ
-**	Lexical analysis
-**	---------------------------
-**	Vojtěch Novotný - xnovot1f
+/**
+ * Předmět: IFJ
+ * Projekt: Implementace překladače jazyka IFJ18
+ * Soubor:  lexicalanalyzer.c
+ *
+ * Popis:   Lexikální analýza
+ *
+ * Autoři:  Vojtěch Novotný     xnovot1f@stud.fit.vutbr.cz
+ *          Tomáš Zálešák       xzales13@stud.fit.vutbr.cz
+ *          Robin Skaličan      xskali19@stud.fit.vutbr.cz
+ *          Tomáš Smädo         xsmado00@stud.fit.vutbr.cz
 */
 
 #include "lexicalanalyzer.h"
