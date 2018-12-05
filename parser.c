@@ -41,6 +41,7 @@ void parse_arg_list_switcher(int print_checker);
 Token token;// TODO extend to my .h or not?
 Token returnValue;
 int paramsCounter = 0;
+int print_paramsCounter = 0;
 
 
 //Parse for <main> LL
@@ -185,6 +186,8 @@ int parse_st_list(int actual_position_helper) {
                     }
                     if (ltsInsert(ltsAct, &K) == SUCCESS)
                         gen_defvar(token_top);
+
+                    ltsInsert(&ltsStack->Act->lts, &K);// == SUCCESS
                     //gtsSearch(gts, &K);
                     token = getToken();
                     token_old = token;
@@ -253,6 +256,7 @@ int parse_st_list(int actual_position_helper) {
                             K.str = "print";
                             token = getToken();
                             parse_arg_list_switcher(1);
+                            gen_bif_print(print_paramsCounter);
                             parse_st_list(actual_position_helper);
                             break;
 
@@ -449,6 +453,7 @@ int parse_st_list(int actual_position_helper) {
             K.str = "print";
             token = getToken();
             parse_arg_list_switcher(1);
+            gen_bif_print(print_paramsCounter);
             parse_st_list(actual_position_helper);
             break;
 
@@ -555,6 +560,9 @@ void parse_arg_list_switcher(int print_checker) {
             parse_arg_list2b();//44,45
         }
 
+        // Used to generate print code (need to know the number of parameters)
+        print_paramsCounter = paramsCounter;
+
         //added for semantic analysis
         //check if the function call has correct number of parameters
         if (print_checker != 1) {
@@ -579,6 +587,9 @@ void parse_arg_list_switcher(int print_checker) {
         gen_argument(token, 1);
         //Call function for <arg-list2>
         parse_arg_list2();//48,49
+
+        // Used to generate print code (need to know the number of parameters)
+        print_paramsCounter = paramsCounter;
 
         //added for semantic analysis
         //check if the function call has correct number of parameters
