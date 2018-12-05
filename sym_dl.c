@@ -69,7 +69,7 @@ void ltsDLInsertFirst(tltsDLList *L, LTSNodePtr val) {
 
         // nedostatek pameti
         if (p == NULL) {
-            ltsDLError();
+            //ltsDLError();
             return;
         }
 
@@ -174,7 +174,7 @@ void ltsDLPostInsert(tltsDLList *L, LTSNodePtr val) {
 
     // nedostatek pameti
     if (p == NULL) {
-        ltsDLError();
+        //ltsDLError();
         return;
     }
 
@@ -249,7 +249,7 @@ void ltsDLSearchPre(tltsDLList *L, string K) {
     }
     if (!found) {
         do {
-            ltsDLPred(L);
+            //ltsDLPred(L);
             if (ltsSearch(L->Act->lts, &K) != NULL) {
                 found = 1;
             }
@@ -259,7 +259,7 @@ void ltsDLSearchPre(tltsDLList *L, string K) {
             semanticError(ERR_UNDEF_REDEF, K, SYM_NONE, SYM_VAR);
         }
     }
-    ltsDLLast(L);
+    //ltsDLLast(L);
 }
 
 /**
@@ -275,7 +275,7 @@ int ltsDLSearchValType (tltsDLList *L, string K) {
     }
     if (!found) {
         do {
-            ltsDLPred(L);
+            //ltsDLPred(L);
             if (ltsSearch(L->Act->lts, &K) != NULL) {
                 found = 1;
             }
@@ -286,7 +286,7 @@ int ltsDLSearchValType (tltsDLList *L, string K) {
         }
     }
     found = ltsGetIdType(L->Act->lts, &K);
-    ltsDLLast(L);
+    //ltsDLLast(L);
     return found;
 }
 
@@ -303,13 +303,13 @@ int ltsGenSearch (tltsDLList *L, string K) {
     }
     if (!found) {
         do {
-            ltsDLPred(L);
+            //ltsDLPred(L);
             if (ltsSearch(L->Act->lts, &K) != NULL) {
                 found = 1;
             }
             //if (L->Act != L->First)
         } while (L->Act != L->First && found == 0);
     }
-    ltsDLLast(L);
+    //ltsDLLast(L);
     return found;
 }
