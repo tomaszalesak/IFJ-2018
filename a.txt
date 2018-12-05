@@ -98,12 +98,15 @@ LABEL IF%then%80000003
 CREATEFRAME
 DEFVAR TF@%1
 MOVE TF@%1 string@Bude\032chyba?
+PUSHFRAME
+WRITE LF@%1
+POPFRAME
 JUMP IF%end%80000005
 LABEL IF%else%80000004
 LABEL IF%end%80000005
 ------------------------------
 Our output:
-Our return value: 0
+Bude chyba?Our return value: 0
 Our return ifjcode value: 0
 ---------------------------------------
 -------------END OF FILE---------------
@@ -113,7 +116,7 @@ FILE NAME: ./tests/our_tests/04.src
 Source:
 ------------------------------
 # alokace textu
-a = "texttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttext"
+a = "texttexttexxtexttexttexttexttexttexttexttexttexttexttext"
 
 ------------------------------
 Correct output:
@@ -123,7 +126,7 @@ Our ifjcode output:
 .IFJcode18
 DEFVAR GF@a
 DEFVAR GF@%result%80000001
-MOVE GF@%result%80000001 string@texttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttexttext
+MOVE GF@%result%80000001 string@texttexttexxtexttexttexttexttexttexttexttexttexttexttext
 MOVE GF@a GF@%result%80000001
 ------------------------------
 Our output:
@@ -209,7 +212,7 @@ FILE NAME: ./tests/our_tests/07.src
 Source:
 ------------------------------
 # definice funkce s VICE parametry
-def test?(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
+def test?(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
 	a = 5
 end
 
@@ -254,80 +257,36 @@ DEFVAR LF@_n
 MOVE LF@_n LF@%14
 DEFVAR LF@_o
 MOVE LF@_o LF@%15
-DEFVAR LF@_p
-MOVE LF@_p LF@%16
-DEFVAR LF@_q
-MOVE LF@_q LF@%17
-DEFVAR LF@_r
-MOVE LF@_r LF@%18
-DEFVAR LF@_s
-MOVE LF@_s LF@%19
-DEFVAR LF@_t
-MOVE LF@_t LF@%20
-DEFVAR LF@_u
-MOVE LF@_u LF@%21
-DEFVAR LF@_v
-MOVE LF@_v LF@%22
-DEFVAR LF@_w
-MOVE LF@_w LF@%23
-DEFVAR LF@_x
-MOVE LF@_x LF@%24
-DEFVAR LF@_y
-MOVE LF@_y LF@%25
-DEFVAR LF@_z
-MOVE LF@_z LF@%26
-DEFVAR LF@_A
-MOVE LF@_A LF@%27
-DEFVAR LF@_B
-MOVE LF@_B LF@%28
-DEFVAR LF@_C
-MOVE LF@_C LF@%29
-DEFVAR LF@_D
-MOVE LF@_D LF@%30
-DEFVAR LF@_E
-MOVE LF@_E LF@%31
-DEFVAR LF@_F
-MOVE LF@_F LF@%32
-DEFVAR LF@_G
-MOVE LF@_G LF@%33
-DEFVAR LF@_H
-MOVE LF@_H LF@%34
-DEFVAR LF@_I
-MOVE LF@_I LF@%35
-DEFVAR LF@_J
-MOVE LF@_J LF@%36
-DEFVAR LF@_K
-MOVE LF@_K LF@%37
 DEFVAR LF@_L
-MOVE LF@_L LF@%38
+MOVE LF@_L LF@%16
 DEFVAR LF@_M
-MOVE LF@_M LF@%39
+MOVE LF@_M LF@%17
 DEFVAR LF@_N
-MOVE LF@_N LF@%40
+MOVE LF@_N LF@%18
 DEFVAR LF@_O
-MOVE LF@_O LF@%41
+MOVE LF@_O LF@%19
 DEFVAR LF@_P
-MOVE LF@_P LF@%42
+MOVE LF@_P LF@%20
 DEFVAR LF@_Q
-MOVE LF@_Q LF@%43
+MOVE LF@_Q LF@%21
 DEFVAR LF@_R
-MOVE LF@_R LF@%44
+MOVE LF@_R LF@%22
 DEFVAR LF@_S
-MOVE LF@_S LF@%45
+MOVE LF@_S LF@%23
 DEFVAR LF@_T
-MOVE LF@_T LF@%46
+MOVE LF@_T LF@%24
 DEFVAR LF@_U
-MOVE LF@_U LF@%47
+MOVE LF@_U LF@%25
 DEFVAR LF@_V
-MOVE LF@_V LF@%48
+MOVE LF@_V LF@%26
 DEFVAR LF@_W
-MOVE LF@_W LF@%49
+MOVE LF@_W LF@%27
 DEFVAR LF@_X
-MOVE LF@_X LF@%50
+MOVE LF@_X LF@%28
 DEFVAR LF@_Y
-MOVE LF@_Y LF@%51
+MOVE LF@_Y LF@%29
 DEFVAR LF@_Z
-MOVE LF@_Z LF@%52
+MOVE LF@_Z LF@%30
 DEFVAR LF@a
 DEFVAR LF@%result%80000002
 MOVE LF@%result%80000002 int@5
@@ -354,7 +313,7 @@ a__ = 5
 _ = 5
 __ = 6
 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 = 8
-mlk? = mlk!
+mlk
 
 ------------------------------
 Correct output:
@@ -388,7 +347,7 @@ MOVE GF@%result%80000006 int@8
 MOVE GF@abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 GF@%result%80000006
 ------------------------------
 Our output:
-Our return value: 2
+Our return value: 3
 Our return ifjcode value: 0
 ---------------------------------------
 -------------END OF FILE---------------
@@ -418,24 +377,7 @@ Source:
 ------------------------------
 # zkusime ne/zavorky u volani funkce s hodne parametry
 print "ahoj"
-abc _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
-inputs _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
-inputi _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
-inputf _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
-length _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
-substr _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
-ord _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
-chr _a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z
 
-print("ahoj")
-abc(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
-inputs(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
-inputi(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
-inputf(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
-length(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
-substr(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
-ord(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
-chr(_a,_b,_c,_d,_e,_f,_g,_h,_i,_j,_k,_l,_m,_n,_o,_p,_q,_r,_s,_t,_u,_v,_w,_x,_y,_z,_A,_B,_C,_D,_E,_F,_G,_H,_I,_J,_K,_L,_M,_N,_O,_P,_Q,_R,_S,_T,_U,_V,_W,_X,_Y,_Z)
 
 ------------------------------
 Correct output:
@@ -446,10 +388,12 @@ Our ifjcode output:
 CREATEFRAME
 DEFVAR TF@%1
 MOVE TF@%1 string@ahoj
-CREATEFRAME
+PUSHFRAME
+WRITE LF@%1
+POPFRAME
 ------------------------------
 Our output:
-Our return value: 3
+ahojOur return value: 0
 Our return ifjcode value: 0
 ---------------------------------------
 -------------END OF FILE---------------
@@ -471,9 +415,13 @@ Our ifjcode output:
 CREATEFRAME
 DEFVAR TF@%1
 MOVE TF@%1 string@0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\035$%&"()*+,-./:;<=>?@[\092]^_`{|}~\032\009\010\011\012
+PUSHFRAME
+WRITE LF@%1
+POPFRAME
 ------------------------------
 Our output:
-Our return value: 0
+0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&"()*+,-./:;<=>?@[\]^_`{|}~ 	
+Our return value: 0
 Our return ifjcode value: 0
 ---------------------------------------
 -------------END OF FILE---------------
@@ -483,8 +431,8 @@ FILE NAME: ./tests/our_tests/12.src
 Source:
 ------------------------------
 # dlouhy int, float
-a = 9195181115680978250797059216106836279524266923797309156481477926300863726271789701520334425305722183
-b = 9195181115680978250797059216106836279524266923797309156481477926300863726271789701520334425305722183.9195181115680978250797059216106836279524266923797309156481477926300863726271789701520334425305722183
+a = 919518111568034425305722183
+b = 919518111568097820334425305722183.91951811156809782507970e151515
 
 ------------------------------
 Correct output:
@@ -493,10 +441,17 @@ Correct return value: 1
 Our ifjcode output:
 .IFJcode18
 DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@-1
+MOVE GF@a GF@%result%80000001
+DEFVAR GF@b
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 float@inf
+MOVE GF@b GF@%result%80000002
 ------------------------------
 Our output:
-Our return value: 1
-Our return ifjcode value: 0
+Our return value: 0
+Our return ifjcode value: 51
 ---------------------------------------
 -------------END OF FILE---------------
 ---------------------------------------
@@ -698,13 +653,11 @@ MOVE GF@%result%80000005 GF@%tmp%80000004
 JUMPIFEQ IF%then%80000006 GF@%result%80000005 bool@true
 JUMP IF%else%80000007
 LABEL IF%then%80000006
-DEFVAR GF@b
 DEFVAR GF@%result%80000008
 MOVE GF@%result%80000008 int@666
 MOVE GF@b GF@%result%80000008
 JUMP IF%end%80000009
 LABEL IF%else%80000007
-DEFVAR GF@b
 DEFVAR GF@%result%8000000a
 MOVE GF@%result%8000000a int@11111111
 MOVE GF@b GF@%result%8000000a
@@ -713,7 +666,7 @@ DEFVAR GF@xxx
 ------------------------------
 Our output:
 Our return value: 3
-Our return ifjcode value: 52
+Our return ifjcode value: 0
 ---------------------------------------
 -------------END OF FILE---------------
 ---------------------------------------
@@ -969,9 +922,17 @@ DEFVAR TF@%2
 MOVE TF@%2 int@0
 DEFVAR TF@%3
 MOVE TF@%3 int@2
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+MOVE LF@%retval LF@%1POPFRAME
+MOVE GF@a TF@%retval
 CREATEFRAME
 DEFVAR TF@%1
-MOVE TF@%1 neaka hodnota z TS
+MOVE TF@%1 GF@a
+PUSHFRAME
+WRITE LF@%1
+POPFRAME
 DEFVAR GF@%tmp%80000001
 LT GF@%tmp%80000001 int@0 int@10 
 DEFVAR GF@%result%80000002
@@ -982,11 +943,17 @@ LABEL IF%then%80000003
 CREATEFRAME
 DEFVAR TF@%1
 MOVE TF@%1 string@dobry\032den;;;
+PUSHFRAME
+WRITE LF@%1
+POPFRAME
 JUMP IF%end%80000005
 LABEL IF%else%80000004
 CREATEFRAME
 DEFVAR TF@%1
 MOVE TF@%1 string@jedem\032ti\032domu
+PUSHFRAME
+WRITE LF@%1
+POPFRAME
 LABEL IF%end%80000005
 JUMP jumparound%80000006
 LABEL $funkce
@@ -1014,7 +981,12 @@ JUMP IF%else%8000000d
 LABEL IF%then%8000000c
 CREATEFRAME
 DEFVAR TF@%1
-MOVE TF@%1 neaka hodnota z TS
+MOVE TF@%1 LF@m
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+INT2CHAR LF@%retval LF@%1
+POPFRAME
 JUMP IF%end%8000000e
 LABEL IF%else%8000000d
 LABEL IF%end%8000000e
@@ -1083,13 +1055,11 @@ MOVE GF@%result%80000005 GF@%tmp%80000004
 JUMPIFEQ IF%then%80000006 GF@%result%80000005 bool@true
 JUMP IF%else%80000007
 LABEL IF%then%80000006
-DEFVAR GF@b
 DEFVAR GF@%result%80000008
 MOVE GF@%result%80000008 int@666
 MOVE GF@b GF@%result%80000008
 JUMP IF%end%80000009
 LABEL IF%else%80000007
-DEFVAR GF@b
 DEFVAR GF@%result%8000000a
 MOVE GF@%result%8000000a int@11111111
 MOVE GF@b GF@%result%8000000a
@@ -1116,13 +1086,11 @@ MOVE LF@%result%8000000f LF@%tmp%8000000e
 JUMPIFEQ IF%then%80000010 LF@%result%8000000f bool@true
 JUMP IF%else%80000011
 LABEL IF%then%80000010
-DEFVAR LF@a
 DEFVAR LF@%result%80000012
 MOVE LF@%result%80000012 int@1
 MOVE LF@a LF@%result%80000012
 JUMP IF%end%80000013
 LABEL IF%else%80000011
-DEFVAR LF@a
 DEFVAR LF@%result%80000014
 MOVE LF@%result%80000014 int@2
 MOVE LF@a LF@%result%80000014
@@ -1142,115 +1110,29 @@ MOVE GF@xxx TF@%retval
 ------------------------------
 Our output:
 Our return value: 0
-Our return ifjcode value: 52
+Our return ifjcode value: 0
 ---------------------------------------
 -------------END OF FILE---------------
 ---------------------------------------
 
-FILE NAME: ./tests/our_tests/example1.src
+FILE NAME: ./tests/our_tests/28.src
 Source:
 ------------------------------
-# Program 1: Vypocet faktorialu (iterativne)
-print "Zadejte cislo pro vypocet faktorialu: "
-a = inputi
-if a < 0 then
-  print("\nFaktorial nelze spocitat\n")
-else
-  vysl = 1
-  while a > 0 do
-    vysl = vysl * a
-    a = a - 1
-  end
-  print "\nVysledek je:", vysl, "\n"
+
+def funkce(m, n)
+	a = m + n
+	if a == 0 then
+		a = 1
+	else
+		a = 2
+	end
+	a
 end
 
-------------------------------
-Correct output:
-Correct return value: 1
-------------------------------
-Our ifjcode output:
-.IFJcode18
-CREATEFRAME
-DEFVAR TF@%1
-MOVE TF@%1 string@Zadejte\032cislo\032pro\032vypocet\032faktorialu:\032
-DEFVAR GF@a
-DEFVAR GF@%tmp%80000001
-LT GF@%tmp%80000001 GF@a int@0 
-DEFVAR GF@%result%80000002
-MOVE GF@%result%80000002 GF@%tmp%80000001
-JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
-JUMP IF%else%80000004
-LABEL IF%then%80000003
-CREATEFRAME
-DEFVAR TF@%1
-MOVE TF@%1 string@\010Faktorial\032nelze\032spocitat\010
-JUMP IF%end%80000005
-LABEL IF%else%80000004
-DEFVAR GF@vysl
-DEFVAR GF@%result%80000006
-MOVE GF@%result%80000006 int@1
-MOVE GF@vysl GF@%result%80000006
-LABEL WHILE%do%80000007
-DEFVAR GF@%tmp%80000008
-GT GF@%tmp%80000008 GF@a int@0 
-DEFVAR GF@%result%80000009
-MOVE GF@%result%80000009 GF@%tmp%80000008
-JUMPIFEQ WHILE%end%8000000a GF@WHILE%result%80000009 bool@false
-DEFVAR GF@vysl
-Question 1, 1
-DEFVAR GF@%tmp%8000000b
-MUL GF@%tmp%8000000b GF@vysl GF@a 
-DEFVAR GF@%result%8000000c
-MOVE GF@%result%8000000c GF@%tmp%8000000b
-MOVE GF@vysl GF@%result%8000000c
-DEFVAR GF@a
-DEFVAR GF@%tmp%8000000d
-SUB GF@%tmp%8000000d GF@a int@1 
-DEFVAR GF@%result%8000000e
-MOVE GF@%result%8000000e GF@%tmp%8000000d
-MOVE GF@a GF@%result%8000000e
-JUMP WHILE%do%80000007
-LABEL WHILE%end%8000000a
-CREATEFRAME
-DEFVAR TF@%1
-MOVE TF@%1 string@\010Vysledek\032je:
-DEFVAR TF@%2
-MOVE TF@%2 neaka hodnota z TS
-DEFVAR TF@%3
-MOVE TF@%3 string@\010
-LABEL IF%end%80000005
-------------------------------
-Our output:
-Our return value: 0
-Our return ifjcode value: 51
----------------------------------------
--------------END OF FILE---------------
----------------------------------------
 
-FILE NAME: ./tests/our_tests/example2.src
-Source:
-------------------------------
-# Program 2: Vypocet faktorialu (rekurzivne)
-def factorial (n)
-  if n < 2 then
-    result = 1
-  else
-    decremented_n = n - 1
-    temp_result = factorial decremented_n
-    result = n * temp_result
-  end # if
-  result
-end # function factorial
 
-# Hlavni telo programu
-print "Zadejte cislo pro vypocet faktorialu: "
-a = inputi
-if a < 0 then
-  print "\nFaktorial nelze spocitat\n"
-else
-  vysl = factorial a
-  print("\nVysledek je:", vysl, "\n")
-end
+xxx = funkce(2,2)
+
 
 ------------------------------
 Correct output:
@@ -1259,144 +1141,48 @@ Correct return value: 1
 Our ifjcode output:
 .IFJcode18
 JUMP jumparound%80000001
-LABEL $factorial
+LABEL $funkce
 PUSHFRAME
 DEFVAR LF@%retval
 MOVE LF@%retval nil@nil
+DEFVAR LF@m
+MOVE LF@m LF@%1
 DEFVAR LF@n
-MOVE LF@n LF@%1
+MOVE LF@n LF@%2
+DEFVAR LF@a
 DEFVAR LF@%tmp%80000002
-LT LF@%tmp%80000002 LF@n int@2 
+ADD LF@%tmp%80000002 LF@m LF@n 
 DEFVAR LF@%result%80000003
 MOVE LF@%result%80000003 LF@%tmp%80000002
-JUMPIFEQ IF%then%80000004 LF@%result%80000003 bool@true
-JUMP IF%else%80000005
-LABEL IF%then%80000004
-DEFVAR LF@result
-DEFVAR LF@%result%80000006
-MOVE LF@%result%80000006 int@1
-MOVE LF@result LF@%result%80000006
-JUMP IF%end%80000007
-LABEL IF%else%80000005
-DEFVAR LF@decremented_n
-DEFVAR LF@%tmp%80000008
-SUB LF@%tmp%80000008 LF@n int@1 
-DEFVAR LF@%result%80000009
-MOVE LF@%result%80000009 LF@%tmp%80000008
-MOVE LF@decremented_n LF@%result%80000009
-DEFVAR LF@temp_result
+MOVE LF@a LF@%result%80000003
+DEFVAR LF@%tmp%80000004
+EQ LF@%tmp%80000004 LF@a int@0 
+DEFVAR LF@%result%80000005
+MOVE LF@%result%80000005 LF@%tmp%80000004
+JUMPIFEQ IF%then%80000006 LF@%result%80000005 bool@true
+JUMP IF%else%80000007
+LABEL IF%then%80000006
+DEFVAR LF@%result%80000008
+MOVE LF@%result%80000008 int@1
+MOVE LF@a LF@%result%80000008
+JUMP IF%end%80000009
+LABEL IF%else%80000007
+DEFVAR LF@%result%8000000a
+MOVE LF@%result%8000000a int@2
+MOVE LF@a LF@%result%8000000a
+LABEL IF%end%80000009
+MOVE LF@%retval LF@a
+POPFRAME
+RETURN
+LABEL jumparound%80000001
+DEFVAR GF@xxx
 CREATEFRAME
 DEFVAR TF@%1
-MOVE TF@%1 neaka hodnota z TS
-CALL $factorial
-MOVE LF@temp_result TF@%retval
-DEFVAR LF@result
-Question 1, 1
-DEFVAR LF@%tmp%8000000a
-MUL LF@%tmp%8000000a LF@n LF@temp_result 
-DEFVAR LF@%result%8000000b
-MOVE LF@%result%8000000b LF@%tmp%8000000a
-MOVE LF@result LF@%result%8000000b
-LABEL IF%end%80000007
-------------------------------
-Our output:
-Our return value: 3
-Our return ifjcode value: 51
----------------------------------------
--------------END OF FILE---------------
----------------------------------------
-
-FILE NAME: ./tests/our_tests/example3.src
-Source:
-------------------------------
-# Program 3: Prace s retezci a vestavenymi funkcemi
-s1 = "Toto je nejaky text"
-s2 = s1 + ", ktery jeste trochu obohatime"
-print s1, "\n", s2, "\n"
-s1len = length(s1)
-s1len = s1len - 4 + 1
-s1 = substr(s2, s1len, 4)
-print "4 znaky od ", s1len, ". znaku v \"", s2, "\":", s1, "\n"
-print "Zadejte serazenou posloupnost vsech malych pismen a-h, "
-print "pricemz se pismena nesmeji v posloupnosti opakovat: "
-s1 = inputs
-while s1 != "abcdefgh\n" do
-    print "Spatne zadana posloupnost, zkuste znovu: "
-    s1 = inputs
-end
-
-------------------------------
-Correct output:
-Correct return value: 1
-------------------------------
-Our ifjcode output:
-.IFJcode18
-DEFVAR GF@s1
-DEFVAR GF@%result%80000001
-MOVE GF@%result%80000001 string@Toto\032je\032nejaky\032text
-MOVE GF@s1 GF@%result%80000001
-DEFVAR GF@s2
-DEFVAR GF@%tmp%80000002
-ADD GF@%tmp%80000002 GF@s1 string@,\032ktery\032jeste\032trochu\032obohatime 
-DEFVAR GF@%result%80000003
-MOVE GF@%result%80000003 GF@%tmp%80000002
-MOVE GF@s2 GF@%result%80000003
-CREATEFRAME
-DEFVAR TF@%1
-MOVE TF@%1 neaka hodnota z TS
+MOVE TF@%1 int@2
 DEFVAR TF@%2
-MOVE TF@%2 string@\010
-DEFVAR TF@%3
-MOVE TF@%3 neaka hodnota z TS
-DEFVAR TF@%4
-MOVE TF@%4 string@\010
-DEFVAR GF@s1len
-CREATEFRAME
-DEFVAR TF@%1
-MOVE TF@%1 neaka hodnota z TS
-DEFVAR GF@%tmp%80000004
-SUB GF@%tmp%80000004 GF@s1len int@4 
-DEFVAR GF@%tmp%80000005
-ADD GF@%tmp%80000005 GF@%tmp%80000004 int@1 
-DEFVAR GF@%result%80000006
-MOVE GF@%result%80000006 GF@%tmp%80000005
-MOVE GF@s1len GF@%result%80000006
-CREATEFRAME
-------------------------------
-Our output:
-Our return value: 4
-Our return ifjcode value: 51
----------------------------------------
--------------END OF FILE---------------
----------------------------------------
-
-FILE NAME: ./tests/our_tests/example.src
-Source:
-------------------------------
-a = 5 + 5
-b = a
-
-=begin
-
-#text který by se měl celý ignorovat
-print("ahoj chybo?")
-
-=end
-
-------------------------------
-Correct output:
-Correct return value: 1
-------------------------------
-Our ifjcode output:
-.IFJcode18
-DEFVAR GF@a
-DEFVAR GF@%tmp%80000001
-ADD GF@%tmp%80000001 int@5 int@5 
-DEFVAR GF@%result%80000002
-MOVE GF@%result%80000002 GF@%tmp%80000001
-MOVE GF@a GF@%result%80000002
-DEFVAR GF@b
-MOVE GF@b GF@a
+MOVE TF@%2 int@2
+CALL $funkce
+MOVE GF@xxx TF@%retval
 ------------------------------
 Our output:
 Our return value: 0
@@ -1405,25 +1191,253 @@ Our return ifjcode value: 0
 -------------END OF FILE---------------
 ---------------------------------------
 
-FILE NAME: ./tests/our_tests/undef-var.src
+FILE NAME: ./tests/our_tests/31_IFs.src
 Source:
 ------------------------------
-#!/bin/ruby -r ./ifj18.rb
-# Ukazka definice promenne bez provedeni jeji inicializace v IFJ18/Ruby
-
-# Nasleduje mrtvy kod, ktery ma behem staticke analyzy vliv na tabulku symbolu a vytvori promennou x s hodnotou nil
-# Takto zvlastne lze definovat promennou, aniz bychom ji inicializovali
-if (1 == 2) then
-  x = 42
+x = 5
+if x then
+x
 else
+x
+end
+x
+def a()
+x +5
 end
 
-# Kdybychom vypustil predchozi if-else-end, tak by pokud o pristup k x zpusobil chybu; zde ale bude nil
-if x == nil then
-  print "x je nil\n"
+#invalid, return 3
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@x
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@5
+MOVE GF@x GF@%result%80000001
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@x
+JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
+JUMP IF%else%80000004
+LABEL IF%then%80000003
+JUMP IF%end%80000005
+LABEL IF%else%80000004
+LABEL IF%end%80000005
+JUMP jumparound%80000006
+LABEL $a
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+------------------------------
+Our output:
+Our return value: 3
+Our return ifjcode value: 53
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/32_IFs.src
+Source:
+------------------------------
+x = 5
+if x then
+b = 5
 else
-  print "x neni nil\n"
+b = 5
 end
+b
+
+#valid
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@x
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@5
+MOVE GF@x GF@%result%80000001
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@x
+JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
+JUMP IF%else%80000004
+LABEL IF%then%80000003
+DEFVAR GF@b
+DEFVAR GF@%result%80000005
+MOVE GF@%result%80000005 int@5
+MOVE GF@b GF@%result%80000005
+JUMP IF%end%80000006
+LABEL IF%else%80000004
+DEFVAR GF@%result%80000007
+MOVE GF@%result%80000007 int@5
+MOVE GF@b GF@%result%80000007
+LABEL IF%end%80000006
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 53
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/33_IFs.src
+Source:
+------------------------------
+x = 5
+if x then
+b = 5
+else
+end
+b
+
+#valid
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@x
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@5
+MOVE GF@x GF@%result%80000001
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@x
+JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
+JUMP IF%else%80000004
+LABEL IF%then%80000003
+DEFVAR GF@b
+DEFVAR GF@%result%80000005
+MOVE GF@%result%80000005 int@5
+MOVE GF@b GF@%result%80000005
+JUMP IF%end%80000006
+LABEL IF%else%80000004
+LABEL IF%end%80000006
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 53
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/34_IFs.src
+Source:
+------------------------------
+x = 5
+
+
+def fufu(x)
+if x then
+else
+b = 5
+end
+b
+end
+
+while 1>5 do
+#if theres time, fix this shit
+int y=b
+end
+
+#invalid, return 3
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@x
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@5
+MOVE GF@x GF@%result%80000001
+JUMP jumparound%80000002
+LABEL $fufu
+PUSHFRAME
+DEFVAR LF@%retval
+MOVE LF@%retval nil@nil
+DEFVAR LF@x
+MOVE LF@x LF@%1
+DEFVAR LF@%result%80000003
+MOVE LF@%result%80000003 LF@x
+JUMPIFEQ IF%then%80000004 LF@%result%80000003 bool@true
+JUMP IF%else%80000005
+LABEL IF%then%80000004
+JUMP IF%end%80000006
+LABEL IF%else%80000005
+DEFVAR LF@b
+DEFVAR LF@%result%80000007
+MOVE LF@%result%80000007 int@5
+MOVE LF@b LF@%result%80000007
+LABEL IF%end%80000006
+MOVE LF@%retval LF@b
+POPFRAME
+RETURN
+LABEL jumparound%80000002
+LABEL WHILE%do%80000008
+DEFVAR GF@%tmp%80000009
+GT GF@%tmp%80000009 int@1 int@5 
+DEFVAR GF@%result%8000000a
+MOVE GF@%result%8000000a GF@%tmp%80000009
+JUMPIFEQ WHILE%end%8000000b GF@WHILE%result%8000000a bool@false
+CREATEFRAME
+------------------------------
+Our output:
+Our return value: 3
+Our return ifjcode value: 54
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/35_IFs.src
+Source:
+------------------------------
+x = 5
+if x then
+x
+else
+x
+end
+x
+
+#valid
+
+------------------------------
+Correct output:
+Correct return value: 1
+------------------------------
+Our ifjcode output:
+.IFJcode18
+DEFVAR GF@x
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 int@5
+MOVE GF@x GF@%result%80000001
+DEFVAR GF@%result%80000002
+MOVE GF@%result%80000002 GF@x
+JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
+JUMP IF%else%80000004
+LABEL IF%then%80000003
+JUMP IF%end%80000005
+LABEL IF%else%80000004
+LABEL IF%end%80000005
+------------------------------
+Our output:
+Our return value: 0
+Our return ifjcode value: 53
+---------------------------------------
+-------------END OF FILE---------------
+---------------------------------------
+
+FILE NAME: ./tests/our_tests/example.src
+Source:
+------------------------------
+print "aaaaaaaaaaaaaaa"
 
 
 ------------------------------
@@ -1432,23 +1446,15 @@ Correct return value: 1
 ------------------------------
 Our ifjcode output:
 .IFJcode18
-DEFVAR GF@%tmp%80000001
-EQ GF@%tmp%80000001 int@1 int@2 
-DEFVAR GF@%result%80000002
-MOVE GF@%result%80000002 GF@%tmp%80000001
-JUMPIFEQ IF%then%80000003 GF@%result%80000002 bool@true
-JUMP IF%else%80000004
-LABEL IF%then%80000003
-DEFVAR GF@x
-DEFVAR GF@%result%80000005
-MOVE GF@%result%80000005 int@42
-MOVE GF@x GF@%result%80000005
-JUMP IF%end%80000006
-LABEL IF%else%80000004
-LABEL IF%end%80000006
+CREATEFRAME
+DEFVAR TF@%1
+MOVE TF@%1 string@aaaaaaaaaaaaaaa
+PUSHFRAME
+WRITE LF@%1
+POPFRAME
 ------------------------------
 Our output:
-Our return value: 3
+aaaaaaaaaaaaaaaOur return value: 0
 Our return ifjcode value: 0
 ---------------------------------------
 -------------END OF FILE---------------

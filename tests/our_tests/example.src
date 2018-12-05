@@ -1,9 +1,3 @@
-a = 5 + 5
-b = a
+a = 2.2
+print a
 
-=begin
-
-#text který by se měl celý ignorovat
-print("ahoj chybo?")
-
-=end
