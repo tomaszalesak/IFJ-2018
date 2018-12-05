@@ -21,8 +21,8 @@
 <stat> -> inputs()
 <stat> -> inputi()
 <stat> -> inputf()
-<stat> -> print(<term-list>)
-<stat> -> length(<arg>)
+<stat> -> print(<arg-list-print>)
+<stat> -> length(<arg-list>)
 <stat> -> substr()
 <stat> -> ord()
 <stat> -> chr()
@@ -41,12 +41,16 @@
 <func-call> -> id (<arg-listb> EOL 
 
 <arg-list> -> <arg> <arg-list2>
+<arg-list> -> EOL
 <arg-list2> -> , <arg> <arg-list2>
 <arg-list2> -> EOL
 
 <arg-listb> -> <arg> <arg-list2b>
+<arg-listb> -> )
 <arg-list2b> -> , <arg> <arg-list2b>
 <arg-list2b> -> )
+
+<arg-list-print> -> <arg> <arg-list2>
 
 <arg> -> id
 <arg> -> int
