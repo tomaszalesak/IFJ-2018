@@ -407,6 +407,7 @@ int parse_st_list(int actual_position_helper) {
                                 semanticError(ERR_NO_OF_ARGS, k, paramsCounter, SYM_NONE);
                             }
                         } //todo add error and exit?
+                        gen_call(token_old);
                     } else {
                         if (ltsSearch(*ltsAct, &k) == NULL) {
                             semanticError(ERR_UNDEF_REDEF, k, paramsCounter, SYM_VAR);
