@@ -613,7 +613,7 @@ void gen_bif_substr(){
     /// NOT IMPLEMENTED
     gen_pushframe();
     gen_retval_def();
-    printf("MOVE LF@%%retval LF@%%1");
+    printf("MOVE LF@%%retval LF@%%1\n");
     gen_popframe();
 
 
@@ -633,7 +633,33 @@ void gen_bif_substr(){
 void gen_bif_ord(){
     gen_pushframe();
     gen_retval_def();
+
+    int typeID = gen_uniqueID_next();
+    int opID = gen_uniqueID_next();
+    int nilID = gen_uniqueID_next();
+    int endID = gen_uniqueID_next();
+
+    printf("DEFVAR LF@%%type%%%x\n", typeID);
+
+    printf("TYPE LF@%%type%%%x LF@%%1\n", typeID);
+    printf("JUMPIFNEQ $label%%%x LF@%%type%%%x string@string\n", opID, typeID);
+    printf("TYPE LF@%%type%%%x LF@%%2\n", typeID);
+    printf("JUMPIFNEQ $label%%%x LF@%%type%%%x string@int\n", opID, typeID);
+    printf("STRLEN LF@%%type%%%x LF@%%1\n", typeID);
+    printf("SUB LF@%%type%%%x LF@%%type%%%x int@1\n", typeID, typeID);
+    printf("LT LF@%%type%%%x LF@%%2 LF@%%type%%%x\n", typeID, typeID);
+    printf("JUMPIFNEQ $label%%%x LF@%%type%%%x bool@false\n", nilID, typeID);
+
     printf("STRI2INT LF@%%retval LF@%%1 LF@%%2\n");
+    printf("JUMP $label%%%x\n", endID);
+
+    printf("LABEL $label%%%x\n", opID);
+    printf("EXIT int@53\n");
+
+    printf("LABEL $label%%%x\n", nilID);
+    printf("MOVE LF@%%retval nil@nil\n");
+
+    printf("LABEL $label%%%x\n", endID);
     gen_popframe();
 }
 
