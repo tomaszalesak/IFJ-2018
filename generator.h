@@ -262,17 +262,17 @@ void gen_result_ass(Token token);
 /**
  * Generates code for built-in function INPUTS().
  */
-void gen_bif_inputs(Token token);
+void gen_bif_inputs();
 
 /**
  * Generates code for built-in function INPUTI().
  */
-void gen_bif_inputi(Token token);
+void gen_bif_inputi();
 
 /**
  * Generates code for built-in function INPUTF().
  */
-void gen_bif_inputf(Token token);
+void gen_bif_inputf();
 
 /**
  * Generates code for built-in function PRINT().

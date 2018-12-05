@@ -144,7 +144,7 @@ void gen_call(Token token) {
  * Generates code for return value variable definition.
  */
 void gen_retval_def() {
-    printf("DEFVAR %cF@%%retval\nMOVE %cF@%%retval nil@nil\n", (char)frame, (char)frame);
+    printf("DEFVAR LF@%%retval\nMOVE LF@%%retval nil@nil\n");
 }
 
 /*
@@ -504,22 +504,31 @@ void gen_result_ass(Token token) {
 /*
  * Generates code for built-in function INPUTS().
  */
-void gen_bif_inputs(Token token) {
-    printf("READ %cF@%s string\n", (char)frame, (char*)(token.data));
+void gen_bif_inputs() {
+    gen_pushframe();
+    gen_retval_def();
+    printf("READ LF@%%retval string\n");
+    gen_popframe();
 }
 
 /*
  * Generates code for built-in function INPUTI().
  */
-void gen_bif_inputi(Token token){
-    printf("READ %cF@%s int\n", (char)frame, (char*)(token.data));
+void gen_bif_inputi(){
+    gen_pushframe();
+    gen_retval_def();
+    printf("READ LF@%%retval int\n");
+    gen_popframe();
 }
 
 /*
  * Generates code for built-in function INPUTF().
  */
-void gen_bif_inputf(Token token){
-    printf("READ %cF@%s float\n", (char)frame, (char*)(token.data));
+void gen_bif_inputf(){
+    gen_pushframe();
+    gen_retval_def();
+    printf("READ LF@%%retval float\n");
+    gen_popframe();
 }
 
 /*
@@ -538,28 +547,50 @@ void gen_bif_print(int args_count){
  * Generates code for built-in function LENGTH().
  */
 void gen_bif_length(){
-    printf("DEFVAR %cF@str\nMOVE %cF@str %cF@%%1\n",  (char)frame, (char)frame, (char)frame);
+    gen_pushframe();
     gen_retval_def();
-    printf("STRLEN %cF@%%retval %cF@str", (char)frame, (char)frame);
+    printf("STRLEN LF@%%retval LF@%%1\n");
+    gen_popframe();
 }
 
 /*
  * Generates code for built-in function SUBSTR().
  */
 void gen_bif_substr(){
-    printf("");
+
+    /// NOT IMPLEMENTED
+    gen_pushframe();
+    gen_retval_def();
+    printf("MOVE LF@%%retval LF@%%1");
+    gen_popframe();
+
+
+    /*
+    printf("DEFVAR LF@%%I\nMOVE LF@%%I LF@%%2\n");
+    printf("DEFVAR LF@%%N\nMOVE LF@%%N LF@%%3\n");
+    // to get final index
+    printf("ADD LF@%%N LF@%%N LF@%%I\n");
+    printf("DEFVAR LF@%%S\nMOVE LF@%%S LF@%%1\n");
+
+    printf("LABEL $SUBSTR$")*/
 }
 
 /*
  * Generates code for built-in function ORD().
  */
 void gen_bif_ord(){
-    printf("");
+    gen_pushframe();
+    gen_retval_def();
+    printf("STRI2INT LF@%%retval LF@%%1 LF@%%2\n");
+    gen_popframe();
 }
 
 /*
  * Generates code for built-in function CHR().
  */
 void gen_bif_chr(){
-    printf("");
+    gen_pushframe();
+    gen_retval_def();
+    printf("INT2CHAR LF@%%retval LF@%%1\n");
+    gen_popframe();
 }

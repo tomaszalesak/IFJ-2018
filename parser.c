@@ -129,6 +129,7 @@ void parse_function() {//3
             gen_return();
             gen_set_frame(GEN_GLOBAL);
             gen_jumparound_label(jumparound_label);
+
             ltsAct = tmpLTS;
         } else {
             compiler_exit(ERR_SYNTAX);
@@ -237,17 +238,73 @@ int parse_st_list(int actual_position_helper) {
 
                             //BIF Handling
                         case BIF_INPUTS://32
-                        case BIF_INPUTI://33
-                        case BIF_INPUTF://34
                             if (((token = getToken()).type) == T_LBRACKET) {
                                 if (((getToken().type) == T_RBRACKET) &&
                                     ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
+                                    // generate inline INPUTF function
+                                    gen_TF();
+                                    gen_bif_inputs();
+                                    gen_retval_get(token_top);
                                     parse_st_list(actual_position_helper);
                                     break;
                                 } else {
                                     compiler_exit(ERR_NO_OF_ARGS);
                                 }
                             } else if (token.type == T_EOL) {
+                                // generate inline INPUTF function
+                                gen_TF();
+                                gen_bif_inputs();
+                                gen_retval_get(token_top);
+                                parse_st_list(actual_position_helper);
+                                break;
+                            } else {// TODO SEMANTIC TODO, THIS DOES NOT COUNT WITH BAD NUMBER OF ARGS
+                                compiler_exit(ERR_SYNTAX);
+                            }
+                            break;
+
+                        case BIF_INPUTI://33
+                            if (((token = getToken()).type) == T_LBRACKET) {
+                                if (((getToken().type) == T_RBRACKET) &&
+                                    ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
+                                    // generate inline INPUTF function
+                                    gen_TF();
+                                    gen_bif_inputi();
+                                    gen_retval_get(token_top);
+                                    parse_st_list(actual_position_helper);
+                                    break;
+                                } else {
+                                    compiler_exit(ERR_NO_OF_ARGS);
+                                }
+                            } else if (token.type == T_EOL) {
+                                // generate inline INPUTF function
+                                gen_TF();
+                                gen_bif_inputi();
+                                gen_retval_get(token_top);
+                                parse_st_list(actual_position_helper);
+                                break;
+                            } else {// TODO SEMANTIC TODO, THIS DOES NOT COUNT WITH BAD NUMBER OF ARGS
+                                compiler_exit(ERR_SYNTAX);
+                            }
+                            break;
+
+                        case BIF_INPUTF://34
+                            if (((token = getToken()).type) == T_LBRACKET) {
+                                if (((getToken().type) == T_RBRACKET) &&
+                                    ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
+                                    // generate inline INPUTF function
+                                    gen_TF();
+                                    gen_bif_inputf();
+                                    gen_retval_get(token_top);
+                                    parse_st_list(actual_position_helper);
+                                    break;
+                                } else {
+                                    compiler_exit(ERR_NO_OF_ARGS);
+                                }
+                            } else if (token.type == T_EOL) {
+                                // generate inline INPUTF function
+                                gen_TF();
+                                gen_bif_inputf();
+                                gen_retval_get(token_top);
                                 parse_st_list(actual_position_helper);
                                 break;
                             } else {// TODO SEMANTIC TODO, THIS DOES NOT COUNT WITH BAD NUMBER OF ARGS
@@ -271,6 +328,9 @@ int parse_st_list(int actual_position_helper) {
                             K.str = "length";
                             token = getToken();
                             parse_arg_list_switcher(0);
+                            // generate inline LENGTH function
+                            gen_bif_length();
+                            gen_retval_get(token_top);
                             parse_st_list(actual_position_helper);
                             break;
 
@@ -280,6 +340,9 @@ int parse_st_list(int actual_position_helper) {
                             K.str = "substr";
                             token = getToken();
                             parse_arg_list_switcher(0);
+                            // generate inline SUBSTR function
+                            gen_bif_substr();
+                            gen_retval_get(token_top);
                             parse_st_list(actual_position_helper);
                             break;
 
@@ -289,6 +352,9 @@ int parse_st_list(int actual_position_helper) {
                             K.str = "ord";
                             token = getToken();
                             parse_arg_list_switcher(0);
+                            // generate inline ORD function
+                            gen_bif_ord();
+                            gen_retval_get(token_top);
                             parse_st_list(actual_position_helper);
                             break;
 
@@ -298,6 +364,9 @@ int parse_st_list(int actual_position_helper) {
                             K.str = "chr";
                             token = getToken();
                             parse_arg_list_switcher(0);
+                            // generate inline CHR function
+                            gen_bif_chr();
+                            gen_retval_get(token_top);
                             parse_st_list(actual_position_helper);
                             break;
 
@@ -436,17 +505,65 @@ int parse_st_list(int actual_position_helper) {
 
             //BIF Handling
         case BIF_INPUTS://32
-        case BIF_INPUTI://33
-        case BIF_INPUTF://34
             if (((token = getToken()).type) == T_LBRACKET) {
                 if (((getToken().type) == T_RBRACKET) &&
                     ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
+                    // generate inline INPUTF function
+                    gen_TF();
+                    gen_bif_inputs();
                     parse_st_list(actual_position_helper);
                     break;
                 } else {
                     compiler_exit(ERR_NO_OF_ARGS);
                 }
             } else if (token.type == T_EOL) {
+                // generate inline INPUTF function
+                gen_TF();
+                gen_bif_inputs();
+                parse_st_list(actual_position_helper);
+                break;
+            } else {// TODO SEMANTIC TODO, THIS DOES NOT COUNT WITH BAD NUMBER OF ARGS
+                compiler_exit(ERR_SYNTAX);
+            }
+
+        case BIF_INPUTI://33
+            if (((token = getToken()).type) == T_LBRACKET) {
+                if (((getToken().type) == T_RBRACKET) &&
+                    ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
+                    // generate inline INPUTF function
+                    gen_TF();
+                    gen_bif_inputi();
+                    parse_st_list(actual_position_helper);
+                    break;
+                } else {
+                    compiler_exit(ERR_NO_OF_ARGS);
+                }
+            } else if (token.type == T_EOL) {
+                // generate inline INPUTF function
+                gen_TF();
+                gen_bif_inputi();
+                parse_st_list(actual_position_helper);
+                break;
+            } else {// TODO SEMANTIC TODO, THIS DOES NOT COUNT WITH BAD NUMBER OF ARGS
+                compiler_exit(ERR_SYNTAX);
+            }
+
+        case BIF_INPUTF://34
+            if (((token = getToken()).type) == T_LBRACKET) {
+                if (((getToken().type) == T_RBRACKET) &&
+                    ((((token = getToken()).type) == T_EOL) || ((token.type) == T_EOF))) {
+                    // generate inline INPUTF function
+                    gen_TF();
+                    gen_bif_inputf();
+                    parse_st_list(actual_position_helper);
+                    break;
+                } else {
+                    compiler_exit(ERR_NO_OF_ARGS);
+                }
+            } else if (token.type == T_EOL) {
+                // generate inline INPUTF function
+                gen_TF();
+                gen_bif_inputf();
                 parse_st_list(actual_position_helper);
                 break;
             } else {// TODO SEMANTIC TODO, THIS DOES NOT COUNT WITH BAD NUMBER OF ARGS
@@ -467,6 +584,8 @@ int parse_st_list(int actual_position_helper) {
             K.str = "length";
             token = getToken();
             parse_arg_list_switcher(0);
+            // generate inline LENGTH function
+            gen_bif_length();
             parse_st_list(actual_position_helper);
             break;
 
@@ -474,6 +593,8 @@ int parse_st_list(int actual_position_helper) {
             K.str = "substr";
             token = getToken();
             parse_arg_list_switcher(0);
+            // generate inline SUBSTR function
+            gen_bif_substr();
             parse_st_list(actual_position_helper);
             break;
 
@@ -481,6 +602,8 @@ int parse_st_list(int actual_position_helper) {
             K.str = "ord";
             token = getToken();
             parse_arg_list_switcher(0);
+            // generate inline ORD function
+            gen_bif_ord();
             parse_st_list(actual_position_helper);
             break;
 
@@ -488,6 +611,8 @@ int parse_st_list(int actual_position_helper) {
             K.str = "chr";
             token = getToken();
             parse_arg_list_switcher(0);
+            // generate inline CHR function
+            gen_bif_chr();
             parse_st_list(actual_position_helper);
             break;
 
