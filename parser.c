@@ -39,10 +39,13 @@ void parse_arg_list2b();
 void parse_arg_list_switcher(int print_checker);
 
 Token token;// TODO extend to my .h or not?
+/// @var returnValue - Variable storing the last reference variable
+///                    that will be used as a return value at the end of defined function.
 Token returnValue;
 int paramsCounter = 0;
+/// @var print_paramsCounter - int storing the number of parameters of the last called function.
+/// Used to keep the number of arguments passed to PRINT function (variable number of parameters).
 int print_paramsCounter = 0;
-
 
 //Parse for <main> LL
 void parse_main(int x) {
@@ -126,7 +129,6 @@ void parse_function() {//3
             gen_return();
             gen_set_frame(GEN_GLOBAL);
             gen_jumparound_label(jumparound_label);
-            
             ltsAct = tmpLTS;
         } else {
             compiler_exit(ERR_SYNTAX);
@@ -184,10 +186,12 @@ int parse_st_list(int actual_position_helper) {
                         fprintf(stderr, "Semantic Error! Can't redefine function %s as variable!\n", K.str);
                         compiler_exit(ERR_UNDEF_REDEF);
                     }
-                    if (ltsInsert(ltsAct, &K) == SUCCESS)
+
+                    // Detecting variable definition to generate DEFVAR
+                    if (ltsSearch(*ltsAct, &K) == NULL)
                         gen_defvar(token_top);
 
-                    ltsInsert(&ltsStack->Act->lts, &K);// == SUCCESS
+                    ltsInsert(ltsAct, &K); //== SUCCESS
                     //gtsSearch(gts, &K);
                     token = getToken();
                     token_old = token;
@@ -256,6 +260,7 @@ int parse_st_list(int actual_position_helper) {
                             K.str = "print";
                             token = getToken();
                             parse_arg_list_switcher(1);
+                            // generate inline PRINT function
                             gen_bif_print(print_paramsCounter);
                             parse_st_list(actual_position_helper);
                             break;
@@ -453,6 +458,7 @@ int parse_st_list(int actual_position_helper) {
             K.str = "print";
             token = getToken();
             parse_arg_list_switcher(1);
+            // generate inline PRINT function
             gen_bif_print(print_paramsCounter);
             parse_st_list(actual_position_helper);
             break;
@@ -560,7 +566,7 @@ void parse_arg_list_switcher(int print_checker) {
             parse_arg_list2b();//44,45
         }
 
-        // Used to generate print code (need to know the number of parameters)
+        // Used to generate PRINT code (need to know the number of parameters)
         print_paramsCounter = paramsCounter;
 
         //added for semantic analysis
@@ -588,7 +594,7 @@ void parse_arg_list_switcher(int print_checker) {
         //Call function for <arg-list2>
         parse_arg_list2();//48,49
 
-        // Used to generate print code (need to know the number of parameters)
+        // Used to generate PRINT code (need to know the number of parameters)
         print_paramsCounter = paramsCounter;
 
         //added for semantic analysis

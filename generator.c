@@ -75,7 +75,7 @@ void gen_argument(Token token, int argumentNumber) {
 
     switch (token.type) {
         case T_IDENTIFIER:
-            printf("neaka hodnota z TS\n");
+            printf("%cF@%s\n", (char)frame, (char*)(token.data));
             break;
         case T_INT:
             printf("int@%d\n", *(int*)(token.data));
@@ -90,7 +90,6 @@ void gen_argument(Token token, int argumentNumber) {
             free(token.data);
             break;
         default:
-            printf("WHEEE\n");
             break;
     }
 }
@@ -525,9 +524,14 @@ void gen_bif_inputf(Token token){
 
 /*
  * Generates code for built-in function PRINT().
+ * @param args_count - Int with number of arguments of the print function.
  */
-void gen_bif_print(){
-    printf("WRITE lol");
+void gen_bif_print(int args_count){
+    gen_pushframe();
+    for (int i = 1; i <= args_count; i++) {
+        printf("WRITE LF@%%%d\n", i);
+    }
+    gen_popframe();
 }
 
 /*
