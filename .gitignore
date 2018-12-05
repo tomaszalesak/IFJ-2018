@@ -4,6 +4,7 @@ ic18int
 *.prg
 *.code
 *.output
+a.txt
 
 # VSC
 *.vscode

@@ -796,6 +796,8 @@ MOVE LF@%retval LF@%result%80000002
 POPFRAME
 RETURN
 LABEL jumparound%80000001
+CREATEFRAME
+CALL $neco
 ------------------------------
 Our output:
 Our return value: 0
@@ -1385,12 +1387,12 @@ DEFVAR GF@%tmp%80000009
 GT GF@%tmp%80000009 int@1 int@5 
 DEFVAR GF@%result%8000000a
 MOVE GF@%result%8000000a GF@%tmp%80000009
-JUMPIFEQ WHILE%end%8000000b GF@WHILE%result%8000000a bool@false
+JUMPIFEQ WHILE%end%8000000b GF@%result%8000000a bool@false
 CREATEFRAME
 ------------------------------
 Our output:
 Our return value: 3
-Our return ifjcode value: 54
+Our return ifjcode value: 52
 ---------------------------------------
 -------------END OF FILE---------------
 ---------------------------------------
@@ -1437,7 +1439,8 @@ Our return ifjcode value: 53
 FILE NAME: ./tests/our_tests/example.src
 Source:
 ------------------------------
-print "aaaaaaaaaaaaaaa"
+a = 2.2
+print a
 
 
 ------------------------------
@@ -1446,15 +1449,19 @@ Correct return value: 1
 ------------------------------
 Our ifjcode output:
 .IFJcode18
+DEFVAR GF@a
+DEFVAR GF@%result%80000001
+MOVE GF@%result%80000001 float@0x1.19999ap+1
+MOVE GF@a GF@%result%80000001
 CREATEFRAME
 DEFVAR TF@%1
-MOVE TF@%1 string@aaaaaaaaaaaaaaa
+MOVE TF@%1 GF@a
 PUSHFRAME
 WRITE LF@%1
 POPFRAME
 ------------------------------
 Our output:
-aaaaaaaaaaaaaaaOur return value: 0
+0x1.19999ap+1Our return value: 0
 Our return ifjcode value: 0
 ---------------------------------------
 -------------END OF FILE---------------
