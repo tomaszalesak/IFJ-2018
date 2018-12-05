@@ -670,7 +670,9 @@ int parse_param() {//61
     }
     gen_parameter(token, GEN_COUNTER_ADD);
     ///semantic
-    ltsInsert(ltsAct, &K);
+    if (ltsInsert(ltsAct, &K) != NULL) {
+        semanticError(ERR_UNDEF_REDEF, K, paramsCounter, SYM_VAR);
+    }
     ltsSetIdType(*ltsAct, &K, KW_NIL); //todo replace with T_NIL
     paramsCounter++;
     return 0;
