@@ -1,13 +1,15 @@
 /**
- * Predmet:  IFJ
- * Projekt:  Implementacia prekladaca jazyka IFJ18
- * Soubor:   symtable.h
+ * Předmět: IFJ
+ * Projekt: Implementace překladače jazyka IFJ18
+ * Soubor:  symtable.h
  *
- * Popis: hlavicka do suboru symtable.c
+ * Popis:   Tabulka symbolu realizovaná pomocí binárního vyhledávacího stromu - hlavičkový soubor
  *
- *
- *
- */
+ * Autoři:  Vojtěch Novotný     xnovot1f@stud.fit.vutbr.cz
+ *          Tomáš Zálešák       xzales13@stud.fit.vutbr.cz
+ *          Robin Skaličan      xskali19@stud.fit.vutbr.cz
+ *          Tomáš Smädo         xsmado00@stud.fit.vutbr.cz
+*/
 
 #ifndef IFJ_SYMTABLE_H
 #define IFJ_SYMTABLE_H

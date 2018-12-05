@@ -1,8 +1,14 @@
-/*
-**	IFJ
-**	Stack - Double-Linked List
-**	---------------------------
-**	Tomáš Zálešák - xzales13
+/**
+ * Předmět: IFJ
+ * Projekt: Implementace překladače jazyka IFJ18
+ * Soubor:  prec_dl.h
+ *
+ * Popis:   Precedenční analýza - práce se stackem - hlavičkový soubor
+ *
+ * Autoři:  Vojtěch Novotný     xnovot1f@stud.fit.vutbr.cz
+ *          Tomáš Zálešák       xzales13@stud.fit.vutbr.cz
+ *          Robin Skaličan      xskali19@stud.fit.vutbr.cz
+ *          Tomáš Smädo         xsmado00@stud.fit.vutbr.cz
 */
 
 #ifndef PREC_DL_H
